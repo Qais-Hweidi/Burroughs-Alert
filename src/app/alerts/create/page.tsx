@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Bell, ArrowLeft } from 'lucide-react'
 import { APP_CONFIG } from '@/lib/utils/constants'
 
-export default function CreateAlertPage() {
+function CreateAlertContent() {
   const [email, setEmail] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -80,5 +80,13 @@ export default function CreateAlertPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function CreateAlertPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateAlertContent />
+    </Suspense>
   )
 }
