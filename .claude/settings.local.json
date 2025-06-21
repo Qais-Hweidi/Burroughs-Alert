@@ -56,7 +56,10 @@
       "Bash(.:*)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
-      "Bash(claude doctor)"
+      "Bash(claude doctor)",
+      "Bash(timeout 10s npm run dev)",
+      "Bash(true)",
+      "Bash(timeout 30s npm run dev)"
     ],
     "deny": []
   }

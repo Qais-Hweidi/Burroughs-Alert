@@ -2,30 +2,30 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Documentation Policy
+**IMPORTANT**: Always update documentation after any critical changes to the project architecture, scope, or implementation approach. This ensures consistent understanding of project decisions and current state.
+
+**CRITICAL RULE**: Never delete files from the `/docs/` folder. Only modify existing documentation files to reflect current project state and decisions.
+
 ## Development Environment
 * Using Claude Code via WSL terminal on Windows VS Code
 * Choose solutions that are less likely to cause development issues
 * Always validate links before using them
 * Check environment variable requirements before coding
+* Ask for clarification if needed for task scope, critical vs. optional aspects, and specific implementation details
 
 ## Essential Commands
 
-### Database Operations
-```bash
-npm run db:init          # Initialize database and run migrations
-npm run db:generate      # Generate new migrations with Drizzle Kit
-npm run db:migrate       # Apply migrations to database
-npm run db:seed          # Seed database with sample data
-```
-
-### Development Workflow
+### Development Workflow (Simplified for Local MVP)
 ```bash
 npm run dev              # Start Next.js development server
-npm run jobs:start       # Start background job system (separate terminal)
 npm run type-check       # Run TypeScript validation
 npm run lint             # Run ESLint checks
 npm run build            # Production build
+npm start                # Start production server
 ```
+
+**Note**: Complex database operations, job system, and testing infrastructure have been removed for MVP simplicity.
 
 ### Testing & Validation
 ```bash
@@ -48,35 +48,26 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
               External Services (SMTP, Maps)
 ```
 
-### Database Architecture (Drizzle ORM + LibSQL)
-**IMPORTANT**: This project recently migrated from better-sqlite3 to Drizzle ORM + @libsql/client due to compilation issues.
-
+### Database Architecture (Simplified for MVP)
 - **Schema Location**: `/src/lib/database/schema.sql.ts`
 - **Connection**: SQLite with file path `./data/app.db`
 - **Key Tables**: users, alerts, listings, notifications
-- **Configuration**: `drizzle.config.ts` defines schema path and migration output
+- **Approach**: Direct schema setup (no migrations system for MVP)
 
-### Background Job System
-**Critical Pattern**: All background jobs run independently and must be resilient to failures.
+### Background Job System (Simplified for MVP)
+**Note**: For local MVP, background jobs will be simplified or manual triggers instead of complex scheduling system.
 
-**Job Schedule** (defined in `/src/lib/jobs/`):
-- **Scraper**: Every 15 minutes - scrapes Craigslist NYC
-- **Matcher**: Every 5 minutes - matches new listings against user alerts
-- **Notifier**: Every 10 minutes - sends email notifications
-- **Cleanup**: Daily at 2 AM - removes old data
-
-### API Architecture Pattern
+### API Architecture Pattern (Simplified MVP)
 **Location**: `/src/app/api/`
-**Key Routes**:
+**Essential Routes Only**:
 - `/api/alerts` - CRUD for user search criteria
-- `/api/listings` - Apartment listing data
+- `/api/listings` - Basic apartment listing data
 - `/api/unsubscribe/[token]` - Email unsubscribe handling
-- `/api/health` - System monitoring
 
-### Data Flow Architecture
-1. **User Journey**: Landing → Alert Form → Email Confirmation → Background Monitoring
-2. **Listing Flow**: Craigslist → Scraper → Database → Matcher → Email Queue → Users
-3. **Notification Flow**: Match Found → Email Template → SMTP → Delivery Tracking
+### Data Flow Architecture (Simplified MVP)
+1. **User Journey**: Landing Page (Email Input) → Alert Creation Form → Confirmation
+2. **Background Flow**: Scraper → Basic Scam Detection → Database → Matcher → Direct Email Notification
+3. **Simple Flow**: No complex queues, direct processing for MVP
 
 ### Scraping System Design
 **Technology Stack**: Puppeteer (primary) + Axios/Cheerio (fallback)
@@ -84,12 +75,13 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 **Anti-Detection**: User agent rotation, delays, rate limiting
 **Data Processing**: Title cleaning, neighborhood normalization, scam detection
 
-### Key Implementation Status
-**CRITICAL**: Most implementation files are currently empty/incomplete. The codebase has excellent architectural planning with:
-- ✅ Database schema and Drizzle configuration
+### Key Implementation Status (Updated for MVP)
+**CRITICAL**: This is a simplified MVP focused on local development only. Current status:
+- ✅ Simplified project structure (removed migrations, testing, complex scripts)
+- ✅ Database schema and basic Drizzle setup
 - ✅ Type definitions and constants
 - ✅ Documentation and project structure
-- ❌ Core business logic implementations (jobs, API routes, components)
+- ❌ Core business logic implementations (jobs, API routes, components) - **NEXT PRIORITY**
 
 ## Environment Variables Required
 
@@ -113,12 +105,11 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
 - **Data Sources**: Craigslist NYC apartment listings
 - **Commute Integration**: Optional Google Maps integration for work commute estimates
 
-## Database Migration Strategy
-**Pattern**: Use Drizzle Kit for schema changes
-1. Modify schema in `/src/lib/database/schema.sql.ts`
-2. Run `npm run db:generate` to create migration
-3. Run `npm run db:migrate` to apply changes
-4. Migrations stored in `/data/migrations/`
+## Database Strategy (Simplified for MVP)
+**Pattern**: Direct schema setup for local development
+1. Schema defined in `/src/lib/database/schema.sql.ts`
+2. Database initialized directly from schema (no migrations)
+3. Schema changes applied by recreating database if needed
 
 ## Error Handling Architecture
 - **Structured Logging**: Different log levels throughout system
@@ -131,3 +122,16 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
 - **SQL Injection Prevention**: Parameterized queries with Drizzle ORM
 - **Automatic Cleanup**: Privacy compliance through data retention policies
 - **Unsubscribe Tokens**: Secure unsubscribe mechanism
+
+## Recent Development Activities
+* **2024-06-21**: Simplified codebase for fast MVP development
+  - **Phase 1**: Removed complex infrastructure: `/scripts/`, `/data/migrations/`, `/tests/`
+  - **Phase 2**: Removed non-essential pages and components for fast MVP
+    - Removed: error.tsx, loading.tsx, not-found.tsx, admin/, health API
+    - Removed: ErrorBoundary, LoadingSpinner, EmailPreview, Navigation, ContactForm
+    - **Kept**: Basic scam detection, core alert functionality, essential UI components
+  - Simplified user flow: Email Input → Alert Creation → Background Processing → Notification
+  - **Reason**: Focus on core MVP functionality only
+* Prepared initial codebase structure and architecture for Burroughs-Alert apartment hunting notification service
+* Documented comprehensive system design and implementation strategy
+* Set up core technologies: Next.js, Drizzle ORM, SQLite, Puppeteer

@@ -17,8 +17,7 @@ burroughs-alert/
 ├── prettier.config.js
 ├── CLAUDE.md
 ├── data/
-│   ├── app.db
-│   └── migrations/
+│   └── app.db
 ├── docs/
 │   ├── 01-project-overview.md
 │   ├── 02-tech-stack.md
@@ -36,36 +35,20 @@ burroughs-alert/
 │   ├── app/
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
-│   │   ├── globals.css
-│   │   ├── loading.tsx
-│   │   ├── not-found.tsx
-│   │   ├── error.tsx
+│   │   ├── globals.css.tsx
 │   │   ├── api/
 │   │   │   ├── alerts/
 │   │   │   │   ├── route.ts
 │   │   │   │   └── [id]/
 │   │   │   │       └── route.ts
-│   │   │   ├── unsubscribe/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── [token]/
-│   │   │   │       └── route.ts
 │   │   │   ├── listings/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── [id]/
-│   │   │   │       └── route.ts
-│   │   │   ├── neighborhoods/
 │   │   │   │   └── route.ts
-│   │   │   └── health/
-│   │   │       └── route.ts
-│   │   ├── alerts/
-│   │   │   └── page.tsx
-│   │   ├── unsubscribe/
-│   │   │   ├── page.tsx
-│   │   │   └── [token]/
-│   │   │       └── page.tsx
-│   │   └── admin/
-│   │       ├── page.tsx
-│   │       └── listings/
+│   │   │   └── unsubscribe/
+│   │   │       ├── route.ts
+│   │   │       └── [token]/
+│   │   │           └── route.ts
+│   │   └── unsubscribe/
+│   │       └── [token]/
 │   │           └── page.tsx
 │   ├── components/
 │   │   ├── ui/
@@ -80,28 +63,19 @@ burroughs-alert/
 │   │   │   └── toast.tsx
 │   │   ├── forms/
 │   │   │   ├── AlertForm.tsx
-│   │   │   ├── UnsubscribeForm.tsx
-│   │   │   └── ContactForm.tsx
+│   │   │   └── UnsubscribeForm.tsx
 │   │   ├── layout/
 │   │   │   ├── Header.tsx
 │   │   │   ├── Footer.tsx
-│   │   │   ├── Navigation.tsx
 │   │   │   └── Container.tsx
-│   │   ├── listings/
-│   │   │   ├── ListingCard.tsx
-│   │   │   ├── ListingGrid.tsx
-│   │   │   ├── ListingFilters.tsx
-│   │   │   └── ScamBadge.tsx
-│   │   └── common/
-│   │       ├── LoadingSpinner.tsx
-│   │       ├── ErrorBoundary.tsx
-│   │       ├── EmailPreview.tsx
-│   │       └── CommuteDisplay.tsx
+│   │   └── listings/
+│   │       ├── ListingCard.tsx
+│   │       ├── ListingGrid.tsx
+│   │       └── ScamBadge.tsx
 │   ├── lib/
 │   │   ├── database/
 │   │   │   ├── index.ts
-│   │   │   ├── migrations.ts
-│   │   │   ├── schema.sql
+│   │   │   ├── schema.sql.ts
 │   │   │   └── queries/
 │   │   │       ├── users.ts
 │   │   │       ├── alerts.ts
@@ -144,30 +118,7 @@ burroughs-alert/
 │   │       └── notification.types.ts
 │   └── styles/
 │       └── components.css
-├── scripts/
-│   ├── init-db.ts
-│   ├── migrate-db.ts
-│   ├── seed-data.ts
-│   ├── start-jobs.ts
-│   └── backup-db.ts
-└── tests/
-    ├── api/
-    │   ├── alerts.test.ts
-    │   ├── listings.test.ts
-    │   └── health.test.ts
-    ├── lib/
-    │   ├── scraping.test.ts
-    │   ├── matching.test.ts
-    │   └── notifications.test.ts
-    ├── components/
-    │   ├── AlertForm.test.tsx
-    │   └── ListingCard.test.tsx
-    ├── utils/
-    │   ├── validation.test.ts
-    │   └── formatting.test.ts
-    └── setup/
-        ├── test-db.ts
-        └── test-utils.ts
+# Note: scripts/ and tests/ folders removed for MVP simplification
 ```
 
 ## File Descriptions
@@ -199,28 +150,18 @@ burroughs-alert/
 #### `src/app/` (Next.js App Router)
 
 **`layout.tsx`**: Root layout with metadata, providers
-**`page.tsx`**: Landing page with hero section and alert form
-**`globals.css`**: Global styles, Tailwind imports
-**`loading.tsx`**: Global loading UI
-**`not-found.tsx`**: 404 error page
-**`error.tsx`**: Error boundary page
+**`page.tsx`**: Landing page with email input and alert form
+**`globals.css.tsx`**: Global styles, Tailwind imports
 
-**API Routes (`src/app/api/`)**:
+**API Routes (`src/app/api/`)** (MVP Essential Only):
 - `alerts/route.ts`: POST create alert, GET list alerts
 - `alerts/[id]/route.ts`: DELETE deactivate alert
+- `listings/route.ts`: GET basic listings data
 - `unsubscribe/route.ts`: POST unsubscribe by email
 - `unsubscribe/[token]/route.ts`: GET unsubscribe by token
-- `listings/route.ts`: GET list listings (admin)
-- `listings/[id]/route.ts`: GET single listing details
-- `neighborhoods/route.ts`: GET NYC neighborhoods list
-- `health/route.ts`: GET system health status
 
-**Pages (`src/app/`)**:
-- `alerts/page.tsx`: Alert management dashboard
-- `unsubscribe/page.tsx`: Unsubscribe form
-- `unsubscribe/[token]/page.tsx`: Token-based unsubscribe
-- `admin/page.tsx`: Admin dashboard
-- `admin/listings/page.tsx`: Listings management
+**Pages (`src/app/`)** (MVP Minimal):
+- `unsubscribe/[token]/page.tsx`: Token-based unsubscribe confirmation
 
 #### `src/components/`
 
@@ -228,27 +169,25 @@ burroughs-alert/
 - shadcn/ui components: Button, Input, Select, Card, etc.
 - Consistent design system components
 
-**Form Components (`src/components/forms/`)**:
+**Form Components (`src/components/forms/`)** (MVP Essential):
 - `AlertForm.tsx`: Main alert creation form
 - `UnsubscribeForm.tsx`: Email unsubscribe form
-- `ContactForm.tsx`: Contact/support form
 
-**Layout Components (`src/components/layout/`)**:
-- `Header.tsx`: Site header with navigation
-- `Footer.tsx`: Site footer with links
+**Layout Components (`src/components/layout/`)** (MVP Simplified):
+- `Header.tsx`: Simple site header
+- `Footer.tsx`: Basic site footer
 - `Container.tsx`: Responsive container wrapper
 
-**Listing Components (`src/components/listings/`)**:
+**Listing Components (`src/components/listings/`)** (MVP Core):
 - `ListingCard.tsx`: Individual listing display
 - `ListingGrid.tsx`: Grid of listing cards
-- `ScamBadge.tsx`: Scam warning indicator
+- `ScamBadge.tsx`: Basic scam warning indicator
 
 #### `src/lib/`
 
-**Database (`src/lib/database/`)**:
+**Database (`src/lib/database/`)** (Simplified for MVP):
 - `index.ts`: Database connection and setup
-- `migrations.ts`: Migration runner
-- `schema.sql`: Initial database schema
+- `schema.sql.ts`: Drizzle schema definition (no migrations)
 - `queries/`: Organized database queries by entity
 
 **Scraping (`src/lib/scraping/`)**:
@@ -283,26 +222,13 @@ burroughs-alert/
 - TypeScript interfaces and types
 - Database models, API contracts
 
-### Scripts & Tools
-
-#### `scripts/`
-- `init-db.ts`: Initialize database and schema
-- `migrate-db.ts`: Run database migrations
-- `seed-data.ts`: Seed test data
-- `start-jobs.ts`: Start background job processes
-- `backup-db.ts`: Database backup utility
-
-#### `tests/`
-- Unit tests for API routes
-- Component tests for React components
-- Integration tests for services
-- Test utilities and setup
+### Scripts & Tools (Removed for MVP)
+**Note**: Complex scripts and testing infrastructure removed for local MVP development. Focus is on core functionality implementation.
 
 ### Data Directory
 
 #### `data/`
-- `app.db`: SQLite database file
-- `migrations/`: SQL migration files
+- `app.db`: SQLite database file (no migrations for MVP)
 
 ### Public Assets
 

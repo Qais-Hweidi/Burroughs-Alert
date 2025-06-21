@@ -1,5 +1,7 @@
 # Burroughs Alert - Algorithms & Pseudocode
 
+**Note for MVP**: These algorithms represent the full vision. For MVP, we'll implement simplified versions focusing on core functionality first.
+
 ## Core Algorithms
 
 ### 1. Listing Matching Algorithm
@@ -456,54 +458,39 @@ class NotificationQueue {
 }
 ```
 
-### 5. Data Flow Orchestration
+### 5. Data Flow Orchestration (Simplified for MVP)
 
 **Purpose**: Coordinate the complete flow from scraping to notification
+
+**MVP Note**: For local development, this will be simplified to manual triggers or basic scheduling instead of complex orchestration.
 
 #### Main Process Flow
 ```
 FUNCTION runMainDataFlow():
-    WHILE true:
-        TRY:
-            // Step 1: Scrape new listings
-            new_listings = scrapeListings()
-            IF new_listings.length > 0:
-                LOG("Found {new_listings.length} new listings")
+    // MVP: Simplified version - can be triggered manually or on simple schedule
+    TRY:
+        // Step 1: Scrape new listings (basic version)
+        new_listings = scrapeListings()
+        
+        // Step 2: Process listings (simplified)
+        FOR listing in new_listings:
+            // Basic scam detection
+            listing.scam_score = calculateBasicScamScore(listing)
             
-            // Step 2: Process each new listing
-            FOR listing in new_listings:
-                // Calculate scam score
-                listing.scam_score = calculateScamScore(listing)
-                
-                // Save to database
-                saved_listing = saveListings(listing)
-                
-                // Find matching alerts
-                active_alerts = getActiveAlerts()
-                matches = matchListingToAlerts(saved_listing, active_alerts)
-                
-                // Queue notifications
-                FOR match in matches:
-                    queueNotification({
-                        user_id: match.userId,
-                        alert_id: match.alertId,
-                        listing_id: match.listingId,
-                        priority: determinePriority(saved_listing, match)
-                    })
+            // Save to database
+            saved_listing = saveListings(listing)
             
-            // Step 3: Process notification queue
-            processNotificationQueue()
+            // Simple matching
+            matches = matchListingToAlerts(saved_listing)
             
-            // Step 4: Cleanup old data
-            IF isTimeForCleanup():
-                cleanupOldData()
-            
-            LOG("Data flow cycle completed")
-            SLEEP(5_minutes)  // Wait before next cycle
-            
-        CATCH error:
-            LOG_ERROR("Data flow error: {error}")
-            SLEEP(1_minute)  // Brief pause before retry
+            // Direct notification (no complex queue)
+            FOR match in matches:
+                sendDirectNotification(match)
+        
+        LOG("MVP data flow completed")
+        
+    CATCH error:
+        LOG_ERROR("Data flow error: {error}")
 
 FUNCTION determinePriority(listing, match):
     // High priority for great deals

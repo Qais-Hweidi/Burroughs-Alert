@@ -1,10 +1,10 @@
 # Burroughs Alert - Database Schema
 
-## Database: SQLite
+## Database: SQLite (Simplified for MVP)
 
 **File Location**: `./data/app.db`  
-**Library**: better-sqlite3  
-**Migration Strategy**: Simple SQL files in order
+**Library**: Drizzle ORM + @libsql/client  
+**Strategy**: Direct schema setup (no migrations for MVP)
 
 ## Schema Design
 
