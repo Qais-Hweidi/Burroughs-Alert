@@ -16,13 +16,15 @@ export default function Footer() {
                 <Home className="h-5 w-5" />
               </div>
               <div>
-                <span className="text-xl font-bold text-foreground">Burroughs</span>
+                <span className="text-xl font-bold text-foreground">
+                  Burroughs
+                </span>
                 <span className="text-xl font-bold text-primary">Alert</span>
               </div>
             </div>
             <p className="text-muted-foreground max-w-md">
-              Get instant notifications for NYC apartment listings that match your criteria. 
-              Never miss your perfect apartment again.
+              Get instant notifications for NYC apartment listings that match
+              your criteria. Never miss your perfect apartment again.
             </p>
             <div className="mt-4 flex items-center space-x-2 text-sm text-muted-foreground">
               <Shield className="h-4 w-4" />
@@ -35,32 +37,32 @@ export default function Footer() {
             <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Home
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="#how-it-works" 
+                <Link
+                  href="#how-it-works"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   How it Works
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/create-alert" 
+                <Link
+                  href="/create-alert"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Create Alert
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="#pricing" 
+                <Link
+                  href="#pricing"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Pricing
@@ -71,35 +73,37 @@ export default function Footer() {
 
           {/* Legal & Support */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Legal & Support</h3>
+            <h3 className="font-semibold text-foreground mb-4">
+              Legal & Support
+            </h3>
             <ul className="space-y-2">
               <li>
-                <Link 
-                  href="/privacy" 
+                <Link
+                  href="/privacy"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/terms" 
+                <Link
+                  href="/terms"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/unsubscribe" 
+                <Link
+                  href="/unsubscribe"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Unsubscribe
                 </Link>
               </li>
               <li>
-                <a 
-                  href="mailto:support@burroughsalert.com" 
+                <a
+                  href="mailto:support@burroughsalert.com"
                   className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
                 >
                   <Mail className="h-3 w-3 mr-1" />
@@ -116,21 +120,22 @@ export default function Footer() {
             <div className="text-sm text-muted-foreground">
               � {currentYear} BurroughsAlert. All rights reserved.
             </div>
-            
+
             {/* NYC Disclaimer */}
             <div className="text-sm text-muted-foreground text-center md:text-right max-w-md">
               <p className="inline-flex items-center">
                 <FileText className="h-3 w-3 mr-1" />
-                NYC apartment hunting service. Not affiliated with any real estate companies.
+                NYC apartment hunting service. Not affiliated with any real
+                estate companies.
               </p>
             </div>
           </div>
-          
+
           {/* Data Sources Attribution */}
           <div className="mt-4 pt-4 border-t border-border">
             <div className="text-xs text-muted-foreground text-center">
               <p className="inline-flex items-center justify-center">
-                Listings sourced from public rental platforms. 
+                Listings sourced from public rental platforms.
                 <ExternalLink className="h-3 w-3 ml-1" />
               </p>
             </div>

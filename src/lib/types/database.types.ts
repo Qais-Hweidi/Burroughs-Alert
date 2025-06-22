@@ -76,7 +76,8 @@ export interface ParsedAlert extends Omit<Alert, 'neighborhoods'> {
 }
 
 // Listing with parsed images and contact info
-export interface ParsedListing extends Omit<Listing, 'images' | 'contact_info'> {
+export interface ParsedListing
+  extends Omit<Listing, 'images' | 'contact_info'> {
   images: string[];
   contact_info: ListingContactInfo | null;
 }
@@ -304,7 +305,7 @@ export interface DeleteResult extends DatabaseResult {
 }
 
 // ================================
-// Database Health/Info Types  
+// Database Health/Info Types
 // ================================
 
 export interface DatabaseHealth {
@@ -334,7 +335,12 @@ export interface MaintenanceResult {
 // NYC Specific Types
 // ================================
 
-export type NYCBorough = 'Manhattan' | 'Brooklyn' | 'Queens' | 'Bronx' | 'Staten Island';
+export type NYCBorough =
+  | 'Manhattan'
+  | 'Brooklyn'
+  | 'Queens'
+  | 'Bronx'
+  | 'Staten Island';
 
 export interface NYCNeighborhood {
   name: string;

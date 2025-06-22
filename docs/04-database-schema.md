@@ -29,6 +29,7 @@ CREATE INDEX idx_users_unsubscribe ON users(unsubscribe_token);
 ```
 
 **Sample Data**:
+
 ```json
 {
   "id": 1,
@@ -59,7 +60,7 @@ CREATE TABLE alerts (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   is_active BOOLEAN DEFAULT 1,
-  
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -70,6 +71,7 @@ CREATE INDEX idx_alerts_price_range ON alerts(min_price, max_price);
 ```
 
 **Sample Data**:
+
 ```json
 {
   "id": 1,
@@ -128,6 +130,7 @@ CREATE INDEX idx_listings_scam_score ON listings(scam_score);
 ```
 
 **Sample Data**:
+
 ```json
 {
   "id": 1,
@@ -167,11 +170,11 @@ CREATE TABLE notifications (
   notification_type VARCHAR(50) DEFAULT 'email',
   sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   email_status VARCHAR(50), -- sent, delivered, bounced, failed
-  
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (alert_id) REFERENCES alerts(id) ON DELETE CASCADE,
   FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE,
-  
+
   UNIQUE(user_id, alert_id, listing_id) -- Prevent duplicate notifications
 );
 
@@ -182,6 +185,7 @@ CREATE INDEX idx_notifications_status ON notifications(email_status);
 ```
 
 **Sample Data**:
+
 ```json
 {
   "id": 1,
@@ -194,15 +198,15 @@ CREATE INDEX idx_notifications_status ON notifications(email_status);
 }
 ```
 
-
 ## Database Operations
 
 ### Common Queries
 
 #### Create New Alert
+
 ```sql
-INSERT INTO users (email, unsubscribe_token) 
-VALUES (?, ?) 
+INSERT INTO users (email, unsubscribe_token)
+VALUES (?, ?)
 ON CONFLICT(email) DO UPDATE SET updated_at = CURRENT_TIMESTAMP
 RETURNING id;
 
@@ -211,6 +215,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 ```
 
 #### Find Matching Listings
+
 ```sql
 SELECT l.* FROM listings l
 WHERE l.is_active = 1
@@ -220,39 +225,43 @@ WHERE l.is_active = 1
   AND (? = 0 OR l.pet_friendly = 1)
   AND l.neighborhood IN (SELECT value FROM json_each(?))
   AND l.id NOT IN (
-    SELECT listing_id FROM notifications 
+    SELECT listing_id FROM notifications
     WHERE user_id = ? AND alert_id = ?
   )
 ORDER BY l.posted_at DESC;
 ```
 
 #### Get User's Active Alerts
+
 ```sql
-SELECT a.*, u.email 
+SELECT a.*, u.email
 FROM alerts a
 JOIN users u ON a.user_id = u.id
 WHERE u.is_active = 1 AND a.is_active = 1;
 ```
 
 #### Update Listing Status
+
 ```sql
-UPDATE listings 
-SET is_active = 0 
+UPDATE listings
+SET is_active = 0
 WHERE external_id = ? AND source = ?;
 ```
 
 ### Data Maintenance
 
 #### Daily Cleanup (Remove old listings)
+
 ```sql
-DELETE FROM listings 
+DELETE FROM listings
 WHERE scraped_at < datetime('now', '-30 days');
 
-DELETE FROM notifications 
+DELETE FROM notifications
 WHERE sent_at < datetime('now', '-90 days');
 ```
 
 #### Vacuum Database (Weekly)
+
 ```sql
 VACUUM;
 ANALYZE;
@@ -271,11 +280,13 @@ ANALYZE;
 ### JSON Fields
 
 #### neighborhoods (in alerts table)
+
 ```json
 ["Manhattan", "Brooklyn", "Queens"]
 ```
 
 #### images (in listings table)
+
 ```json
 [
   "https://images.craigslist.org/abc123.jpg",
@@ -284,6 +295,7 @@ ANALYZE;
 ```
 
 #### contact_info (in listings table)
+
 ```json
 {
   "phone": "555-0123",
@@ -295,12 +307,14 @@ ANALYZE;
 ## Migration Strategy
 
 ### Initial Setup
+
 ```sql
 -- migrations/001_initial_schema.sql
 -- Create all tables with initial structure
 ```
 
 ### Future Migrations
+
 ```sql
 -- migrations/002_add_commute_data.sql
 -- migrations/003_add_user_preferences.sql
@@ -308,12 +322,13 @@ ANALYZE;
 ```
 
 ### Migration Runner
+
 ```typescript
 // Simple migration system
 function runMigrations(db: Database) {
   const currentVersion = getCurrentVersion(db);
   const migrationFiles = getMigrationFiles();
-  
+
   for (const file of migrationFiles) {
     if (file.version > currentVersion) {
       db.exec(readFileSync(file.path, 'utf8'));
@@ -326,18 +341,21 @@ function runMigrations(db: Database) {
 ## Performance Considerations
 
 ### Indexing Strategy
+
 - Primary keys: Automatic B-tree indexes
 - Foreign keys: Explicit indexes for joins
 - Query columns: Indexes on frequently filtered columns
 - Composite indexes: For multi-column queries
 
 ### Query Optimization
+
 - Use EXPLAIN QUERY PLAN for slow queries
 - Limit result sets with appropriate WHERE clauses
 - Use prepared statements for repeated queries
 - Consider query result caching for expensive operations
 
 ### Storage Optimization
+
 - Use appropriate data types (INTEGER vs VARCHAR)
 - Normalize repeated data (neighborhoods lookup table)
 - Regular VACUUM to reclaim space

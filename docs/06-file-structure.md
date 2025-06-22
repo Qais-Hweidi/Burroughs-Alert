@@ -126,22 +126,27 @@ burroughs-alert/
 ### Configuration Files
 
 #### `package.json`
+
 - Dependencies and scripts
 - Next.js, TypeScript, Tailwind, database libraries
 
 #### `next.config.js`
+
 - Next.js configuration
 - Environment variables, build settings
 
 #### `tailwind.config.js`
+
 - Tailwind CSS configuration
 - Custom colors, fonts, spacing
 
 #### `tsconfig.json`
+
 - TypeScript configuration
 - Strict mode, path aliases
 
 #### `.env.local` & `.env.example`
+
 - Environment variables
 - Database URL, email credentials, API keys
 
@@ -154,6 +159,7 @@ burroughs-alert/
 **`globals.css.tsx`**: Global styles, Tailwind imports
 
 **API Routes (`src/app/api/`)** (MVP Essential Only):
+
 - `alerts/route.ts`: POST create alert, GET list alerts
 - `alerts/[id]/route.ts`: DELETE deactivate alert
 - `listings/route.ts`: GET basic listings data
@@ -161,24 +167,29 @@ burroughs-alert/
 - `unsubscribe/[token]/route.ts`: GET unsubscribe by token
 
 **Pages (`src/app/`)** (MVP Minimal):
+
 - `unsubscribe/[token]/page.tsx`: Token-based unsubscribe confirmation
 
 #### `src/components/`
 
 **UI Components (`src/components/ui/`)**:
+
 - shadcn/ui components: Button, Input, Select, Card, etc.
 - Consistent design system components
 
 **Form Components (`src/components/forms/`)** (MVP Essential):
+
 - `AlertForm.tsx`: Main alert creation form
 - `UnsubscribeForm.tsx`: Email unsubscribe form
 
 **Layout Components (`src/components/layout/`)** (MVP Simplified):
+
 - `Header.tsx`: Simple site header
 - `Footer.tsx`: Basic site footer
 - `Container.tsx`: Responsive container wrapper
 
 **Listing Components (`src/components/listings/`)** (MVP Core):
+
 - `ListingCard.tsx`: Individual listing display
 - `ListingGrid.tsx`: Grid of listing cards
 - `ScamBadge.tsx`: Basic scam warning indicator
@@ -186,75 +197,90 @@ burroughs-alert/
 #### `src/lib/`
 
 **Database (`src/lib/database/`)** (Simplified for MVP):
+
 - `index.ts`: Database connection and setup
 - `schema.sql.ts`: Drizzle schema definition (no migrations)
 - `queries/`: Organized database queries by entity
 
 **Scraping (`src/lib/scraping/`)**:
+
 - `craigslist-scraper.ts`: Craigslist-specific scraper
 - `listing-parser.ts`: Parse listing data
 - `scam-detector.ts`: Detect suspicious listings
 - `proxy-manager.ts`: Manage scraping proxies
 
 **Matching (`src/lib/matching/`)**:
+
 - `match-engine.ts`: Core matching algorithm
 - `criteria-validator.ts`: Validate user criteria
 - `commute-calculator.ts`: Calculate commute times
 
 **Notifications (`src/lib/notifications/`)**:
+
 - `email-service.ts`: Email sending service
 - `email-templates.ts`: HTML email templates
 - `notification-queue.ts`: Queue management
 
 **Background Jobs (`src/lib/jobs/`)**:
+
 - `scraper-job.ts`: Scheduled scraping job
 - `matcher-job.ts`: Matching algorithm job
 - `notifier-job.ts`: Notification sending job
 - `cleanup-job.ts`: Database cleanup job
 
 **Utilities (`src/lib/utils/`)**:
+
 - `validation.ts`: Input validation functions
 - `constants.ts`: App-wide constants
 - `logger.ts`: Structured logging
 - `error-handler.ts`: Error handling utilities
 
 **Types (`src/lib/types/`)**:
+
 - TypeScript interfaces and types
 - Database models, API contracts
 
 ### Scripts & Tools (Removed for MVP)
+
 **Note**: Complex scripts and testing infrastructure removed for local MVP development. Focus is on core functionality implementation.
 
 ### Data Directory
 
 #### `data/`
+
 - `app.db`: SQLite database file (no migrations for MVP)
 
 ### Public Assets
 
 #### `public/`
+
 - Static assets: favicon, logo, images
 - Served directly by Next.js
 
 ## File Naming Conventions
 
 ### Components
+
 - **PascalCase**: `AlertForm.tsx`, `ListingCard.tsx`
 - **Descriptive**: Name describes component purpose
 
 ### Pages
+
 - **kebab-case**: `apartment-alerts/page.tsx`
 - **Follows URL structure**: Matches route paths
 
 ### Utilities & Libraries
+
 - **camelCase**: `parseListingData.ts`, `validateInput.ts`
 - **Descriptive**: Function-focused naming
 
 ### Types
+
 - **PascalCase with suffix**: `User.types.ts`, `Api.types.ts`
 - **Grouped by domain**: Related types in same file
 
 ### Constants
+
 - **UPPER_SNAKE_CASE**: `API_ENDPOINTS.ts`, `ERROR_CODES.ts`
 - **Descriptive**: Clear constant purpose
 

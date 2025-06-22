@@ -29,7 +29,7 @@ export function formatDate(date: string | Date): string {
   return dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   });
 }
 
@@ -74,7 +74,7 @@ export function truncateText(text: string, length: number): string {
  * @returns Capitalized text
  */
 export function capitalizeWords(text: string): string {
-  return text.replace(/\b\w/g, char => char.toUpperCase());
+  return text.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 /**
@@ -83,7 +83,10 @@ export function capitalizeWords(text: string): string {
  * @param bathrooms - Number of bathrooms
  * @returns Formatted size string (e.g., "2br/1ba")
  */
-export function formatApartmentSize(bedrooms: number, bathrooms: number): string {
+export function formatApartmentSize(
+  bedrooms: number,
+  bathrooms: number
+): string {
   const br = bedrooms === 0 ? 'studio' : `${bedrooms}br`;
   const ba = `${bathrooms}ba`;
   return `${br}/${ba}`;

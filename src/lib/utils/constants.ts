@@ -14,7 +14,7 @@ export const APP_CONFIG = {
   version: '1.0.0',
   description: 'NYC Apartment Alert Service',
   author: 'Burroughs Alert Team',
-  url: 'https://burroughsalert.com'
+  url: 'https://burroughsalert.com',
 } as const;
 
 // ================================
@@ -27,7 +27,7 @@ export const API_CONFIG = {
   timeout: 30000, // 30 seconds
   retryAttempts: 3,
   retryDelay: 1000, // 1 second
-  maxPayloadSize: '10mb'
+  maxPayloadSize: '10mb',
 } as const;
 
 // ================================
@@ -40,7 +40,7 @@ export const DATABASE_CONFIG = {
   backupRetention: 30, // days
   maintenanceInterval: 24 * 60 * 60 * 1000, // 24 hours
   connectionTimeout: 5000, // 5 seconds
-  maxConnections: 1 // SQLite is single-threaded
+  maxConnections: 1, // SQLite is single-threaded
 } as const;
 
 // ================================
@@ -50,33 +50,33 @@ export const DATABASE_CONFIG = {
 export const VALIDATION_LIMITS = {
   email: {
     minLength: 5,
-    maxLength: 255
+    maxLength: 255,
   },
   price: {
     min: 500,
-    max: 20000
+    max: 20000,
   },
   bedrooms: {
     min: 0,
-    max: 10
+    max: 10,
   },
   bathrooms: {
     min: 0,
-    max: 20
+    max: 20,
   },
   squareFeet: {
     min: 50,
-    max: 10000
+    max: 10000,
   },
   commute: {
     minMinutes: 1,
-    maxMinutes: 120
+    maxMinutes: 120,
   },
   neighborhoods: {
-    minSelection: 1
+    minSelection: 1,
   },
   images: {
-    maxCount: 20
+    maxCount: 20,
   },
   text: {
     title: 500,
@@ -84,9 +84,9 @@ export const VALIDATION_LIMITS = {
     address: 500,
     commuteDestination: 500,
     name: 100,
-    source: 50
+    source: 50,
   },
-  unsubscribeToken: 32
+  unsubscribeToken: 32,
 } as const;
 
 // ================================
@@ -96,12 +96,12 @@ export const VALIDATION_LIMITS = {
 export const NYC_BOUNDS = {
   latitude: {
     min: 40.4,
-    max: 40.9
+    max: 40.9,
   },
   longitude: {
     min: -74.3,
-    max: -73.7
-  }
+    max: -73.7,
+  },
 } as const;
 
 // ================================
@@ -124,7 +124,7 @@ export const NYC_NEIGHBORHOODS: NYCNeighborhood[] = [
   { name: 'Murray Hill', borough: 'Manhattan', popular: false },
   { name: 'Kips Bay', borough: 'Manhattan', popular: false },
   { name: 'Tudor City', borough: 'Manhattan', popular: false },
-  { name: 'Hell\'s Kitchen', borough: 'Manhattan', popular: true },
+  { name: "Hell's Kitchen", borough: 'Manhattan', popular: true },
   { name: 'Times Square', borough: 'Manhattan', popular: false },
   { name: 'Lincoln Square', borough: 'Manhattan', popular: false },
   { name: 'Yorkville', borough: 'Manhattan', popular: false },
@@ -139,7 +139,7 @@ export const NYC_NEIGHBORHOODS: NYCNeighborhood[] = [
   { name: 'Bowery', borough: 'Manhattan', popular: false },
   { name: 'East Village', borough: 'Manhattan', popular: true },
   { name: 'West Village', borough: 'Manhattan', popular: true },
-  
+
   // Brooklyn
   { name: 'Williamsburg', borough: 'Brooklyn', popular: true },
   { name: 'DUMBO', borough: 'Brooklyn', popular: true },
@@ -169,7 +169,7 @@ export const NYC_NEIGHBORHOODS: NYCNeighborhood[] = [
   { name: 'Mill Basin', borough: 'Brooklyn', popular: false },
   { name: 'Marine Park', borough: 'Brooklyn', popular: false },
   { name: 'Gravesend', borough: 'Brooklyn', popular: false },
-  
+
   // Queens
   { name: 'Long Island City', borough: 'Queens', popular: true },
   { name: 'Astoria', borough: 'Queens', popular: true },
@@ -194,7 +194,7 @@ export const NYC_NEIGHBORHOODS: NYCNeighborhood[] = [
   { name: 'Queens Village', borough: 'Queens', popular: false },
   { name: 'Bellerose', borough: 'Queens', popular: false },
   { name: 'Floral Park', borough: 'Queens', popular: false },
-  
+
   // Bronx
   { name: 'South Bronx', borough: 'Bronx', popular: false },
   { name: 'Mott Haven', borough: 'Bronx', popular: false },
@@ -225,7 +225,7 @@ export const NYC_NEIGHBORHOODS: NYCNeighborhood[] = [
   { name: 'Kingsbridge', borough: 'Bronx', popular: false },
   { name: 'Riverdale', borough: 'Bronx', popular: false },
   { name: 'Spuyten Duyvil', borough: 'Bronx', popular: false },
-  
+
   // Staten Island
   { name: 'St. George', borough: 'Staten Island', popular: false },
   { name: 'Stapleton', borough: 'Staten Island', popular: false },
@@ -244,12 +244,12 @@ export const NYC_NEIGHBORHOODS: NYCNeighborhood[] = [
   { name: 'Eltingville', borough: 'Staten Island', popular: false },
   { name: 'Annadale', borough: 'Staten Island', popular: false },
   { name: 'Huguenot', borough: 'Staten Island', popular: false },
-  { name: 'Prince\'s Bay', borough: 'Staten Island', popular: false },
+  { name: "Prince's Bay", borough: 'Staten Island', popular: false },
   { name: 'Richmond Valley', borough: 'Staten Island', popular: false },
   { name: 'Tottenville', borough: 'Staten Island', popular: false },
   { name: 'Charleston', borough: 'Staten Island', popular: false },
   { name: 'Rossville', borough: 'Staten Island', popular: false },
-  { name: 'Woodrow', borough: 'Staten Island', popular: false }
+  { name: 'Woodrow', borough: 'Staten Island', popular: false },
 ];
 
 // ================================
@@ -263,20 +263,20 @@ export const ERROR_CODES = {
   INVALID_NEIGHBORHOOD: 'INVALID_NEIGHBORHOOD',
   PRICE_RANGE_ERROR: 'PRICE_RANGE_ERROR',
   REQUIRED_FIELD_MISSING: 'REQUIRED_FIELD_MISSING',
-  
+
   // Resource Errors (404)
   ALERT_NOT_FOUND: 'ALERT_NOT_FOUND',
   USER_NOT_FOUND: 'USER_NOT_FOUND',
   LISTING_NOT_FOUND: 'LISTING_NOT_FOUND',
-  
+
   // Server Errors (500)
   DATABASE_ERROR: 'DATABASE_ERROR',
   EMAIL_SERVICE_ERROR: 'EMAIL_SERVICE_ERROR',
   SCRAPING_ERROR: 'SCRAPING_ERROR',
   INTERNAL_ERROR: 'INTERNAL_ERROR',
-  
+
   // Rate Limiting (429)
-  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED'
+  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
 } as const;
 
 // ================================
@@ -295,7 +295,7 @@ export const HTTP_STATUS = {
   TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500,
   BAD_GATEWAY: 502,
-  SERVICE_UNAVAILABLE: 503
+  SERVICE_UNAVAILABLE: 503,
 } as const;
 
 // ================================
@@ -305,18 +305,18 @@ export const HTTP_STATUS = {
 export const EMAIL_CONFIG = {
   from: {
     name: 'Burroughs Alert',
-    address: 'noreply@burroughsalert.com'
+    address: 'noreply@burroughsalert.com',
   },
   templates: {
     alert: 'apartment-alert',
     welcome: 'welcome',
-    unsubscribe: 'unsubscribe-confirmation'
+    unsubscribe: 'unsubscribe-confirmation',
   },
   limits: {
     dailyPerUser: 10,
     hourlyPerUser: 3,
-    maxListingsPerEmail: 10
-  }
+    maxListingsPerEmail: 10,
+  },
 } as const;
 
 // ================================
@@ -329,22 +329,23 @@ export const SCRAPING_CONFIG = {
     searchPath: '/search/apa',
     delay: {
       min: 2000, // 2 seconds
-      max: 5000  // 5 seconds
+      max: 5000, // 5 seconds
     },
     maxPages: 5,
     timeout: 30000, // 30 seconds
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    userAgent:
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
   },
   intervals: {
     production: 15 * 60 * 1000, // 15 minutes
-    development: 5 * 60 * 1000,  // 5 minutes
-    testing: 60 * 1000          // 1 minute
+    development: 5 * 60 * 1000, // 5 minutes
+    testing: 60 * 1000, // 1 minute
   },
   retries: {
     maxAttempts: 3,
     backoffMultiplier: 2,
-    initialDelay: 1000
-  }
+    initialDelay: 1000,
+  },
 } as const;
 
 // ================================
@@ -354,16 +355,16 @@ export const SCRAPING_CONFIG = {
 export const RATE_LIMITS = {
   api: {
     window: 15 * 60 * 1000, // 15 minutes
-    max: 100 // requests per window
+    max: 100, // requests per window
   },
   alerts: {
-    window: 60 * 60 * 1000, // 1 hour  
-    max: 5 // alert creations per hour
+    window: 60 * 60 * 1000, // 1 hour
+    max: 5, // alert creations per hour
   },
   listings: {
     window: 60 * 1000, // 1 minute
-    max: 50 // listing requests per minute
-  }
+    max: 50, // listing requests per minute
+  },
 } as const;
 
 // ================================
@@ -373,20 +374,20 @@ export const RATE_LIMITS = {
 export const JOB_CONFIG = {
   scraper: {
     cron: '*/15 * * * *', // Every 15 minutes
-    timeout: 10 * 60 * 1000 // 10 minutes
+    timeout: 10 * 60 * 1000, // 10 minutes
   },
   matcher: {
     cron: '*/5 * * * *', // Every 5 minutes
-    timeout: 5 * 60 * 1000 // 5 minutes
+    timeout: 5 * 60 * 1000, // 5 minutes
   },
   notifier: {
     cron: '*/10 * * * *', // Every 10 minutes
-    timeout: 10 * 60 * 1000 // 10 minutes
+    timeout: 10 * 60 * 1000, // 10 minutes
   },
   cleanup: {
     cron: '0 2 * * *', // Daily at 2 AM
-    timeout: 30 * 60 * 1000 // 30 minutes
-  }
+    timeout: 30 * 60 * 1000, // 30 minutes
+  },
 } as const;
 
 // ================================
@@ -394,22 +395,24 @@ export const JOB_CONFIG = {
 // ================================
 
 export function getPopularNeighborhoods(): NYCNeighborhood[] {
-  return NYC_NEIGHBORHOODS.filter(n => n.popular);
+  return NYC_NEIGHBORHOODS.filter((n) => n.popular);
 }
 
-export function getNeighborhoodsByBorough(borough: NYCBorough): NYCNeighborhood[] {
-  return NYC_NEIGHBORHOODS.filter(n => n.borough === borough);
+export function getNeighborhoodsByBorough(
+  borough: NYCBorough
+): NYCNeighborhood[] {
+  return NYC_NEIGHBORHOODS.filter((n) => n.borough === borough);
 }
 
 export function getNeighborhoodNames(): string[] {
-  return NYC_NEIGHBORHOODS.map(n => n.name);
+  return NYC_NEIGHBORHOODS.map((n) => n.name);
 }
 
 export function isValidNeighborhood(name: string): boolean {
-  return NYC_NEIGHBORHOODS.some(n => n.name === name);
+  return NYC_NEIGHBORHOODS.some((n) => n.name === name);
 }
 
 export function getBoroughForNeighborhood(name: string): NYCBorough | null {
-  const neighborhood = NYC_NEIGHBORHOODS.find(n => n.name === name);
+  const neighborhood = NYC_NEIGHBORHOODS.find((n) => n.name === name);
   return neighborhood ? neighborhood.borough : null;
 }

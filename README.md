@@ -5,22 +5,26 @@ A renter-focused notification service for New York City apartment hunting. Get i
 ## Quick Start
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Set up environment**:
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your email credentials
    ```
 
 3. **Initialize database**:
+
    ```bash
    npm run db:init
    ```
 
 4. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -40,6 +44,7 @@ A renter-focused notification service for New York City apartment hunting. Get i
 ## Documentation
 
 See the `docs/` folder for comprehensive documentation:
+
 - [Project Overview](./docs/01-project-overview.md)
 - [Tech Stack](./docs/02-tech-stack.md)
 - [Architecture](./docs/03-architecture.md)

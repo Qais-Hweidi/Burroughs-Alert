@@ -3,7 +3,12 @@
  * TypeScript interfaces for API requests, responses, and validation
  */
 
-import { ParsedAlert, ParsedListing, User, NYCNeighborhood } from './database.types';
+import {
+  ParsedAlert,
+  ParsedListing,
+  User,
+  NYCNeighborhood,
+} from './database.types';
 
 // ================================
 // Standard API Response Structure
@@ -190,7 +195,7 @@ export interface GetNeighborhoodsResponse {
 // Error Codes
 // ================================
 
-export type ValidationErrorCode = 
+export type ValidationErrorCode =
   | 'VALIDATION_ERROR'
   | 'INVALID_EMAIL'
   | 'INVALID_NEIGHBORHOOD'
@@ -210,7 +215,7 @@ export type ServerErrorCode =
 
 export type RateLimitErrorCode = 'RATE_LIMIT_EXCEEDED';
 
-export type ApiErrorCode = 
+export type ApiErrorCode =
   | ValidationErrorCode
   | ResourceErrorCode
   | ServerErrorCode
@@ -373,26 +378,32 @@ export interface AdminStatsResponse {
 // Type Guards
 // ================================
 
-export function isApiError(response: ApiResponse): response is ApiResponse & { error: ApiError } {
+export function isApiError(
+  response: ApiResponse
+): response is ApiResponse & { error: ApiError } {
   return !response.success && !!response.error;
 }
 
-export function isValidationError(error: ApiError): error is ApiError & { code: ValidationErrorCode } {
+export function isValidationError(
+  error: ApiError
+): error is ApiError & { code: ValidationErrorCode } {
   const validationCodes: ValidationErrorCode[] = [
     'VALIDATION_ERROR',
     'INVALID_EMAIL',
     'INVALID_NEIGHBORHOOD',
     'PRICE_RANGE_ERROR',
-    'REQUIRED_FIELD_MISSING'
+    'REQUIRED_FIELD_MISSING',
   ];
   return validationCodes.includes(error.code as ValidationErrorCode);
 }
 
-export function isResourceNotFoundError(error: ApiError): error is ApiError & { code: ResourceErrorCode } {
+export function isResourceNotFoundError(
+  error: ApiError
+): error is ApiError & { code: ResourceErrorCode } {
   const resourceCodes: ResourceErrorCode[] = [
     'ALERT_NOT_FOUND',
     'USER_NOT_FOUND',
-    'LISTING_NOT_FOUND'
+    'LISTING_NOT_FOUND',
   ];
   return resourceCodes.includes(error.code as ResourceErrorCode);
 }

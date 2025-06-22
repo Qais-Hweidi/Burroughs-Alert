@@ -13,17 +13,23 @@ export default function HomePage() {
               <span className="text-primary block">NYC Apartment</span>
             </h1>
             <p className="lead mb-8 max-w-2xl mx-auto">
-              Get instant notifications for apartment listings across all 5 boroughs 
-              that match your exact criteria. Smart filtering, scam detection, and 
-              real-time alerts included.
+              Get instant notifications for apartment listings across all 5
+              boroughs that match your exact criteria. Smart filtering, scam
+              detection, and real-time alerts included.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/alerts/create" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
+              <Link
+                href="/alerts/create"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
+              >
                 <Bell className="h-5 w-5 mr-2" />
                 Create Free Alert
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
-              <Link href="#how-it-works" className="inline-flex items-center px-6 py-3 border border-border text-base font-medium rounded-md text-foreground bg-background hover:bg-accent transition-colors">
+              <Link
+                href="#how-it-works"
+                className="inline-flex items-center px-6 py-3 border border-border text-base font-medium rounded-md text-foreground bg-background hover:bg-accent transition-colors"
+              >
                 <MapPin className="h-5 w-5 mr-2" />
                 Learn How It Works
               </Link>
@@ -40,8 +46,8 @@ export default function HomePage() {
               How BurroughsAlert Works
             </h2>
             <p className="lead max-w-2xl mx-auto">
-              Set your criteria once, and we&apos;ll handle the rest. Our system monitors 
-              listings 24/7 and sends you instant notifications.
+              Set your criteria once, and we&apos;ll handle the rest. Our system
+              monitors listings 24/7 and sends you instant notifications.
             </p>
           </div>
 
@@ -55,8 +61,8 @@ export default function HomePage() {
                 Set Your Criteria
               </h3>
               <p className="text-muted-foreground">
-                Choose your preferred neighborhoods, price range, apartment size, 
-                and commute requirements. Cover all 5 NYC boroughs.
+                Choose your preferred neighborhoods, price range, apartment
+                size, and commute requirements. Cover all 5 NYC boroughs.
               </p>
             </div>
 
@@ -69,8 +75,8 @@ export default function HomePage() {
                 Get Instant Alerts
               </h3>
               <p className="text-muted-foreground">
-                Receive email notifications within minutes of new listings 
-                that match your criteria. Never miss a great apartment again.
+                Receive email notifications within minutes of new listings that
+                match your criteria. Never miss a great apartment again.
               </p>
             </div>
 
@@ -83,7 +89,7 @@ export default function HomePage() {
                 Smart Filtering
               </h3>
               <p className="text-muted-foreground">
-                Built-in scam detection and duplicate removal ensure you only 
+                Built-in scam detection and duplicate removal ensure you only
                 see legitimate, high-quality apartment listings.
               </p>
             </div>
@@ -108,7 +114,9 @@ export default function HomePage() {
               <div className="text-sm text-muted-foreground">Basic Alerts</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">&lt;5min</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                &lt;5min
+              </div>
               <div className="text-sm text-muted-foreground">Alert Speed</div>
             </div>
           </div>
@@ -123,10 +131,13 @@ export default function HomePage() {
               Ready to Find Your Next Apartment?
             </h2>
             <p className="lead mb-8">
-              Join thousands of NYC apartment hunters who never miss a great listing. 
-              Set up your first alert in under 2 minutes.
+              Join thousands of NYC apartment hunters who never miss a great
+              listing. Set up your first alert in under 2 minutes.
             </p>
-            <Link href="/alerts/create" className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
+            <Link
+              href="/alerts/create"
+              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
+            >
               <Bell className="h-6 w-6 mr-2" />
               Create Your First Alert
               <ArrowRight className="h-6 w-6 ml-2" />

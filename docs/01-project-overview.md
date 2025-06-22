@@ -30,6 +30,7 @@ Burroughs Alert is a renter-focused notification service specifically designed f
 ## MVP Scope
 
 ### Core Features (Must Have)
+
 - Email collection and basic user preferences
 - Single listing source monitoring (Craigslist NYC)
 - Simple matching algorithm (neighborhood, price, bedrooms)
@@ -38,6 +39,7 @@ Burroughs Alert is a renter-focused notification service specifically designed f
 - Simple commute time estimation
 
 ### Simplified for MVP
+
 - **Authentication**: None - just email collection
 - **Notifications**: Email only (no push/SMS)
 - **Verification**: No email verification required
@@ -46,6 +48,7 @@ Burroughs Alert is a renter-focused notification service specifically designed f
 - **Commute**: Hardcoded estimates or simple API call
 
 ### Future Enhancements (Post-MVP)
+
 - Multiple listing sources
 - User accounts and authentication
 - Push notifications and SMS

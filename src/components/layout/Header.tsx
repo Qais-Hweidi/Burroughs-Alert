@@ -17,12 +17,17 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo and Brand */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+            <Link
+              href="/"
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            >
               <div className="bg-primary text-primary-foreground p-2 rounded-lg">
                 <Home className="h-5 w-5" />
               </div>
               <div>
-                <span className="text-xl font-bold text-foreground">Burroughs</span>
+                <span className="text-xl font-bold text-foreground">
+                  Burroughs
+                </span>
                 <span className="text-xl font-bold text-primary">Alert</span>
               </div>
             </Link>
@@ -30,20 +35,20 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
               Home
             </Link>
-            <Link 
-              href="#how-it-works" 
+            <Link
+              href="#how-it-works"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               How it Works
             </Link>
-            <Link 
-              href="#pricing" 
+            <Link
+              href="#pricing"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               Pricing

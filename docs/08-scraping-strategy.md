@@ -11,6 +11,7 @@
 ### URL Patterns
 
 #### Main Search URLs
+
 ```
 Base URL: https://newyork.craigslist.org/search/apa#search=2~gallery~0
 Manhattan: https://newyork.craigslist.org/search/mnh/apa#search=2~gallery~0
@@ -21,10 +22,11 @@ Staten Island: https://newyork.craigslist.org/search/stn/apa#search=2~gallery~0
 ```
 
 #### Search Parameters
+
 ```
 ?min_price=1000          // Minimum price
 &max_price=5000          // Maximum price
-&min_bedrooms=1          // Minimum bedrooms  
+&min_bedrooms=1          // Minimum bedrooms
 &max_bedrooms=3          // Maximum bedrooms
 &pets_cat=1              // Cats OK
 &pets_dog=1              // Dogs OK
@@ -33,6 +35,7 @@ Staten Island: https://newyork.craigslist.org/search/stn/apa#search=2~gallery~0
 ```
 
 #### Individual Listing URLs
+
 ```
 Pattern: https://newyork.craigslist.org/{area}/apa/d/{title-slug}/{listing_id}.html
 Example: https://newyork.craigslist.org/que/apa/d/springfield-gardens-deluxe-one-bedroom/7859490750.html
@@ -43,26 +46,31 @@ Example: https://newyork.craigslist.org/brk/apa/d/brooklyn-stunning-bed-bath-cor
 ### Page Structure
 
 #### Search Results Page
+
 ```html
 <div class="result-info">
-    <a href="/que/apa/d/springfield-gardens-deluxe-one-bedroom/7859490750.html" class="result-title">
-        Deluxe One Bedroom Springfield Gardens
-    </a>
-    <span class="result-price">$3200</span>
-    <span class="result-meta">
-        <span class="result-date">Jan 15</span>
-        <span class="result-neighborhood">(Upper East Side)</span>
-    </span>
+  <a
+    href="/que/apa/d/springfield-gardens-deluxe-one-bedroom/7859490750.html"
+    class="result-title"
+  >
+    Deluxe One Bedroom Springfield Gardens
+  </a>
+  <span class="result-price">$3200</span>
+  <span class="result-meta">
+    <span class="result-date">Jan 15</span>
+    <span class="result-neighborhood">(Upper East Side)</span>
+  </span>
 </div>
 ```
 
 #### Individual Listing Page
+
 ```html
 <section id="postingbody">
     <span class="price">$3200</span>
     <span class="housing">1br / 1ba</span>
     <div class="mapaddress">123 E 86th St</div>
-    
+
     <div class="postinginfos">
         <p class="attrgroup">
             <span>laundry in bldg</span>
@@ -70,11 +78,11 @@ Example: https://newyork.craigslist.org/brk/apa/d/brooklyn-stunning-bed-bath-cor
             <span>dogs are OK - wooof</span>
         </span>
     </div>
-    
+
     <section id="postingbody">
         Description text here...
     </section>
-    
+
     <div class="thumbs">
         <img src="https://images.craigslist.org/abc123_300x300.jpg">
     </div>
@@ -86,27 +94,31 @@ Example: https://newyork.craigslist.org/brk/apa/d/brooklyn-stunning-bed-bath-cor
 ### Technology Stack
 
 #### Primary Scraper: Puppeteer
+
 ```typescript
 // Basic Puppeteer setup
 const puppeteer = require('puppeteer');
 
 const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  headless: true,
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 
 const page = await browser.newPage();
-await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+await page.setUserAgent(
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+);
 ```
 
 #### Fallback: Axios + Cheerio
+
 ```typescript
 // For simpler pages when Puppeteer is blocked
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 const response = await axios.get(url, {
-    headers: { 'User-Agent': randomUserAgent() }
+  headers: { 'User-Agent': randomUserAgent() },
 });
 const $ = cheerio.load(response.data);
 ```
@@ -114,69 +126,70 @@ const $ = cheerio.load(response.data);
 ### Scraping Algorithm
 
 #### Main Scraping Process
+
 ```typescript
 FUNCTION scrapeNewListings():
     all_listings = []
-    
+
     // Get last successful scrape timestamp
     last_scrape = getLastScrapeTime()
-    
+
     // Scrape each NYC area
     areas = ['mnh', 'brk', 'que', 'brx', 'stn']
-    
+
     FOR area in areas:
         TRY:
             area_listings = scrapeArea(area, last_scrape)
             all_listings.extend(area_listings)
             LOG("Scraped {area_listings.length} listings from {area}")
-            
+
             // Respectful delay between areas
             SLEEP(random(2, 5) seconds)
-            
+
         CATCH error:
             LOG_ERROR("Failed to scrape {area}: {error}")
             CONTINUE
-    
+
     // Filter out duplicates and existing listings
     new_listings = filterNewListings(all_listings)
-    
+
     // Update last scrape timestamp
     updateLastScrapeTime(NOW())
-    
+
     RETURN new_listings
 
 FUNCTION scrapeArea(area, since_timestamp):
     listings = []
     page = 1
-    
+
     WHILE page <= 5:  // Max 5 pages to avoid getting blocked
         search_url = buildSearchUrl(area, page, since_timestamp)
-        
+
         TRY:
             page_listings = scrapePage(search_url)
-            
+
             IF page_listings.length == 0:
                 BREAK  // No more listings
-            
+
             listings.extend(page_listings)
             page += 1
-            
+
             // Delay between pages
             SLEEP(random(1, 3) seconds)
-            
+
         CATCH error:
             LOG_ERROR("Failed to scrape page {page} for {area}: {error}")
             BREAK
-    
+
     RETURN listings
 
 FUNCTION scrapePage(url):
     page_listings = []
-    
+
     // Load page
     page = await browser.newPage()
     await page.goto(url, { waitUntil: 'networkidle2' })
-    
+
     // Extract listing links
     listing_links = await page.$$eval('.result-row', rows => {
         return rows.map(row => {
@@ -184,7 +197,7 @@ FUNCTION scrapePage(url):
             const price = row.querySelector('.result-price');
             const date = row.querySelector('.result-date');
             const hood = row.querySelector('.result-neighborhood');
-            
+
             return {
                 url: link?.href,
                 title: link?.textContent?.trim(),
@@ -194,33 +207,34 @@ FUNCTION scrapePage(url):
             };
         });
     });
-    
+
     // Process each listing
     FOR link_data in listing_links:
         IF isRecentListing(link_data.date):
             listing_details = await scrapeListingDetails(link_data.url)
             IF listing_details:
                 page_listings.append(listing_details)
-        
+
         // Small delay between listings
         SLEEP(random(0.5, 1.5) seconds)
-    
+
     await page.close()
     RETURN page_listings
 ```
 
 #### Individual Listing Scraper
+
 ```typescript
 FUNCTION scrapeListingDetails(listing_url):
     TRY:
         page = await browser.newPage()
         await page.goto(listing_url, { waitUntil: 'networkidle2' })
-        
+
         // Check if listing still exists
         const removed = await page.$('.removed');
         IF removed:
             RETURN null
-        
+
         // Extract listing data
         listing_data = await page.evaluate(() => {
             const price = document.querySelector('.price')?.textContent;
@@ -229,23 +243,23 @@ FUNCTION scrapeListingDetails(listing_url):
             const body = document.querySelector('#postingbody')?.textContent;
             const attrs = Array.from(document.querySelectorAll('.attrgroup span'))
                                 .map(span => span.textContent);
-            
+
             // Extract bedrooms/bathrooms from housing text
             const housingMatch = housing?.match(/(\d+)br\s*\/\s*(\d+(?:\.\d+)?)ba/);
             const bedrooms = housingMatch ? parseInt(housingMatch[1]) : 0;
             const bathrooms = housingMatch ? parseFloat(housingMatch[2]) : 0;
-            
+
             // Extract images
             const images = Array.from(document.querySelectorAll('.thumbs img'))
                                .map(img => img.src.replace('_300x300', '_1200x900'));
-            
+
             // Check pet policy
-            const petFriendly = attrs.some(attr => 
-                attr.includes('cats are OK') || 
-                attr.includes('dogs are OK') || 
+            const petFriendly = attrs.some(attr =>
+                attr.includes('cats are OK') ||
+                attr.includes('dogs are OK') ||
                 attr.includes('pets OK')
             );
-            
+
             return {
                 price: parseInt(price?.replace(/[$,]/g, '')),
                 bedrooms,
@@ -257,10 +271,10 @@ FUNCTION scrapeListingDetails(listing_url):
                 attributes: attrs
             };
         });
-        
+
         // Extract posting ID from URL
         const posting_id = extractPostingId(listing_url);
-        
+
         // Combine all data
         const complete_listing = {
             external_id: posting_id,
@@ -270,10 +284,10 @@ FUNCTION scrapeListingDetails(listing_url):
             posted_at: extractPostDate(page),
             ...listing_data
         };
-        
+
         await page.close();
         RETURN complete_listing;
-        
+
     CATCH error:
         LOG_ERROR("Failed to scrape listing {listing_url}: {error}");
         RETURN null;
@@ -282,30 +296,32 @@ FUNCTION scrapeListingDetails(listing_url):
 ### Anti-Detection Measures
 
 #### User Agent Rotation
+
 ```typescript
 const USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/121.0'
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/121.0',
 ];
 
 function getRandomUserAgent() {
-    return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+  return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
 }
 ```
 
 #### Request Timing
+
 ```typescript
 // Randomized delays to appear human-like
 function getRandomDelay(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
+  return Math.random() * (max - min) + min;
 }
 
 // Between pages: 1-3 seconds
 await sleep(getRandomDelay(1000, 3000));
 
-// Between listings: 0.5-1.5 seconds  
+// Between listings: 0.5-1.5 seconds
 await sleep(getRandomDelay(500, 1500));
 
 // Between areas: 2-5 seconds
@@ -313,16 +329,17 @@ await sleep(getRandomDelay(2000, 5000));
 ```
 
 #### Browser Configuration
+
 ```typescript
 const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-blink-features=AutomationControlled',
-        '--disable-web-security',
-        '--disable-dev-shm-usage'
-    ]
+  headless: true,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-blink-features=AutomationControlled',
+    '--disable-web-security',
+    '--disable-dev-shm-usage',
+  ],
 });
 
 // Set viewport to common resolution
@@ -330,21 +347,22 @@ await page.setViewport({ width: 1366, height: 768 });
 
 // Override webdriver detection
 await page.evaluateOnNewDocument(() => {
-    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
 });
 ```
 
 #### IP Rotation (Future Enhancement)
+
 ```typescript
 // For scaling, rotate through proxy IPs
 const PROXY_LIST = [
-    'proxy1.example.com:8080',
-    'proxy2.example.com:8080',
-    'proxy3.example.com:8080'
+  'proxy1.example.com:8080',
+  'proxy2.example.com:8080',
+  'proxy3.example.com:8080',
 ];
 
 function getRandomProxy() {
-    return PROXY_LIST[Math.floor(Math.random() * PROXY_LIST.length)];
+  return PROXY_LIST[Math.floor(Math.random() * PROXY_LIST.length)];
 }
 
 // Use proxy for requests
@@ -355,6 +373,7 @@ await page.authenticate({ username: 'user', password: 'pass' });
 ### Data Processing Pipeline
 
 #### Data Normalization
+
 ```typescript
 FUNCTION normalizeListingData(raw_data):
     normalized = {
@@ -373,16 +392,16 @@ FUNCTION normalizeListingData(raw_data):
         posted_at: parseDate(raw_data.posted_at),
         scraped_at: NOW()
     }
-    
+
     // Add scam score calculation
     normalized.scam_score = calculateScamScore(normalized)
-    
+
     RETURN normalized
 
 FUNCTION cleanTitle(title):
     // Remove excessive punctuation and caps
     cleaned = title.replace(/[!]{2,}/g, '!');
-    cleaned = cleaned.replace(/[A-Z]{5,}/g, match => 
+    cleaned = cleaned.replace(/[A-Z]{5,}/g, match =>
         match.charAt(0) + match.slice(1).toLowerCase()
     );
     RETURN cleaned.trim();
@@ -397,7 +416,7 @@ FUNCTION normalizeNeighborhood(neighborhood):
         'SOHO': 'SoHo',
         'TRIBECA': 'Tribeca'
     };
-    
+
     cleaned = neighborhood.replace(/[()]/g, '').trim();
     RETURN neighborhood_map[cleaned] || cleaned;
 ```
@@ -405,107 +424,117 @@ FUNCTION normalizeNeighborhood(neighborhood):
 ### Error Handling & Recovery
 
 #### Robust Error Handling
+
 ```typescript
 class ScrapingError extends Error {
-    constructor(message: string, public code: string, public retryable: boolean) {
-        super(message);
-    }
+  constructor(
+    message: string,
+    public code: string,
+    public retryable: boolean
+  ) {
+    super(message);
+  }
 }
 
 async function robustScrape(url: string, maxRetries: number = 3): Promise<any> {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            return await scrapeListingDetails(url);
-        } catch (error) {
-            if (error instanceof ScrapingError && !error.retryable) {
-                throw error; // Don't retry non-retryable errors
-            }
-            
-            if (attempt === maxRetries) {
-                throw error; // Last attempt failed
-            }
-            
-            // Exponential backoff
-            const delay = Math.pow(2, attempt) * 1000;
-            await sleep(delay);
-        }
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await scrapeListingDetails(url);
+    } catch (error) {
+      if (error instanceof ScrapingError && !error.retryable) {
+        throw error; // Don't retry non-retryable errors
+      }
+
+      if (attempt === maxRetries) {
+        throw error; // Last attempt failed
+      }
+
+      // Exponential backoff
+      const delay = Math.pow(2, attempt) * 1000;
+      await sleep(delay);
     }
+  }
 }
 ```
 
 #### Circuit Breaker Pattern
+
 ```typescript
 class CircuitBreaker {
-    private failures: number = 0;
-    private lastFailureTime: number = 0;
-    private state: 'closed' | 'open' | 'half-open' = 'closed';
-    
-    async execute<T>(operation: () => Promise<T>): Promise<T> {
-        if (this.state === 'open') {
-            if (Date.now() - this.lastFailureTime > 300000) { // 5 minutes
-                this.state = 'half-open';
-            } else {
-                throw new Error('Circuit breaker is open');
-            }
-        }
-        
-        try {
-            const result = await operation();
-            this.reset();
-            return result;
-        } catch (error) {
-            this.recordFailure();
-            throw error;
-        }
+  private failures: number = 0;
+  private lastFailureTime: number = 0;
+  private state: 'closed' | 'open' | 'half-open' = 'closed';
+
+  async execute<T>(operation: () => Promise<T>): Promise<T> {
+    if (this.state === 'open') {
+      if (Date.now() - this.lastFailureTime > 300000) {
+        // 5 minutes
+        this.state = 'half-open';
+      } else {
+        throw new Error('Circuit breaker is open');
+      }
     }
-    
-    private recordFailure(): void {
-        this.failures++;
-        this.lastFailureTime = Date.now();
-        
-        if (this.failures >= 5) { // Open after 5 failures
-            this.state = 'open';
-        }
+
+    try {
+      const result = await operation();
+      this.reset();
+      return result;
+    } catch (error) {
+      this.recordFailure();
+      throw error;
     }
-    
-    private reset(): void {
-        this.failures = 0;
-        this.state = 'closed';
+  }
+
+  private recordFailure(): void {
+    this.failures++;
+    this.lastFailureTime = Date.now();
+
+    if (this.failures >= 5) {
+      // Open after 5 failures
+      this.state = 'open';
     }
+  }
+
+  private reset(): void {
+    this.failures = 0;
+    this.state = 'closed';
+  }
 }
 ```
 
 ### Performance Monitoring
 
 #### Scraping Metrics
+
 ```typescript
 interface ScrapingMetrics {
-    total_listings_found: number;
-    new_listings_added: number;
-    failed_requests: number;
-    average_response_time: number;
-    success_rate: number;
-    last_successful_scrape: Date;
+  total_listings_found: number;
+  new_listings_added: number;
+  failed_requests: number;
+  average_response_time: number;
+  success_rate: number;
+  last_successful_scrape: Date;
 }
 
 function trackScrapingMetrics(results: ScrapingResult[]): ScrapingMetrics {
-    const successful = results.filter(r => r.success);
-    const failed = results.filter(r => !r.success);
-    
-    return {
-        total_listings_found: results.length,
-        new_listings_added: successful.length,
-        failed_requests: failed.length,
-        average_response_time: calculateAverageTime(successful),
-        success_rate: successful.length / results.length,
-        last_successful_scrape: new Date()
-    };
+  const successful = results.filter((r) => r.success);
+  const failed = results.filter((r) => !r.success);
+
+  return {
+    total_listings_found: results.length,
+    new_listings_added: successful.length,
+    failed_requests: failed.length,
+    average_response_time: calculateAverageTime(successful),
+    success_rate: successful.length / results.length,
+    last_successful_scrape: new Date(),
+  };
 }
 ```
 
 ## Compliance & Ethics
 
 ### Respectful Scraping Practices
+
 1. **Rate Limiting**: Never exceed 1 request per second
 2. **robots.txt**: Check and respect robots.txt directives
 3. **Terms of Service**: Regular review of Craigslist ToS
@@ -513,6 +542,7 @@ function trackScrapingMetrics(results: ScrapingResult[]): ScrapingMetrics {
 5. **No Republishing**: Never republish scraped content
 
 ### Legal Considerations
+
 1. **Fair Use**: Data used for legitimate consumer service
 2. **No Commercial Redistribution**: Data not resold or redistributed
 3. **User Privacy**: No collection of personal information
@@ -520,6 +550,7 @@ function trackScrapingMetrics(results: ScrapingResult[]): ScrapingMetrics {
 5. **Compliance**: Regular legal review of scraping practices
 
 ### Backup Strategy
+
 1. **Multiple Data Sources**: Plan for additional listing sites
 2. **Manual Fallback**: Admin interface for manual listing entry
 3. **Partner APIs**: Investigate official real estate APIs
