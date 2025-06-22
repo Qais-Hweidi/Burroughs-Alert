@@ -247,53 +247,103 @@ class ScamDetector {
 
 ### 3. Commute Calculation Algorithm
 
-**Purpose**: Estimate travel time from listing to work location
+**Purpose**: Calculate accurate public transit time from apartment listing to user's work/study location
 
-#### Input
-- Origin address (listing)
-- Destination address (work/school)
-- Time of day (rush hour consideration)
+**Frontend Status**: ✅ Complete - Collects work destination and maximum commute time
+**Backend Status**: ❌ Not implemented - Requires Google Maps API integration
 
-#### Output
-- Estimated commute time in minutes
+#### Implementation Strategy: Google Maps API
 
-#### Pseudocode
+**Step 1: Geocoding Work Location**
 ```
-FUNCTION calculateCommute(origin, destination, timeOfDay = "rush_hour"):
+FUNCTION geocodeWorkLocation(work_destination):
+    // Convert user input to coordinates
+    api_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {
+        address: work_destination + ", NYC",
+        key: GOOGLE_MAPS_API_KEY
+    }
+    
+    response = makeApiCall(api_url, params)
+    
+    IF response.status == "OK":
+        location = response.results[0].geometry.location
+        RETURN {lat: location.lat, lng: location.lng}
+    ELSE:
+        THROW GeocodeError("Could not geocode work location")
+```
+
+**Step 2: Commute Time Calculation**
+```
+FUNCTION calculateCommute(apartment_address, work_coords, max_commute_minutes):
     // Try cache first
-    cache_key = generateCacheKey(origin, destination, timeOfDay)
+    cache_key = generateCacheKey(apartment_address, work_coords)
     cached_result = getFromCache(cache_key)
     IF cached_result:
         RETURN cached_result
     
-    // Use external API (Google Maps/Transit)
-    commute_time = 0
+    // Use Google Maps Distance Matrix API
+    api_url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+    params = {
+        origins: apartment_address,
+        destinations: work_coords.lat + "," + work_coords.lng,
+        mode: "transit",
+        transit_mode: "subway|bus",
+        departure_time: getCurrentRushHourTime(),
+        key: GOOGLE_MAPS_API_KEY
+    }
     
     TRY:
-        // Get coordinates
-        origin_coords = geocodeAddress(origin)
-        dest_coords = geocodeAddress(destination)
+        response = makeApiCall(api_url, params)
         
-        // Calculate public transit time
-        transit_time = getTransitTime(origin_coords, dest_coords, timeOfDay)
-        
-        // Calculate walking + subway time (NYC specific)
-        subway_time = calculateSubwayTime(origin_coords, dest_coords, timeOfDay)
-        
-        // Use the shorter time
-        commute_time = min(transit_time, subway_time)
-        
-        // Add buffer for NYC delays
-        commute_time *= 1.2
-        
-        // Cache result for 24 hours
-        cacheResult(cache_key, commute_time, "24h")
-        
-    CATCH api_error:
-        // Fallback to distance-based estimation
-        commute_time = estimateByDistance(origin, destination)
+        IF response.status == "OK":
+            element = response.rows[0].elements[0]
+            
+            IF element.status == "OK":
+                commute_seconds = element.duration.value
+                commute_minutes = commute_seconds / 60
+                
+                // Cache result for 24 hours
+                cacheResult(cache_key, commute_minutes, "24h")
+                
+                RETURN commute_minutes
+            ELSE:
+                // No transit route found
+                RETURN null
+        ELSE:
+            THROW ApiError("Google Maps API error")
     
-    RETURN round(commute_time)
+    CATCH api_error:
+        LOG_WARNING("Commute calculation failed for " + apartment_address)
+        RETURN null // Don't filter if calculation fails
+```
+
+**Step 3: Filtering Logic Integration**
+```
+FUNCTION isMatchingListing(listing, alert):
+    // ... existing price, bedroom, neighborhood checks ...
+    
+    // Commute time check (only if both fields provided)
+    IF alert.commute_destination AND alert.max_commute_minutes:
+        // Get work coordinates (cached from alert creation)
+        work_coords = getWorkCoordinates(alert.commute_destination)
+        
+        IF work_coords:
+            commute_time = calculateCommute(
+                listing.address, 
+                work_coords, 
+                alert.max_commute_minutes
+            )
+            
+            // If calculation successful and exceeds limit, exclude
+            IF commute_time AND commute_time > alert.max_commute_minutes:
+                RETURN false
+            
+            // If calculation failed, include listing (graceful degradation)
+            // Better to show too many than miss good apartments
+    
+    RETURN true
+```
 
 FUNCTION estimateByDistance(origin, destination):
     distance_miles = calculateDistance(origin, destination)
@@ -329,25 +379,60 @@ FUNCTION calculateSubwayTime(origin, dest, timeOfDay):
 
 #### Implementation Notes
 ```typescript
-// Commute calculator service
-interface CommuteOptions {
-  time: 'rush_hour' | 'off_peak';
-  modes: ('transit' | 'walking' | 'driving')[];
+// Commute calculator service with Google Maps API
+interface WorkLocation {
+  address: string;
+  coordinates: { lat: number; lng: number };
+  geocoded_at: Date;
+}
+
+interface CommuteResult {
+  duration_minutes: number | null;
+  status: 'success' | 'no_route' | 'api_error';
+  cached: boolean;
 }
 
 class CommuteCalculator {
   private cache: Map<string, number>;
   private googleMapsApiKey: string;
   
+  async geocodeWorkLocation(address: string): Promise<WorkLocation> {
+    // Convert work location to coordinates using Google Geocoding API
+    // Cache results to avoid repeated geocoding
+  }
+  
   async calculateCommute(
-    origin: string,
-    destination: string,
-    options: CommuteOptions = { time: 'rush_hour', modes: ['transit'] }
-  ): Promise<number> {
-    // Implementation with caching and fallbacks
+    apartmentAddress: string,
+    workCoordinates: { lat: number; lng: number },
+    maxCommuteMinutes: number
+  ): Promise<CommuteResult> {
+    // Use Google Maps Distance Matrix API for accurate transit times
+    // Include caching and graceful error handling
+  }
+  
+  private generateCacheKey(origin: string, destination: string): string {
+    // Create consistent cache keys for apartment-to-work pairs
   }
 }
 ```
+
+#### Required Environment Variables
+```bash
+# Google Maps API Configuration
+GOOGLE_MAPS_API_KEY="your_api_key_here"
+GOOGLE_MAPS_CACHE_TTL="86400"  # 24 hours in seconds
+
+# API Rate Limiting
+COMMUTE_CALC_RATE_LIMIT="1000"  # requests per day
+COMMUTE_CALC_BATCH_SIZE="25"    # batch size for bulk calculations
+```
+
+#### Cost Management Strategy
+- **Geocoding API**: ~$5 per 1000 requests (cache work locations)
+- **Distance Matrix API**: ~$10 per 1000 requests (cache apartment-to-work pairs)
+- **Caching**: 24-hour cache reduces API calls by ~90%
+- **Graceful Degradation**: Include apartments if API fails rather than exclude
+- **Batch Processing**: Calculate commutes for multiple apartments in single API call
 
 ### 4. Notification Queue Algorithm
 

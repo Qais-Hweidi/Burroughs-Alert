@@ -73,8 +73,7 @@ export const VALIDATION_LIMITS = {
     maxMinutes: 120
   },
   neighborhoods: {
-    minSelection: 1,
-    maxSelection: 5
+    minSelection: 1
   },
   images: {
     maxCount: 20

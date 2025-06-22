@@ -59,7 +59,9 @@
       "Bash(claude doctor)",
       "Bash(timeout 10s npm run dev)",
       "Bash(true)",
-      "Bash(timeout 30s npm run dev)"
+      "Bash(timeout 30s npm run dev)",
+      "WebFetch(domain:github.com)",
+      "WebFetch:*"
     ],
     "deny": []
   }

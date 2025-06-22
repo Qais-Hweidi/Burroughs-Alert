@@ -7,13 +7,15 @@ const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> & {
     error?: string
+    indeterminate?: boolean
   }
->(({ className, error, ...props }, ref) => (
+>(({ className, error, indeterminate, ...props }, ref) => (
   <div className="flex flex-col">
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
         "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+        indeterminate && "data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground",
         error && "border-destructive focus-visible:ring-destructive",
         className
       )}
@@ -24,7 +26,11 @@ const Checkbox = React.forwardRef<
       <CheckboxPrimitive.Indicator
         className={cn("flex items-center justify-center text-current")}
       >
-        <Check className="h-4 w-4" />
+        {indeterminate ? (
+          <div className="h-2 w-2 bg-current rounded-sm" />
+        ) : (
+          <Check className="h-4 w-4" />
+        )}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
     {error && (
@@ -46,12 +52,13 @@ export interface CheckboxWithLabelProps
   label: string
   description?: string
   error?: string
+  indeterminate?: boolean
 }
 
 const CheckboxWithLabel = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   CheckboxWithLabelProps
->(({ label, description, error, className, id, ...props }, ref) => {
+>(({ label, description, error, indeterminate, className, id, ...props }, ref) => {
   const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`
   
   return (
@@ -62,6 +69,7 @@ const CheckboxWithLabel = React.forwardRef<
           id={checkboxId}
           className={className}
           error={error}
+          indeterminate={indeterminate}
           {...props}
         />
         <div className="grid gap-1.5 leading-none">

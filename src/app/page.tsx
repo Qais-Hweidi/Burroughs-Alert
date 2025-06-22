@@ -1,4 +1,5 @@
 import { ArrowRight, MapPin, Bell, Shield, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -17,15 +18,15 @@ export default function HomePage() {
               real-time alerts included.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
+              <Link href="/alerts/create" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
                 <Bell className="h-5 w-5 mr-2" />
                 Create Free Alert
                 <ArrowRight className="h-5 w-5 ml-2" />
-              </button>
-              <button className="inline-flex items-center px-6 py-3 border border-border text-base font-medium rounded-md text-foreground bg-background hover:bg-accent transition-colors">
+              </Link>
+              <Link href="#how-it-works" className="inline-flex items-center px-6 py-3 border border-border text-base font-medium rounded-md text-foreground bg-background hover:bg-accent transition-colors">
                 <MapPin className="h-5 w-5 mr-2" />
-                View Sample Listings
-              </button>
+                Learn How It Works
+              </Link>
             </div>
           </div>
         </div>
@@ -125,11 +126,11 @@ export default function HomePage() {
               Join thousands of NYC apartment hunters who never miss a great listing. 
               Set up your first alert in under 2 minutes.
             </p>
-            <button className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
+            <Link href="/alerts/create" className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
               <Bell className="h-6 w-6 mr-2" />
               Create Your First Alert
               <ArrowRight className="h-6 w-6 ml-2" />
-            </button>
+            </Link>
             <p className="text-sm text-muted-foreground mt-4">
               <Clock className="h-4 w-4 inline mr-1" />
               Setup takes less than 2 minutes. No credit card required.

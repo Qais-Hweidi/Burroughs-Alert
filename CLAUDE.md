@@ -8,9 +8,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **CRITICAL RULE**: Never delete files from the `/docs/` folder. Only modify existing documentation files to reflect current project state and decisions.
 
+**MILESTONE DOCUMENTATION RULE**: Always update this CLAUDE.md file after completing each development milestone or significant progress. This maintains accurate project status and prevents information drift.
+
 ## Development Environment
 
 - Using Claude Code via WSL terminal on Windows VS Code
+- **WSL/Windows File System Note**: Project files are on Windows filesystem, accessed through WSL. Some npm commands may timeout or behave differently due to cross-filesystem operations
+- **NPM Command Policy**: Never run `npm run` commands directly. Always ask the user to run them and report the output back
 - Choose solutions that are less likely to cause development issues
 - Always validate links before using them
 - Check environment variable requirements before coding
@@ -110,6 +114,37 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 **Anti-Detection**: User agent rotation, delays, rate limiting
 **Data Processing**: Title cleaning, neighborhood normalization, scam detection
 
+### Commute Time Calculation System Design
+
+**Frontend Implementation**: Complete - collects both work/study destination and maximum acceptable commute time
+**Backend Implementation Plan**: 
+
+**Step 1: Geocoding Work Location**
+- Use Google Geocoding API to convert user's work location to lat/lng coordinates
+- API Call: `https://maps.googleapis.com/maps/api/geocode/json?address={work_location},NYC&key={API_KEY}`
+- Handle various input formats: "Times Square", "Columbia University", "123 Main St, Manhattan"
+- Store coordinates in user alert record for reuse
+
+**Step 2: Commute Time Calculation**
+- For each apartment listing, use Google Maps Distance Matrix API
+- Calculate public transit time from apartment address to work coordinates
+- API Call: `https://maps.googleapis.com/maps/api/distancematrix/json?origins={apt_lat},{apt_lng}&destinations={work_lat},{work_lng}&mode=transit&key={API_KEY}`
+- Cache results to minimize API calls for same apartment-to-destination pairs
+
+**Step 3: Filtering Logic**
+- During matching process, exclude apartments where commute time > user's maximum acceptable time
+- Only apply commute filtering if user provided both destination and time limit
+- Fall back gracefully if API is unavailable (include all apartments, note in email)
+
+**Required Environment Variables**:
+- `GOOGLE_MAPS_API_KEY` - For both geocoding and distance matrix calculations
+- `GOOGLE_MAPS_CACHE_TTL` - Cache duration for commute calculations (default: 24 hours)
+
+**Cost Considerations**: 
+- Geocoding: ~$5 per 1000 requests
+- Distance Matrix: ~$10 per 1000 requests  
+- Implement caching and rate limiting to minimize costs
+
 ### Key Implementation Status (Updated for MVP)
 
 **CRITICAL**: This is a simplified MVP focused on local development only. Current status:
@@ -118,7 +153,17 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 - ✅ Database schema and basic Drizzle setup
 - ✅ Type definitions and constants
 - ✅ Documentation and project structure
-- ❌ Core business logic implementations (jobs, API routes, components) - **NEXT PRIORITY**
+- ✅ Complete frontend foundation with professional UI/UX
+- ✅ Landing page with full user journey flow and navigation
+- ✅ Design system and component library (13 UI components)
+- ✅ Comprehensive AlertForm component with all apartment search criteria
+- ✅ NYC neighborhoods selection with borough-level controls (unlimited selections)
+- ✅ Complete user flow from landing page through alert creation
+- ✅ Resolved page layout and white space issues
+- ⚠️ Build system has stability issues (memory/SIGBUS errors)
+- ❌ API routes and backend integration - **IMMEDIATE PRIORITY**
+- ❌ Core business logic implementations (jobs, scraper, matcher) - **HIGH PRIORITY**
+- ❌ Commute time calculation system - **BACKEND PRIORITY** (documented in algorithms)
 
 ## Environment Variables Required
 
@@ -169,21 +214,36 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
 
 ## Recent Development Activities
 
-- **2024-06-21**: Frontend Development and Build Issues Resolution
+- **Frontend MVP Completion**: Complete functional apartment alert system frontend
 
-  - **Initial Setup**: Simplified codebase for fast MVP development
-    - **Phase 1**: Removed complex infrastructure: `/scripts/`, `/data/migrations/`, `/tests/`
-    - **Phase 2**: Removed non-essential pages and components for fast MVP
-    - Simplified user flow: Email Input → Alert Creation → Background Processing → Notification
-  - **Build & Runtime Fixes**: Resolved Next.js App Router compatibility issues
-    - Fixed client component errors by adding `"use client"` directives to interactive components
-    - Resolved `useSearchParams()` build errors by wrapping components in `<Suspense>` boundaries
-    - Created missing `postcss.config.js` for Tailwind CSS processing
-    - Added custom CSS utilities for layout spacing and typography
-  - **Current Status**: Build process working, investigating styling/asset loading issues
-  - **Next Priority**: Complete Tailwind CSS setup and implement alert creation form
+  - **Professional UI/UX Implementation**: Production-ready frontend foundation
+    - **Landing Page**: Fully implemented with hero section, features, statistics, and working CTAs
+    - **User Flow Pages**: Complete journey (landing → create → confirm → success) with proper navigation
+    - **Design System**: Professional Tailwind CSS setup with HSL color variables and dark mode support
+    - **Component Library**: 13 comprehensive UI components using Radix UI and class-variance-authority
+    - **NYC Data Integration**: 254+ neighborhoods across 5 boroughs with comprehensive type definitions
+
+  - **AlertForm Implementation**: Comprehensive apartment search criteria collection
+    - **All Required Fields**: Email, neighborhoods, price range, bedrooms, pet-friendly, commute preferences
+    - **Advanced Neighborhood Selection**: Borough-level selection with "select all" functionality, unlimited selections
+    - **Smart Validation**: Client-side validation using application constants and business rules
+    - **Enhanced UX**: Real-time feedback, progress indicators, responsive design
+    - **Commute Integration**: Work/study location and maximum commute time collection (backend calculation documented)
+
+  - **Technical Architecture**: Modern Next.js 15 + TypeScript setup
+    - **App Router**: Full Next.js 15 implementation with proper routing and navigation
+    - **Build Configuration**: TypeScript path aliases, PostCSS, ESLint, and Prettier setup
+    - **Type Safety**: Comprehensive TypeScript definitions for NYC-specific business logic
+    - **Icon System**: Lucide React icons integrated throughout application
+    - **Layout Optimization**: Resolved white space issues and container sizing problems
+
+  - **Development Process Improvements**: Streamlined development workflow
+    - **WSL Integration**: Documented npm command policy for WSL/Windows development environment
+    - **Documentation Updates**: Comprehensive algorithm documentation for backend implementation
+    - **Milestone Tracking**: Implemented systematic progress documentation requirements
 
 - **Architecture Foundation**: Established core system design
-  - Prepared initial codebase structure for Burroughs-Alert apartment hunting service
-  - Documented comprehensive system design and implementation strategy
-  - Set up core technologies: Next.js, Drizzle ORM, SQLite, Puppeteer
+  - **Comprehensive Documentation**: Complete system design and implementation strategy in `/docs/`
+  - **Commute Calculation Planning**: Detailed Google Maps API integration strategy documented
+  - **Technology Stack**: Next.js, Drizzle ORM, SQLite, Puppeteer foundation established
+  - **MVP Scope**: Simplified architecture focused on local development and core functionality
