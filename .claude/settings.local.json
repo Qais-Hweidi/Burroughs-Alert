@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "LS(*)",
+      "NotebookEdit(*)",
+      "NotebookRead(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "TodoRead",
+      "TodoWrite",
+      "Agent(*)"
+    ],
+    "deny": []
+  }
+}
