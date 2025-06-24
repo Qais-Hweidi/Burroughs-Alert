@@ -1,37 +1,35 @@
-import { ArrowRight, MapPin, Bell, Shield, Clock } from 'lucide-react';
+import { Search, MapPin, Bell, Shield, Clock, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="space-y-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 section-spacing">
-        <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6">
-              Never Miss Your Perfect
-              <span className="text-primary block">NYC Apartment</span>
+      <section className="pt-20 pb-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6">
+              Find Your Perfect
+              <span className="text-blue-600 block">NYC Apartment</span>
             </h1>
-            <p className="lead mb-8 max-w-2xl mx-auto">
-              Get instant notifications for apartment listings across all 5
-              boroughs that match your exact criteria. Smart filtering, scam
-              detection, and real-time alerts included.
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Stop missing out on great apartments. Get instant notifications
+              for listings that match your criteria across all 5 NYC boroughs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/alerts/create"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
               >
-                <Bell className="h-5 w-5 mr-2" />
-                Create Free Alert
-                <ArrowRight className="h-5 w-5 ml-2" />
+                <Bell className="h-6 w-6 mr-3" />
+                Create Alert
               </Link>
               <Link
-                href="#how-it-works"
-                className="inline-flex items-center px-6 py-3 border border-border text-base font-medium rounded-md text-foreground bg-background hover:bg-accent transition-colors"
+                href="#features"
+                className="inline-flex items-center px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl border border-gray-200"
               >
-                <MapPin className="h-5 w-5 mr-2" />
-                Learn How It Works
+                <Search className="h-6 w-6 mr-3" />
+                See How It Works
               </Link>
             </div>
           </div>
@@ -39,58 +37,55 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="how-it-works" className="section-spacing bg-muted/30">
-        <div className="max-w-7xl mx-auto container-padding">
+      <section id="features" className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              How BurroughsAlert Works
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Why Choose BurroughsAlert?
             </h2>
-            <p className="lead max-w-2xl mx-auto">
-              Set your criteria once, and we&apos;ll handle the rest. Our system
-              monitors listings 24/7 and sends you instant notifications.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Our smart system monitors thousands of listings daily and sends you
+              only the apartments that match your exact requirements.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="text-center">
-              <div className="bg-primary/10 text-primary p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <MapPin className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Set Your Criteria
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Smart Location Filtering
               </h3>
-              <p className="text-muted-foreground">
-                Choose your preferred neighborhoods, price range, apartment
-                size, and commute requirements. Cover all 5 NYC boroughs.
+              <p className="text-gray-600">
+                Choose from 250+ NYC neighborhoods across all 5 boroughs.
+                Set commute preferences to find apartments near your work.
               </p>
             </div>
 
-            {/* Feature 2 */}
-            <div className="text-center">
-              <div className="bg-primary/10 text-primary p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Bell className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Get Instant Alerts
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Instant Notifications
               </h3>
-              <p className="text-muted-foreground">
-                Receive email notifications within minutes of new listings that
-                match your criteria. Never miss a great apartment again.
+              <p className="text-gray-600">
+                Receive email alerts within minutes of new listings.
+                Never miss a great apartment because you checked too late.
               </p>
             </div>
 
-            {/* Feature 3 */}
-            <div className="text-center">
-              <div className="bg-primary/10 text-primary p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Shield className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Smart Filtering
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Scam Protection
               </h3>
-              <p className="text-muted-foreground">
-                Built-in scam detection and duplicate removal ensure you only
-                see legitimate, high-quality apartment listings.
+              <p className="text-gray-600">
+                Built-in filters detect and remove suspicious listings.
+                Only get notifications for legitimate apartments.
               </p>
             </div>
           </div>
@@ -98,55 +93,50 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="section-spacing-sm">
-        <div className="max-w-7xl mx-auto container-padding">
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">5</div>
-              <div className="text-sm text-muted-foreground">NYC Boroughs</div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">5</div>
+              <div className="text-gray-600">NYC Boroughs</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-              <div className="text-sm text-muted-foreground">Monitoring</div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">250+</div>
+              <div className="text-gray-600">Neighborhoods</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">Free</div>
-              <div className="text-sm text-muted-foreground">Basic Alerts</div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">24/7</div>
+              <div className="text-gray-600">Monitoring</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">
-                &lt;5min
-              </div>
-              <div className="text-sm text-muted-foreground">Alert Speed</div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">Free</div>
+              <div className="text-gray-600">To Use</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section id="create-alert" className="section-spacing bg-primary/5">
-        <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Ready to Find Your Next Apartment?
-            </h2>
-            <p className="lead mb-8">
-              Join thousands of NYC apartment hunters who never miss a great
-              listing. Set up your first alert in under 2 minutes.
-            </p>
-            <Link
-              href="/alerts/create"
-              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
-            >
-              <Bell className="h-6 w-6 mr-2" />
-              Create Your First Alert
-              <ArrowRight className="h-6 w-6 ml-2" />
-            </Link>
-            <p className="text-sm text-muted-foreground mt-4">
-              <Clock className="h-4 w-4 inline mr-1" />
-              Setup takes less than 2 minutes. No credit card required.
-            </p>
-          </div>
+      <section className="py-20 bg-blue-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Ready to Find Your Next Home?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Join thousands of NYC apartment hunters who never miss a great listing.
+            Set up your alert in under 2 minutes.
+          </p>
+          <Link
+            href="/alerts/create"
+            className="inline-flex items-center px-8 py-4 bg-white text-blue-600 text-lg font-semibold rounded-xl hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl"
+          >
+            <Bell className="h-6 w-6 mr-3" />
+            Create Your First Alert
+          </Link>
+          <p className="text-blue-200 mt-4 flex items-center justify-center">
+            <Clock className="h-4 w-4 mr-2" />
+            Setup takes less than 2 minutes • No credit card required
+          </p>
         </div>
       </section>
     </div>

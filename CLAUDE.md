@@ -52,6 +52,7 @@ When facing development issues that aren't easily resolved:
 npm run dev              # Start Next.js development server
 npm run type-check       # Run TypeScript validation
 npm run lint             # Run ESLint checks
+npm run format           # Format code with Prettier
 npm run build            # Production build
 npm start                # Start production server
 ```
@@ -63,7 +64,62 @@ npm start                # Start production server
 ```bash
 npm run lint             # ESLint validation
 npm run type-check       # TypeScript compilation check
+npm run format           # Code formatting with Prettier
 ```
+
+**IMPORTANT**: Run `npm run format` immediately after making code changes to maintain consistent formatting.
+
+## Code Standards & Conventions
+
+### Naming Conventions
+
+**Files & Directories:**
+- **kebab-case**: directories (`components/`, `lib/`), utility files (`next.config.js`)
+- **PascalCase**: React components (`AlertForm.tsx`, `Header.tsx`)
+- **lowercase**: UI components (`button.tsx`, `input.tsx`)
+
+**JavaScript/TypeScript:**
+- **camelCase**: functions (`handleSubmit`, `validateForm`), variables (`formData`, `isSubmitting`)
+- **PascalCase**: components (`AlertForm`), types/interfaces (`User`, `Alert`, `ApiResponse`)
+- **SCREAMING_SNAKE_CASE**: constants (`NYC_NEIGHBORHOODS`, `APP_CONFIG`, `ERROR_CODES`)
+
+**Database:**
+- **snake_case**: column names (`user_id`, `created_at`, `pet_friendly`)
+- **camelCase**: API interfaces (`minPrice`, `maxPrice`, `createdAt`)
+
+**API Routes:**
+- **kebab-case**: paths (`/api/alerts`, `/alerts/create`)
+- **camelCase**: JavaScript functions (`createAlert`, `getUserAlerts`)
+
+**CSS/Styling:**
+- **kebab-case**: CSS classes, custom properties (`--primary`, `section-spacing`)
+- **camelCase**: Tailwind config properties (`borderRadius`, `keyframes`)
+
+### Conventional Commits
+
+Use semantic commit messages with consistent formatting:
+
+**Format:** `<type>: <description>`
+
+**Types:**
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `chore:` - Maintenance tasks
+- `docs:` - Documentation updates
+- `refactor:` - Code refactoring
+- `test:` - Adding/updating tests
+- `ci:` - CI/CD pipeline changes
+- `perf:` - Performance improvements
+- `style:` - Code formatting/style changes
+- `build:` - Build system changes
+
+**Examples:**
+- `feat: add commute time filtering to alert form`
+- `fix: resolve neighborhood selection validation bug`
+- `chore: update dependencies and run format`
+- `docs: add naming conventions to CLAUDE.md`
+
+**IMPORTANT**: Run `npm run format` immediately after code changes and before committing.
 
 ## High-Level Architecture
 

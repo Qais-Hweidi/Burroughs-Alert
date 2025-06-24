@@ -5,9 +5,9 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Burroughs Alert - NYC Apartment Hunting Made Easy',
+  title: 'BurroughsAlert - Never Miss Your Perfect NYC Apartment',
   description:
-    'Get instant notifications for NYC apartments that match your criteria. Find your perfect apartment in Manhattan, Brooklyn, Queens, Bronx, or Staten Island.',
+    'Get instant notifications for NYC apartments that match your criteria. Smart filtering, scam detection, and real-time alerts across all 5 boroughs.',
 };
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         {children}
       </body>
     </html>

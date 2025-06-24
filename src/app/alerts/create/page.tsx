@@ -2,8 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Bell, ArrowLeft } from 'lucide-react';
+import { Bell, ArrowLeft, Mail, MapPin, DollarSign, Home, Heart, Clock } from 'lucide-react';
 import { APP_CONFIG } from '@/lib/utils/constants';
 import AlertForm, { AlertFormData } from '@/components/forms/AlertForm';
 
@@ -24,7 +23,6 @@ function CreateAlertContent() {
   };
 
   const handleFormSuccess = (formData: AlertFormData) => {
-    // Redirect to success page with form data in query params
     const searchParams = new URLSearchParams({
       email: formData.email,
       neighborhoods: formData.neighborhoods.join(','),
@@ -35,48 +33,49 @@ function CreateAlertContent() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="w-full px-4 py-4">
+      <header className="w-full px-4 py-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Bell className="w-5 h-5 text-white" />
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+              <Bell className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-gray-900">
               {APP_CONFIG.name}
             </span>
           </div>
-          <Button
-            variant="ghost"
+          <button
             onClick={handleBack}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
-          </Button>
+          </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 pb-4">
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Set Up Your Apartment Alert
-            </h1>
-            <p className="text-gray-600">
-              Tell us what you're looking for and we'll notify you when matching
-              apartments become available.
-            </p>
+      <main className="max-w-4xl mx-auto px-4 pb-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-8 text-white">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold mb-2">
+                Create Your Apartment Alert
+              </h1>
+              <p className="text-blue-100 text-lg">
+                Fill out the form below to get notified about apartments that match your criteria
+              </p>
+            </div>
           </div>
 
-          {/* Alert Creation Form */}
-          <div className="max-w-2xl mx-auto">
+          {/* Form Section */}
+          <div className="p-8">
             <AlertForm
               onSuccess={handleFormSuccess}
               initialData={{ email }}
-              className="space-y-4"
+              className="space-y-6"
             />
           </div>
         </div>
@@ -87,7 +86,7 @@ function CreateAlertContent() {
 
 export default function CreateAlertPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>}>
       <CreateAlertContent />
     </Suspense>
   );

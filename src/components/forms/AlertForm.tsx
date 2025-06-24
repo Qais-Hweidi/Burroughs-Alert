@@ -1,23 +1,13 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import {
-  Input,
-  Button,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  CheckboxWithLabel,
-} from '@/components/ui';
-import { Label } from '@/components/ui/label';
+import { Mail, MapPin, DollarSign, Home, Heart, Clock, Check, AlertCircle } from 'lucide-react';
 import {
   VALIDATION_LIMITS,
   NYC_NEIGHBORHOODS,
   getPopularNeighborhoods,
 } from '@/lib/utils/constants';
-import { NYCBorough, CreateAlertInput } from '@/lib/types/database.types';
+import { NYCBorough } from '@/lib/types/database.types';
 
 // Form data interface
 export interface AlertFormData {
@@ -79,6 +69,7 @@ export default function AlertForm({
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Group neighborhoods by borough and sort popular ones first
   const neighborhoodsByBorough = useMemo(() => {
@@ -95,14 +86,12 @@ export default function AlertForm({
       const neighborhoods = NYC_NEIGHBORHOODS.filter(
         (n) => n.borough === borough
       ).sort((a, b) => {
-        // Popular neighborhoods first
         const aIsPopular = popularNeighborhoods.includes(a.name);
         const bIsPopular = popularNeighborhoods.includes(b.name);
 
         if (aIsPopular && !bIsPopular) return -1;
         if (!aIsPopular && bIsPopular) return 1;
 
-        // Then alphabetical
         return a.name.localeCompare(b.name);
       });
 
@@ -114,33 +103,14 @@ export default function AlertForm({
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
-    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!EMAIL_REGEX.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
-    } else if (formData.email.length < VALIDATION_LIMITS.email.minLength) {
-      newErrors.email = `Email must be at least ${VALIDATION_LIMITS.email.minLength} characters`;
-    } else if (formData.email.length > VALIDATION_LIMITS.email.maxLength) {
-      newErrors.email = `Email must be no more than ${VALIDATION_LIMITS.email.maxLength} characters`;
     }
 
-    // Neighborhoods validation
     if (formData.neighborhoods.length === 0) {
       newErrors.neighborhoods = 'Please select at least one neighborhood';
-    }
-
-    // Price validation
-    if (formData.minPrice !== null) {
-      if (formData.minPrice < VALIDATION_LIMITS.price.min) {
-        newErrors.minPrice = `Minimum price must be at least $${VALIDATION_LIMITS.price.min}`;
-      }
-    }
-
-    if (formData.maxPrice !== null) {
-      if (formData.maxPrice > VALIDATION_LIMITS.price.max) {
-        newErrors.maxPrice = `Maximum price must be no more than $${VALIDATION_LIMITS.price.max}`;
-      }
     }
 
     if (formData.minPrice !== null && formData.maxPrice !== null) {
@@ -149,33 +119,10 @@ export default function AlertForm({
       }
     }
 
-    // Commute validation
-    if (
-      formData.commuteDestination !== null &&
-      formData.commuteDestination.trim()
-    ) {
-      if (formData.commuteDestination.trim().length < 3) {
-        newErrors.commuteDestination =
-          'Commute destination must be at least 3 characters';
-      } else if (formData.commuteDestination.length > 100) {
-        newErrors.commuteDestination =
-          'Commute destination must be no more than 100 characters';
-      }
-    }
-
-    if (formData.maxCommuteMinutes !== null) {
-      if (formData.maxCommuteMinutes < 0) {
-        newErrors.maxCommuteMinutes = 'Commute time cannot be negative';
-      } else if (formData.maxCommuteMinutes > 180) {
-        newErrors.maxCommuteMinutes = 'Commute time cannot exceed 180 minutes';
-      }
-    }
-
-    // If commute time is specified but no destination, require destination
     if (formData.maxCommuteMinutes !== null && formData.maxCommuteMinutes > 0) {
       if (!formData.commuteDestination || !formData.commuteDestination.trim()) {
         newErrors.commuteDestination =
-          'Please specify your work/study location when setting a commute time';
+          'Please specify your work location when setting a commute time';
       }
     }
 
@@ -196,15 +143,11 @@ export default function AlertForm({
     setErrors({});
 
     try {
-      // Simulate API call with delay
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Call success callback
       onSuccess(formData);
     } catch (error) {
       setErrors({
-        general:
-          'An error occurred while creating your alert. Please try again.',
+        general: 'An error occurred while creating your alert. Please try again.',
       });
     } finally {
       setIsSubmitting(false);
@@ -214,8 +157,6 @@ export default function AlertForm({
   // Handle input changes
   const handleInputChange = (field: keyof AlertFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
-    // Clear field error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -224,7 +165,6 @@ export default function AlertForm({
   // Handle neighborhood selection
   const handleNeighborhoodToggle = (neighborhood: string) => {
     const isSelected = formData.neighborhoods.includes(neighborhood);
-
     if (isSelected) {
       handleInputChange(
         'neighborhoods',
@@ -249,13 +189,11 @@ export default function AlertForm({
     );
 
     if (allBoroughSelected) {
-      // Deselect all neighborhoods in this borough
       const newNeighborhoods = formData.neighborhoods.filter(
         (name) => !boroughNeighborhoods.includes(name)
       );
       handleInputChange('neighborhoods', newNeighborhoods);
     } else {
-      // Select all neighborhoods in this borough
       const newNeighborhoods = [
         ...new Set([...formData.neighborhoods, ...boroughNeighborhoods]),
       ];
@@ -263,103 +201,104 @@ export default function AlertForm({
     }
   };
 
-  // Get borough selection state
-  const getBoroughState = (borough: NYCBorough) => {
-    const boroughNeighborhoods = NYC_NEIGHBORHOODS.filter(
-      (n) => n.borough === borough
-    ).map((n) => n.name);
-
-    const selectedCount = boroughNeighborhoods.filter((name) =>
-      formData.neighborhoods.includes(name)
-    ).length;
-
-    if (selectedCount === 0) {
-      return { checked: false, indeterminate: false };
-    } else if (selectedCount === boroughNeighborhoods.length) {
-      return { checked: true, indeterminate: false };
-    } else {
-      return { checked: false, indeterminate: true };
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className={className || 'space-y-4'}>
-      {/* Email Field */}
-      <div className="space-y-2">
-        <Label htmlFor="email">Email Address *</Label>
-        <Input
-          id="email"
+    <form onSubmit={handleSubmit} className={className}>
+      {/* Email Section */}
+      <div className="mb-8">
+        <div className="flex items-center mb-4">
+          <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3">
+            <Mail className="w-4 h-4" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Email Address</h3>
+        </div>
+        <input
           type="email"
-          placeholder="your.email@example.com"
+          placeholder="Enter your email address"
           value={formData.email}
           onChange={(e) => handleInputChange('email', e.target.value)}
-          error={errors.email}
-          required
+          className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+            errors.email ? 'border-red-300' : 'border-gray-200'
+          }`}
         />
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-2 flex items-center">
+            <AlertCircle className="w-4 h-4 mr-1" />
+            {errors.email}
+          </p>
+        )}
       </div>
 
-      {/* Neighborhoods Selection */}
-      <div className="space-y-2">
-        <div>
-          <Label>
-            NYC Neighborhoods * ({formData.neighborhoods.length} selected)
-          </Label>
-          <p className="text-sm text-muted-foreground mt-1">
-            Select the neighborhoods where you&apos;d like to find apartments.
-            Use borough checkboxes to select all neighborhoods in a borough.
-          </p>
+      {/* Neighborhoods Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">NYC Neighborhoods</h3>
+          </div>
+          <span className="text-sm text-gray-500">
+            {formData.neighborhoods.length} selected
+          </span>
         </div>
-
+        
         {errors.neighborhoods && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-red-500 text-sm mb-4 flex items-center">
+            <AlertCircle className="w-4 h-4 mr-1" />
             {errors.neighborhoods}
           </p>
         )}
 
-        <div
-          className="space-y-3 max-h-64 overflow-y-auto border rounded-lg p-3"
-          style={{
-            transform: 'translateZ(0)', // Force GPU layer
-            willChange: 'scroll-position', // Optimize for scrolling
-            contain: 'layout style', // Isolate layout without size constraint
-            WebkitOverflowScrolling: 'touch', // Smooth scrolling
-          }}
-        >
+        <div className="max-h-80 overflow-y-auto border-2 border-gray-200 rounded-lg p-4 space-y-4">
           {neighborhoodsByBorough.map(({ borough, neighborhoods }) => {
-            const boroughState = getBoroughState(borough);
+            const boroughNeighborhoods = neighborhoods.map(n => n.name);
+            const selectedCount = boroughNeighborhoods.filter(name =>
+              formData.neighborhoods.includes(name)
+            ).length;
+            const allSelected = selectedCount === boroughNeighborhoods.length;
+            const someSelected = selectedCount > 0;
 
             return (
-              <div key={borough} className="space-y-1.5">
-                <div className="flex items-center space-x-2 pb-2 border-b border-gray-200">
-                  <CheckboxWithLabel
+              <div key={borough} className="space-y-2">
+                <div className="flex items-center p-2 bg-gray-50 rounded-lg">
+                  <input
+                    type="checkbox"
                     id={`borough-${borough}`}
-                    label={`${borough} (${neighborhoods.length} neighborhoods)`}
-                    description="Select All"
-                    checked={boroughState.checked}
-                    indeterminate={boroughState.indeterminate}
-                    onCheckedChange={() => handleBoroughToggle(borough)}
-                    className="font-semibold text-base"
+                    checked={allSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someSelected && !allSelected;
+                    }}
+                    onChange={() => handleBoroughToggle(borough)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
+                  <label
+                    htmlFor={`borough-${borough}`}
+                    className="ml-2 font-medium text-gray-900 cursor-pointer"
+                  >
+                    {borough} ({neighborhoods.length} neighborhoods)
+                  </label>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 ml-6">
+                <div className="grid grid-cols-2 gap-2 ml-6">
                   {neighborhoods.map((neighborhood) => {
-                    const isSelected = formData.neighborhoods.includes(
-                      neighborhood.name
-                    );
-
+                    const isSelected = formData.neighborhoods.includes(neighborhood.name);
                     return (
-                      <CheckboxWithLabel
+                      <label
                         key={neighborhood.name}
-                        id={`neighborhood-${neighborhood.name}`}
-                        label={neighborhood.name}
-                        description={
-                          neighborhood.popular ? 'Popular' : undefined
-                        }
-                        checked={isSelected}
-                        onCheckedChange={() =>
-                          handleNeighborhoodToggle(neighborhood.name)
-                        }
-                      />
+                        className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleNeighborhoodToggle(neighborhood.name)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {neighborhood.name}
+                          {neighborhood.popular && (
+                            <span className="ml-1 text-xs text-blue-600">★</span>
+                          )}
+                        </span>
+                      </label>
                     );
                   })}
                 </div>
@@ -369,178 +308,200 @@ export default function AlertForm({
         </div>
       </div>
 
-      {/* Price Range */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="minPrice">Minimum Price</Label>
-          <Input
-            id="minPrice"
-            type="number"
-            placeholder="$500"
-            min={VALIDATION_LIMITS.price.min}
-            max={VALIDATION_LIMITS.price.max}
-            value={formData.minPrice || ''}
-            onChange={(e) =>
-              handleInputChange(
-                'minPrice',
-                e.target.value ? parseInt(e.target.value) : null
-              )
-            }
-            error={errors.minPrice}
-          />
+      {/* Price Range Section */}
+      <div className="mb-8">
+        <div className="flex items-center mb-4">
+          <div className="w-8 h-8 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mr-3">
+            <DollarSign className="w-4 h-4" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Price Range</h3>
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="maxPrice">Maximum Price</Label>
-          <Input
-            id="maxPrice"
-            type="number"
-            placeholder="$5000"
-            min={VALIDATION_LIMITS.price.min}
-            max={VALIDATION_LIMITS.price.max}
-            value={formData.maxPrice || ''}
-            onChange={(e) =>
-              handleInputChange(
-                'maxPrice',
-                e.target.value ? parseInt(e.target.value) : null
-              )
-            }
-            error={errors.maxPrice}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Minimum Price
+            </label>
+            <input
+              type="number"
+              placeholder="$500"
+              value={formData.minPrice || ''}
+              onChange={(e) =>
+                handleInputChange(
+                  'minPrice',
+                  e.target.value ? parseInt(e.target.value) : null
+                )
+              }
+              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Maximum Price
+            </label>
+            <input
+              type="number"
+              placeholder="$5000"
+              value={formData.maxPrice || ''}
+              onChange={(e) =>
+                handleInputChange(
+                  'maxPrice',
+                  e.target.value ? parseInt(e.target.value) : null
+                )
+              }
+              className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                errors.maxPrice ? 'border-red-300' : 'border-gray-200'
+              }`}
+            />
+            {errors.maxPrice && (
+              <p className="text-red-500 text-sm mt-2 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1" />
+                {errors.maxPrice}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Number of Bedrooms */}
-      <div className="space-y-2">
-        <Label htmlFor="bedrooms">Number of Bedrooms</Label>
-        <Select
+      {/* Bedrooms Section */}
+      <div className="mb-8">
+        <div className="flex items-center mb-4">
+          <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
+            <Home className="w-4 h-4" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Number of Bedrooms</h3>
+        </div>
+        <select
           value={formData.bedrooms?.toString() || 'any'}
-          onValueChange={(value) =>
+          onChange={(e) =>
             handleInputChange(
               'bedrooms',
-              value === 'any' ? null : parseInt(value)
+              e.target.value === 'any' ? null : parseInt(e.target.value)
             )
           }
+          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         >
-          <SelectTrigger id="bedrooms">
-            <SelectValue placeholder="Any number of bedrooms" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">Any number of bedrooms</SelectItem>
-            {BEDROOM_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <option value="any">Any number of bedrooms</option>
+          {BEDROOM_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Pet Friendly */}
-      <div className="space-y-2">
-        <CheckboxWithLabel
-          id="petFriendly"
-          label="Pet Friendly"
-          description="Only show listings that allow pets"
-          checked={formData.petFriendly}
-          onCheckedChange={(checked) =>
-            handleInputChange('petFriendly', checked)
-          }
-        />
+      {/* Pet Friendly Section */}
+      <div className="mb-8">
+        <div className="flex items-center p-4 bg-pink-50 rounded-lg">
+          <div className="w-8 h-8 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mr-3">
+            <Heart className="w-4 h-4" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">Pet Friendly</h3>
+            <p className="text-sm text-gray-600">Only show listings that allow pets</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={formData.petFriendly}
+              onChange={(e) => handleInputChange('petFriendly', e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
       </div>
 
-      {/* Commute Information */}
-      <div className="space-y-4">
-        <div>
-          <Label className="text-base font-semibold">
-            Commute Preferences (optional)
-          </Label>
-          <p className="text-sm text-muted-foreground mt-1">
-            Help us filter apartments based on your daily commute to work or
-            school. We'll estimate travel times using public transit.
-          </p>
+      {/* Commute Preferences Section */}
+      <div className="mb-8">
+        <div className="flex items-center mb-4">
+          <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mr-3">
+            <Clock className="w-4 h-4" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Commute Preferences</h3>
+          <span className="ml-2 text-sm text-gray-500">(Optional)</span>
         </div>
-
-        {/* Work/Study Location */}
-        <div className="space-y-2">
-          <Label htmlFor="commuteDestination">Work/Study Location</Label>
-          <Input
-            id="commuteDestination"
-            type="text"
-            placeholder="e.g., Times Square, Manhattan or Columbia University"
-            value={formData.commuteDestination || ''}
-            onChange={(e) =>
-              handleInputChange('commuteDestination', e.target.value || null)
-            }
-            error={errors.commuteDestination}
-          />
-          <p className="text-sm text-muted-foreground">
-            Enter your workplace address, company name, or general area (e.g.,
-            "Financial District", "Google NYC", "NYU")
-          </p>
-        </div>
-
-        {/* Maximum Commute Time */}
-        <div className="space-y-2">
-          <Label htmlFor="maxCommuteMinutes">
-            Maximum Commute Time (minutes)
-          </Label>
-          <Input
-            id="maxCommuteMinutes"
-            type="number"
-            placeholder="45"
-            min="5"
-            max="180"
-            value={formData.maxCommuteMinutes || ''}
-            onChange={(e) =>
-              handleInputChange(
-                'maxCommuteMinutes',
-                e.target.value ? parseInt(e.target.value) : null
-              )
-            }
-            error={errors.maxCommuteMinutes}
-          />
-          <p className="text-sm text-muted-foreground">
-            Maximum acceptable commute time by public transit. We'll only show
-            apartments within this travel time from your work/study location.
-          </p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Work/Study Location
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., Times Square, Manhattan or Columbia University"
+              value={formData.commuteDestination || ''}
+              onChange={(e) =>
+                handleInputChange('commuteDestination', e.target.value || null)
+              }
+              className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                errors.commuteDestination ? 'border-red-300' : 'border-gray-200'
+              }`}
+            />
+            {errors.commuteDestination && (
+              <p className="text-red-500 text-sm mt-2 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1" />
+                {errors.commuteDestination}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Maximum Commute Time (minutes)
+            </label>
+            <input
+              type="number"
+              placeholder="45"
+              min="5"
+              max="180"
+              value={formData.maxCommuteMinutes || ''}
+              onChange={(e) =>
+                handleInputChange(
+                  'maxCommuteMinutes',
+                  e.target.value ? parseInt(e.target.value) : null
+                )
+              }
+              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            />
+          </div>
         </div>
       </div>
 
       {/* General Error */}
       {errors.general && (
-        <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
-          <p className="text-sm text-destructive" role="alert">
+        <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
+          <p className="text-red-700 flex items-center">
+            <AlertCircle className="w-4 h-4 mr-2" />
             {errors.general}
           </p>
         </div>
       )}
 
       {/* Submit Button */}
-      <Button
+      <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full"
-        size="lg"
+        className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex items-center justify-center"
       >
         {isSubmitting ? (
           <>
-            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
             Creating Alert...
           </>
         ) : (
-          'Create Alert'
+          <>
+            <Check className="w-5 h-5 mr-2" />
+            Create My Alert
+          </>
         )}
-      </Button>
+      </button>
 
       {/* Form Information */}
-      <div className="text-sm text-muted-foreground space-y-0.5 mt-3">
-        <p>
-          • We&apos;ll email you when new apartments matching your criteria are
-          found
-        </p>
-        <p>• You can unsubscribe at any time</p>
-        <p>• We only send relevant apartment alerts, no spam</p>
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+        <h4 className="font-medium text-gray-900 mb-2">What happens next?</h4>
+        <ul className="text-sm text-gray-600 space-y-1">
+          <li>• We'll email you when apartments matching your criteria are found</li>
+          <li>• You can unsubscribe at any time</li>
+          <li>• We only send relevant apartment alerts, no spam</li>
+        </ul>
       </div>
     </form>
   );
