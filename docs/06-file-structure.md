@@ -1,6 +1,8 @@
 # Burroughs Alert - Complete File Structure
 
-## Project Root Structure
+## Current Project Structure (MVP Focus)
+
+**Note**: This reflects the current implementation state. Backend components (database, API routes, jobs) will be added as development progresses.
 
 ```
 burroughs-alert/
@@ -8,16 +10,17 @@ burroughs-alert/
 ├── package.json
 ├── package-lock.json
 ├── next.config.js
+├── postcss.config.js          # NEW: PostCSS configuration
 ├── tailwind.config.js
 ├── tsconfig.json
+├── tsconfig.tsbuildinfo       # NEW: TypeScript build cache
+├── next-env.d.ts              # NEW: Next.js environment types
 ├── .env.local
 ├── .env.example
 ├── .gitignore
 ├── .eslintrc.json
 ├── prettier.config.js
 ├── CLAUDE.md
-├── data/
-│   └── app.db
 ├── docs/
 │   ├── 01-project-overview.md
 │   ├── 02-tech-stack.md
@@ -26,292 +29,229 @@ burroughs-alert/
 │   ├── 05-api-design.md
 │   ├── 06-file-structure.md
 │   ├── 07-algorithms-pseudocode.md
-│   └── 08-scraping-strategy.md
+│   ├── 08-scraping-strategy.md
+│   └── 09-agent-ownership.md
 ├── public/
 │   ├── favicon.ico
 │   ├── logo.svg
 │   └── images/
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   ├── globals.css.tsx
-│   │   ├── api/
-│   │   │   ├── alerts/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── [id]/
-│   │   │   │       └── route.ts
-│   │   │   ├── listings/
-│   │   │   │   └── route.ts
-│   │   │   └── unsubscribe/
-│   │   │       ├── route.ts
-│   │   │       └── [token]/
-│   │   │           └── route.ts
-│   │   └── unsubscribe/
-│   │       └── [token]/
-│   │           └── page.tsx
-│   ├── components/
-│   │   ├── ui/
-│   │   │   ├── button.tsx
-│   │   │   ├── input.tsx
-│   │   │   ├── select.tsx
-│   │   │   ├── checkbox.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── alert.tsx
-│   │   │   ├── badge.tsx
-│   │   │   ├── spinner.tsx
-│   │   │   └── toast.tsx
-│   │   ├── forms/
-│   │   │   ├── AlertForm.tsx
-│   │   │   └── UnsubscribeForm.tsx
-│   │   ├── layout/
-│   │   │   ├── Header.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   └── Container.tsx
-│   │   └── listings/
-│   │       ├── ListingCard.tsx
-│   │       ├── ListingGrid.tsx
-│   │       └── ScamBadge.tsx
-│   ├── lib/
-│   │   ├── database/
-│   │   │   ├── index.ts
-│   │   │   ├── schema.sql.ts
-│   │   │   └── queries/
-│   │   │       ├── users.ts
-│   │   │       ├── alerts.ts
-│   │   │       ├── listings.ts
-│   │   │       └── notifications.ts
-│   │   ├── scraping/
-│   │   │   ├── index.ts
-│   │   │   ├── craigslist-scraper.ts
-│   │   │   ├── listing-parser.ts
-│   │   │   ├── scam-detector.ts
-│   │   │   └── proxy-manager.ts
-│   │   ├── matching/
-│   │   │   ├── index.ts
-│   │   │   ├── match-engine.ts
-│   │   │   ├── criteria-validator.ts
-│   │   │   └── commute-calculator.ts
-│   │   ├── notifications/
-│   │   │   ├── index.ts
-│   │   │   ├── email-service.ts
-│   │   │   ├── email-templates.ts
-│   │   │   └── notification-queue.ts
-│   │   ├── jobs/
-│   │   │   ├── index.ts
-│   │   │   ├── scraper-job.ts
-│   │   │   ├── matcher-job.ts
-│   │   │   ├── notifier-job.ts
-│   │   │   └── cleanup-job.ts
-│   │   ├── utils/
-│   │   │   ├── validation.ts
-│   │   │   ├── formatting.ts
-│   │   │   ├── constants.ts
-│   │   │   ├── logger.ts
-│   │   │   ├── rate-limiter.ts
-│   │   │   └── error-handler.ts
-│   │   └── types/
-│   │       ├── index.ts
-│   │       ├── database.types.ts
-│   │       ├── api.types.ts
-│   │       ├── scraping.types.ts
-│   │       └── notification.types.ts
-│   └── styles/
-│       └── components.css
-# Note: scripts/ and tests/ folders removed for MVP simplification
+└── src/
+    ├── app/
+    │   ├── layout.tsx
+    │   ├── page.tsx             # Landing page
+    │   ├── not-found.tsx        # 404 page
+    │   ├── globals.css          # Fixed: was globals.css.tsx
+    │   ├── alerts/              # NEW: Alert creation flow
+    │   │   └── create/
+    │   │       └── page.tsx
+    │   ├── confirm/             # NEW: Confirmation page
+    │   │   └── page.tsx
+    │   ├── success/             # NEW: Success page
+    │   │   └── page.tsx
+    │   └── listings/            # NEW: Listings view page
+    │       └── page.tsx
+    ├── components/
+    │   ├── ui/
+    │   │   ├── button.tsx
+    │   │   ├── input.tsx
+    │   │   ├── select.tsx
+    │   │   ├── checkbox.tsx
+    │   │   ├── card.tsx
+    │   │   ├── alert.tsx
+    │   │   ├── badge.tsx
+    │   │   ├── spinner.tsx
+    │   │   ├── toast.tsx
+    │   │   ├── form.tsx          # NEW: Form components
+    │   │   ├── label.tsx         # NEW: Label component
+    │   │   ├── switch.tsx        # NEW: Switch component
+    │   │   ├── textarea.tsx      # NEW: Textarea component
+    │   │   └── index.ts          # NEW: Component exports
+    │   ├── forms/
+    │   │   └── AlertForm.tsx     # Core form component
+    │   ├── layout/
+    │   │   ├── Header.tsx
+    │   │   ├── Footer.tsx
+    │   │   └── Container.tsx
+    │   └── listings/
+    │       ├── ListingCard.tsx
+    │       └── ListingsGrid.tsx  # Fixed: was ListingGrid.tsx
+    └── lib/
+        ├── types/
+        │   ├── index.ts          # Currently empty
+        │   ├── database.types.ts
+        │   ├── api.types.ts
+        │   ├── listings.types.ts # NEW: Listings-specific types
+        │   ├── scraping.types.ts
+        │   └── notification.types.ts
+        └── utils/
+            ├── cn.ts             # NEW: Tailwind class utility
+            ├── constants.ts
+            ├── formatting.ts
+            ├── index.ts          # NEW: Utility exports
+            ├── listingHelpers.ts # NEW: Listing utilities
+            └── mockListings.ts   # NEW: Mock data for development
+
+# Backend Implementation Plan (To Be Added):
+# ├── data/                     # SQLite database storage
+# │   └── app.db
+# ├── tests/                    # Basic testing (essential functionality)
+# │   ├── api/                  # API route tests (alerts, listings, health)
+# │   ├── lib/                  # Unit tests (database, matching, utils)
+# │   └── setup.ts              # Test configuration
+# ├── src/app/api/              # API routes
+# │   ├── alerts/route.ts
+# │   ├── listings/search/route.ts
+# │   └── health/route.ts
+# ├── src/lib/database/         # Database layer
+# │   ├── schema.ts
+# │   └── queries/
+# ├── src/lib/scraping/         # Scraping system
+# │   ├── craigslist-scraper.ts
+# │   └── scam-detector.ts      # Mistral AI integration
+# ├── src/lib/jobs/             # Background jobs
+# │   └── scraper-job.ts
+# └── src/lib/notifications/    # Email system
+#     └── email-service.ts
+# Note: Basic testing infrastructure will be added with backend implementation
 ```
+
+## Current Implementation Overview
+
+### Frontend MVP Status: ✅ Complete
+
+**User Journey Flow**: Fully implemented user experience from landing page through alert creation to listings view.
+
+**Modern Tech Stack**: Next.js 15, React 18, TypeScript, Tailwind CSS, Radix UI components.
+
+**Professional UI/UX**: 13 reusable UI components, responsive design, comprehensive form validation.
+
+### Backend MVP Status: ❌ Not Implemented
+
+Backend components will be added in this order:
+1. Database setup (SQLite + Drizzle ORM)
+2. API routes for alert management
+3. Scraping system with Mistral AI
+4. Background job scheduler
+5. Email notification system
 
 ## File Descriptions
 
-### Configuration Files
+### Configuration Files (Current)
 
 #### `package.json`
-
-- Dependencies and scripts
-- Next.js, TypeScript, Tailwind, database libraries
+- Next.js 15, React 18, TypeScript 5.6
+- Radix UI components, Tailwind CSS, Lucide icons
+- Drizzle ORM, better-sqlite3, Mistral AI
+- ESLint, Prettier, PostCSS
 
 #### `next.config.js`
+- Basic Next.js 15 configuration
+- TypeScript path aliases
 
-- Next.js configuration
-- Environment variables, build settings
+#### `postcss.config.js` (NEW)
+- PostCSS configuration for Tailwind CSS
+- Autoprefixer integration
 
 #### `tailwind.config.js`
-
-- Tailwind CSS configuration
-- Custom colors, fonts, spacing
+- HSL color variables for theming
+- Dark mode support configuration
+- Custom animations and component styling
 
 #### `tsconfig.json`
+- Strict TypeScript configuration
+- Path aliases for clean imports
+- Next.js 15 App Router support
 
-- TypeScript configuration
-- Strict mode, path aliases
+### Current Frontend Implementation
 
-#### `.env.local` & `.env.example`
+#### `src/app/` (Next.js 15 App Router)
 
-- Environment variables
-- Database URL, email credentials, API keys
+**`layout.tsx`**: Root layout with Inter font, metadata, responsive design
+**`page.tsx`**: Landing page with hero, features, statistics, CTA
+**`globals.css`**: Tailwind base styles, HSL color variables, dark mode support
+**`not-found.tsx`**: Custom 404 page
 
-### Source Code Structure
+**User Flow Pages**:
+- `alerts/create/page.tsx`: Comprehensive alert creation form
+- `confirm/page.tsx`: Alert confirmation page
+- `success/page.tsx`: Success state page  
+- `listings/page.tsx`: Listings view with current matches
 
-#### `src/app/` (Next.js App Router)
+#### `src/components/` (13 UI Components)
 
-**`layout.tsx`**: Root layout with metadata, providers
-**`page.tsx`**: Landing page with email input and alert form
-**`globals.css.tsx`**: Global styles, Tailwind imports
+**UI Components (`components/ui/`)**:
+- Modern design system with Radix UI primitives
+- Consistent styling with class-variance-authority
+- TypeScript interfaces for all props
+- Responsive and accessible components
 
-**API Routes (`src/app/api/`)** (MVP Essential Only):
+**Form Components (`components/forms/`)**:
+- `AlertForm.tsx`: Complex form with NYC neighborhood selection, validation, multi-step flow
 
-- `alerts/route.ts`: POST create alert, GET list alerts
-- `alerts/[id]/route.ts`: DELETE deactivate alert
-- `listings/route.ts`: GET basic listings data
-- `unsubscribe/route.ts`: POST unsubscribe by email
-- `unsubscribe/[token]/route.ts`: GET unsubscribe by token
+**Layout Components (`components/layout/`)**:
+- Responsive header, footer, container components
+- Consistent spacing and branding
 
-**Pages (`src/app/`)** (MVP Minimal):
+**Listing Components (`components/listings/`)**:
+- `ListingCard.tsx`: Individual apartment listing display
+- `ListingsGrid.tsx`: Grid layout for multiple listings
 
-- `unsubscribe/[token]/page.tsx`: Token-based unsubscribe confirmation
+#### `src/lib/` (Utilities & Types)
 
-#### `src/components/`
+**Current Utilities (`lib/utils/`)**:
+- `cn.ts`: Tailwind class merging utility
+- `constants.ts`: NYC neighborhoods, form validation rules
+- `formatting.ts`: Date, price, text formatting helpers
+- `listingHelpers.ts`: Listing data manipulation
+- `mockListings.ts`: Development mock data
 
-**UI Components (`src/components/ui/`)**:
+**Type Definitions (`lib/types/`)**:
+- Comprehensive TypeScript interfaces
+- Database schema types
+- API request/response types
+- Listing and form data types
 
-- shadcn/ui components: Button, Input, Select, Card, etc.
-- Consistent design system components
+### Planned Backend Implementation
 
-**Form Components (`src/components/forms/`)** (MVP Essential):
+#### Database Layer (To Be Added)
+- SQLite with Drizzle ORM
+- Schema in `lib/database/schema.ts`
+- Query helpers in `lib/database/queries/`
 
-- `AlertForm.tsx`: Main alert creation form
-- `UnsubscribeForm.tsx`: Email unsubscribe form
+#### API Routes (To Be Added)
+- `app/api/alerts/route.ts`: Alert CRUD with dual system
+- `app/api/listings/search/route.ts`: Immediate listings search
+- `app/api/health/route.ts`: System health monitoring
 
-**Layout Components (`src/components/layout/`)** (MVP Simplified):
+#### Scraping System (To Be Added)
+- `lib/scraping/craigslist-scraper.ts`: Basic Puppeteer scraper
+- `lib/scraping/scam-detector.ts`: Mistral AI integration
+- Safe scraping intervals (30-45 minutes)
 
-- `Header.tsx`: Simple site header
-- `Footer.tsx`: Basic site footer
-- `Container.tsx`: Responsive container wrapper
+#### Background Jobs (To Be Added)
+- `lib/jobs/scraper-job.ts`: Randomized job scheduler
+- Direct processing pipeline (scrape → match → notify)
 
-**Listing Components (`src/components/listings/`)** (MVP Core):
+#### Email System (To Be Added)
+- `lib/notifications/email-service.ts`: Nodemailer + Gmail SMTP
+- Notification templates and delivery
 
-- `ListingCard.tsx`: Individual listing display
-- `ListingGrid.tsx`: Grid of listing cards
-- `ScamBadge.tsx`: Basic scam warning indicator
+## Development Status Summary
 
-#### `src/lib/`
+### ✅ Completed (Frontend MVP)
+- Complete user experience flow
+- Professional UI component library
+- Responsive design system
+- Form validation and state management
+- TypeScript integration
+- Modern development tooling
 
-**Database (`src/lib/database/`)** (Simplified for MVP):
+### 🔄 Next Phase (Backend Implementation)
+- Database schema and connection
+- API route development  
+- Scraping system with AI
+- Background job scheduling
+- Email notification system
+- **Basic testing** (API routes, database ops, core logic)
 
-- `index.ts`: Database connection and setup
-- `schema.sql.ts`: Drizzle schema definition (no migrations)
-- `queries/`: Organized database queries by entity
-
-**Scraping (`src/lib/scraping/`)**:
-
-- `craigslist-scraper.ts`: Craigslist-specific scraper
-- `listing-parser.ts`: Parse listing data
-- `scam-detector.ts`: Detect suspicious listings
-- `proxy-manager.ts`: Manage scraping proxies
-
-**Matching (`src/lib/matching/`)**:
-
-- `match-engine.ts`: Core matching algorithm
-- `criteria-validator.ts`: Validate user criteria
-- `commute-calculator.ts`: Calculate commute times
-
-**Notifications (`src/lib/notifications/`)**:
-
-- `email-service.ts`: Email sending service
-- `email-templates.ts`: HTML email templates
-- `notification-queue.ts`: Queue management
-
-**Background Jobs (`src/lib/jobs/`)**:
-
-- `scraper-job.ts`: Scheduled scraping job
-- `matcher-job.ts`: Matching algorithm job
-- `notifier-job.ts`: Notification sending job
-- `cleanup-job.ts`: Database cleanup job
-
-**Utilities (`src/lib/utils/`)**:
-
-- `validation.ts`: Input validation functions
-- `constants.ts`: App-wide constants
-- `logger.ts`: Structured logging
-- `error-handler.ts`: Error handling utilities
-
-**Types (`src/lib/types/`)**:
-
-- TypeScript interfaces and types
-- Database models, API contracts
-
-### Scripts & Tools (Removed for MVP)
-
-**Note**: Complex scripts and testing infrastructure removed for local MVP development. Focus is on core functionality implementation.
-
-### Data Directory
-
-#### `data/`
-
-- `app.db`: SQLite database file (no migrations for MVP)
-
-### Public Assets
-
-#### `public/`
-
-- Static assets: favicon, logo, images
-- Served directly by Next.js
-
-## File Naming Conventions
-
-### Components
-
-- **PascalCase**: `AlertForm.tsx`, `ListingCard.tsx`
-- **Descriptive**: Name describes component purpose
-
-### Pages
-
-- **kebab-case**: `apartment-alerts/page.tsx`
-- **Follows URL structure**: Matches route paths
-
-### Utilities & Libraries
-
-- **camelCase**: `parseListingData.ts`, `validateInput.ts`
-- **Descriptive**: Function-focused naming
-
-### Types
-
-- **PascalCase with suffix**: `User.types.ts`, `Api.types.ts`
-- **Grouped by domain**: Related types in same file
-
-### Constants
-
-- **UPPER_SNAKE_CASE**: `API_ENDPOINTS.ts`, `ERROR_CODES.ts`
-- **Descriptive**: Clear constant purpose
-
-## Import Path Aliases
-
-```typescript
-// tsconfig.json paths
-{
-  "baseUrl": ".",
-  "paths": {
-    "@/*": ["./src/*"],
-    "@/components/*": ["./src/components/*"],
-    "@/lib/*": ["./src/lib/*"],
-    "@/types/*": ["./src/lib/types/*"],
-    "@/utils/*": ["./src/lib/utils/*"]
-  }
-}
-```
-
-## File Size Guidelines
-
-- **Components**: <200 lines per file
-- **API Routes**: <150 lines per file
-- **Utility Functions**: <100 lines per file
-- **Type Definitions**: <50 interfaces per file
-- **Test Files**: <300 lines per file
-
-## Code Organization Principles
-
-1. **Single Responsibility**: Each file has one clear purpose
-2. **Domain Grouping**: Related functionality grouped together
-3. **Dependency Direction**: Higher-level modules import lower-level
-4. **Clear Interfaces**: Well-defined boundaries between modules
-5. **Testability**: Structure supports easy unit testing
+This structure reflects the current "frontend-first" MVP approach while providing a clear roadmap for backend implementation.

@@ -2,7 +2,7 @@
 
 ## Frontend Framework
 
-### Next.js 14 (App Router)
+### Next.js 15 (App Router)
 
 - **Why**: Full-stack React framework with built-in API routes
 - **Features Used**:
@@ -26,28 +26,30 @@
 - **Configuration**: Custom colors for brand, responsive breakpoints
 - **Benefits**: Consistent design system, small bundle size
 
-### shadcn/ui
+### Radix UI + Custom Components
 
-- **Why**: High-quality, accessible React components
+- **Why**: Headless, accessible React components with full customization
 - **Components Used**:
-  - Forms (input, select, button)
-  - Layout (card, container)
-  - Feedback (alert, toast)
-  - Navigation (tabs, breadcrumb)
-- **Benefits**: Consistent UI, accessibility built-in, customizable
+  - Forms (select, checkbox, switch)
+  - Layout (slot)
+  - Feedback (alert-dialog, toast)
+  - All styled with Tailwind CSS
+- **Benefits**: Full control over styling, accessibility built-in, modern patterns
 
 ## Database
 
-### SQLite
+### SQLite + Drizzle ORM
 
-- **Why**: Simple, serverless, perfect for MVP
-- **Library**: better-sqlite3 for Node.js
+- **Why**: Simple, serverless, perfect for MVP with type safety
+- **Library**: better-sqlite3 for Node.js + Drizzle ORM
+- **Storage**: Local file at `./data/app.db`
 - **Benefits**:
   - Zero configuration
   - ACID transactions
   - Fast for read-heavy workloads
   - Easy backup and migration
   - No separate database server needed
+  - Type-safe queries with Drizzle ORM
 
 ## Data Fetching & Scraping
 
@@ -65,11 +67,15 @@
 
 ## Background Jobs
 
-### node-cron
+### node-cron (Simplified)
 
 - **Why**: Simple cron job scheduler for Node.js
-- **Usage**: Schedule regular scraping tasks
-- **Benefits**: In-process scheduling, no external dependencies
+- **Usage**: Schedule regular scraping tasks with safe, randomized intervals
+- **Schedule**: 
+  - Random intervals between 30-45 minutes
+  - Only scrape recent listings (posted in last 45-60 minutes with buffer)
+  - Automatic delays to avoid detection patterns
+- **Benefits**: In-process scheduling, no external dependencies, respectful rate limiting, randomized timing
 
 ## Email Service
 
@@ -79,6 +85,16 @@
 - **Configuration**: Gmail app passwords for authentication
 - **Benefits**: Free tier sufficient for MVP, reliable delivery
 
+## AI/LLM Integration
+
+### Mistral AI
+
+- **Why**: Enhanced scam detection and content analysis
+- **Model**: `mistral-small-latest` for cost-effective reasoning
+- **Primary Use**: Intelligent scam detection with structured JSON responses  
+- **Secondary Uses**: Neighborhood normalization, content quality assessment
+- **Benefits**: Excellent at structured analysis, reliable JSON parsing, cost-effective
+
 ## Development Tools
 
 ### ESLint + Prettier
@@ -86,6 +102,15 @@
 - **Why**: Code quality and formatting
 - **Configuration**: Standard rules with TypeScript support
 - **Benefits**: Consistent code style, catch common errors
+
+## Testing Framework
+
+### Vitest (Basic Backend Testing)
+
+- **Why**: Fast, modern testing framework with excellent TypeScript support
+- **Scope**: Essential backend functionality only (API routes, database, business logic)
+- **Approach**: Mock external services (Mistral AI, email, scraping)
+- **Benefits**: TypeScript native, fast execution, easy setup with current stack
 
 ## Environment Variables
 
@@ -97,15 +122,17 @@ DATABASE_URL=./data/app.db
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_USER=email@gmail.com
-SMTP_PASS=
+SMTP_PASS=your_app_password
 
+# Scraping (Simplified)
+SCRAPING_ENABLED=true
+USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 
-# Scraping
-SCRAPING_INTERVAL=300000  # 5 minutes
-USER_AGENT=Mozilla/5.0...
+# LLM API
+MISTRAL_API_KEY=your_mistral_api_key
 
-# API Keys (if needed)
-GOOGLE_MAPS_API_KEY=
+# API Keys (Optional)
+GOOGLE_MAPS_API_KEY=your_api_key_here
 ```
 
 ## Package.json Dependencies
@@ -114,19 +141,26 @@ GOOGLE_MAPS_API_KEY=
 
 ```json
 {
-  "next": "^14.0.0",
-  "react": "^18.0.0",
-  "react-dom": "^18.0.0",
-  "typescript": "^5.0.0",
+  "next": "^15.3.4",
+  "react": "^18.3.1",
+  "react-dom": "^18.3.1",
+  "typescript": "^5.6.3",
   "better-sqlite3": "^9.0.0",
-  "puppeteer": "^21.0.0",
-  "axios": "^1.6.0",
-  "nodemailer": "^6.9.0",
-  "node-cron": "^3.0.0",
-  "tailwindcss": "^3.3.0",
-  "class-variance-authority": "^0.7.0",
-  "clsx": "^2.0.0",
-  "tailwind-merge": "^2.0.0"
+  "drizzle-orm": "^0.44.2",
+  "puppeteer": "^24.10.2",
+  "axios": "^1.7.9",
+  "nodemailer": "^6.9.16",
+  "node-cron": "^3.0.3",
+  "tailwindcss": "^3.4.17",
+  "class-variance-authority": "^0.7.1",
+  "clsx": "^2.1.1",
+  "tailwind-merge": "^2.6.0",
+  "@radix-ui/react-select": "^2.1.4",
+  "@radix-ui/react-checkbox": "^1.1.4",
+  "@radix-ui/react-switch": "^1.2.5",
+  "lucide-react": "^0.518.0",
+  "zod": "^3.24.1",
+  "@mistralai/mistralai": "^1.0.0"
 }
 ```
 
@@ -134,13 +168,19 @@ GOOGLE_MAPS_API_KEY=
 
 ```json
 {
-  "@types/node": "^20.0.0",
-  "@types/react": "^18.0.0",
+  "@types/node": "^20.17.12",
+  "@types/react": "^18.3.17",
+  "@types/react-dom": "^18.3.5",
   "@types/better-sqlite3": "^7.6.0",
-  "@types/nodemailer": "^6.4.0",
-  "eslint": "^8.0.0",
-  "eslint-config-next": "^14.0.0",
-  "prettier": "^3.0.0"
+  "@types/nodemailer": "^6.4.17",
+  "drizzle-kit": "^0.31.1",
+  "eslint": "^9.18.0",
+  "eslint-config-next": "^15.3.4",
+  "prettier": "^3.4.2",
+  "autoprefixer": "^10.4.20",
+  "postcss": "^8.5.2",
+  "tsx": "^4.20.3",
+  "vitest": "^2.0.0"
 }
 ```
 
@@ -149,8 +189,9 @@ GOOGLE_MAPS_API_KEY=
 1. **Local Development**: `npm run dev`
 2. **Type Checking**: `npm run type-check`
 3. **Linting**: `npm run lint`
-4. **Building**: `npm run build`
-5. **Testing**: `npm run test` (future enhancement)
+4. **Testing**: `npm run test`
+5. **Test Watch Mode**: `npm run test:watch`
+6. **Building**: `npm run build`
 
 ## File Structure Conventions
 

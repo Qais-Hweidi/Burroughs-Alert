@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Always validate links before using them
 - Check environment variable requirements before coding
 - Ask for clarification if needed for task scope, critical vs. optional aspects, and specific implementation details
+- **New Guideline**: If needed, ask for clarifying questions and followup questions if it seems too vague and not clear or the instructions could be interpreted in many ways, in order to make the instructions clearer
 
 ## Debugging Strategy
 

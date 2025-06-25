@@ -4,7 +4,7 @@
 
 **Primary URL**: https://newyork.craigslist.org/search/apa#search=2~gallery~0  
 **Focus**: Apartments/Housing for Rent in NYC area  
-**Update Frequency**: Every 5 minutes during peak hours, 10 minutes off-peak
+**Update Frequency**: Random intervals 30-45 minutes (safe scraping)
 
 ## Craigslist Structure Analysis
 
@@ -91,12 +91,12 @@ Example: https://newyork.craigslist.org/brk/apa/d/brooklyn-stunning-bed-bath-cor
 
 ## Scraping Implementation
 
-### Technology Stack
+### Technology Stack (Simplified for MVP)
 
-#### Primary Scraper: Puppeteer
+#### Primary Scraper: Basic Puppeteer
 
 ```typescript
-// Basic Puppeteer setup
+// Simple Puppeteer setup - no complex anti-detection initially
 const puppeteer = require('puppeteer');
 
 const browser = await puppeteer.launch({
@@ -110,41 +110,36 @@ await page.setUserAgent(
 );
 ```
 
-#### Fallback: Axios + Cheerio
+#### MVP Strategy: Focus on Getting Data First
 
-```typescript
-// For simpler pages when Puppeteer is blocked
-const axios = require('axios');
-const cheerio = require('cheerio');
-
-const response = await axios.get(url, {
-  headers: { 'User-Agent': randomUserAgent() },
-});
-const $ = cheerio.load(response.data);
-```
+- Start with basic Puppeteer configuration
+- Add anti-detection features later if needed
+- Focus on consistent data extraction
+- Simple error handling and retries
 
 ### Scraping Algorithm
 
 #### Main Scraping Process
 
 ```typescript
-FUNCTION scrapeNewListings():
+FUNCTION scrapeRecentListings():
     all_listings = []
 
-    // Get last successful scrape timestamp
-    last_scrape = getLastScrapeTime()
+    // Focus on recent listings only (posted in last 60 minutes with buffer)
+    time_filter = "60m"
 
     // Scrape each NYC area
     areas = ['mnh', 'brk', 'que', 'brx', 'stn']
 
     FOR area in areas:
         TRY:
-            area_listings = scrapeArea(area, last_scrape)
+            // Only get recent listings to reduce load
+            area_listings = scrapeAreaRecent(area, time_filter)
             all_listings.extend(area_listings)
-            LOG("Scraped {area_listings.length} listings from {area}")
+            LOG("Scraped {area_listings.length} recent listings from {area}")
 
-            // Respectful delay between areas
-            SLEEP(random(2, 5) seconds)
+            // Respectful delay between areas (30-60 seconds)
+            SLEEP(random(30, 60) seconds)
 
         CATCH error:
             LOG_ERROR("Failed to scrape {area}: {error}")
@@ -153,17 +148,16 @@ FUNCTION scrapeNewListings():
     // Filter out duplicates and existing listings
     new_listings = filterNewListings(all_listings)
 
-    // Update last scrape timestamp
-    updateLastScrapeTime(NOW())
-
     RETURN new_listings
 
-FUNCTION scrapeArea(area, since_timestamp):
+FUNCTION scrapeAreaRecent(area, time_filter):
     listings = []
-    page = 1
+    
+    // MVP: Start with just first 2 pages to be safe
+    MAX_PAGES = 2
 
-    WHILE page <= 5:  // Max 5 pages to avoid getting blocked
-        search_url = buildSearchUrl(area, page, since_timestamp)
+    FOR page in 1 to MAX_PAGES:
+        search_url = buildRecentSearchUrl(area, page, time_filter)
 
         TRY:
             page_listings = scrapePage(search_url)
@@ -172,10 +166,9 @@ FUNCTION scrapeArea(area, since_timestamp):
                 BREAK  // No more listings
 
             listings.extend(page_listings)
-            page += 1
 
-            // Delay between pages
-            SLEEP(random(1, 3) seconds)
+            // Longer delay between pages for safety
+            SLEEP(random(10, 20) seconds)
 
         CATCH error:
             LOG_ERROR("Failed to scrape page {page} for {area}: {error}")
@@ -293,82 +286,49 @@ FUNCTION scrapeListingDetails(listing_url):
         RETURN null;
 ```
 
-### Anti-Detection Measures
+### Basic Safety Measures (MVP Approach)
 
-#### User Agent Rotation
-
-```typescript
-const USER_AGENTS = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/121.0',
-];
-
-function getRandomUserAgent() {
-  return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
-}
-```
-
-#### Request Timing
+#### Simple Request Timing
 
 ```typescript
-// Randomized delays to appear human-like
+// Conservative delays to avoid being blocked
 function getRandomDelay(min: number, max: number): number {
   return Math.random() * (max - min) + min;
 }
 
-// Between pages: 1-3 seconds
-await sleep(getRandomDelay(1000, 3000));
+// Between pages: 10-20 seconds (very conservative)
+await sleep(getRandomDelay(10000, 20000));
 
-// Between listings: 0.5-1.5 seconds
-await sleep(getRandomDelay(500, 1500));
+// Between areas: 30-60 seconds (extra safe)
+await sleep(getRandomDelay(30000, 60000));
 
-// Between areas: 2-5 seconds
-await sleep(getRandomDelay(2000, 5000));
+// Main job runs every 30-45 minutes
+const jobInterval = getRandomDelay(30 * 60 * 1000, 45 * 60 * 1000);
 ```
 
-#### Browser Configuration
+#### Basic Browser Configuration
 
 ```typescript
+// Simple, reliable setup
 const browser = await puppeteer.launch({
   headless: true,
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-blink-features=AutomationControlled',
-    '--disable-web-security',
-    '--disable-dev-shm-usage',
-  ],
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 
-// Set viewport to common resolution
-await page.setViewport({ width: 1366, height: 768 });
-
-// Override webdriver detection
-await page.evaluateOnNewDocument(() => {
-  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-});
+// Standard user agent (no rotation initially)
+await page.setUserAgent(
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+);
 ```
 
-#### IP Rotation (Future Enhancement)
+#### Future Enhancements (Add Later If Needed)
 
-```typescript
-// For scaling, rotate through proxy IPs
-const PROXY_LIST = [
-  'proxy1.example.com:8080',
-  'proxy2.example.com:8080',
-  'proxy3.example.com:8080',
-];
+- User agent rotation
+- Advanced browser stealth
+- Proxy rotation
+- More sophisticated timing patterns
 
-function getRandomProxy() {
-  return PROXY_LIST[Math.floor(Math.random() * PROXY_LIST.length)];
-}
-
-// Use proxy for requests
-const proxy = getRandomProxy();
-await page.authenticate({ username: 'user', password: 'pass' });
-```
+**MVP Strategy**: Start simple, add complexity only if blocked
 
 ### Data Processing Pipeline
 

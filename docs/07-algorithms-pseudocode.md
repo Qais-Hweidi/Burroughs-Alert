@@ -1,6 +1,6 @@
-# Burroughs Alert - Algorithms & Pseudocode
+# Burroughs Alert - Algorithms & Pseudocode (MVP Focus)
 
-**Note for MVP**: These algorithms represent the full vision. For MVP, we'll implement simplified versions focusing on core functionality first.
+**MVP Strategy**: Start with basic filtering algorithms, add advanced features incrementally. Focus on getting core matching working first.
 
 ## Core Algorithms
 
@@ -52,15 +52,12 @@ FUNCTION isMatchingListing(listing, alert):
     IF alert.pet_friendly AND NOT listing.pet_friendly:
         RETURN false
 
-    // Scam score check
-    IF listing.scam_score > 0.5:  // High scam probability
+    // Basic scam detection (MVP - simple price check)
+    IF isObviousScam(listing):
         RETURN false
 
-    // Commute time check (if specified)
-    IF alert.max_commute_minutes:
-        commute_time = calculateCommute(listing.address, alert.commute_destination)
-        IF commute_time > alert.max_commute_minutes:
-            RETURN false
+    // Skip commute calculation for MVP - add later
+    // TODO: Implement commute time check in future iteration
 
     // Already notified check
     IF hasBeenNotified(alert.user_id, alert.id, listing.id):
@@ -100,158 +97,247 @@ async function matchListingToAlerts(
 }
 ```
 
-### 2. Scam Detection Algorithm
+### 2. Scam Detection Algorithm (Enhanced MVP)
 
-**Purpose**: Identify potentially fraudulent listings
+**Purpose**: Identify fraudulent listings using LLM-powered analysis
 
-#### Input
+#### Option A: Simple Rule-Based (Fallback)
+- Input: Listing data (title, description, price)
+- Output: Boolean (true if obviously suspicious)
 
-- Listing data (title, description, price, contact info)
-
-#### Output
-
-- Scam score (0.0 to 1.0, higher = more suspicious)
+#### Option B: LLM-Enhanced Detection (Recommended)
+- Input: Full listing content
+- Output: Scam probability + reasoning
+- **API**: Mistral AI (`mistral-small-latest`)
 
 #### Pseudocode
 
 ```
-FUNCTION calculateScamScore(listing):
-    score = 0.0
-    factors = []
+// Primary: LLM-Enhanced Scam Detection
+FUNCTION detectScamWithLLM(listing):
+    prompt = buildScamDetectionPrompt(listing)
+    
+    TRY:
+        // Use Mistral AI API
+        response = await callMistralAPI(prompt)
+        scam_analysis = parseScamResponse(response)
+        
+        RETURN {
+            isScam: scam_analysis.probability > 0.7,
+            confidence: scam_analysis.probability,
+            reasoning: scam_analysis.reasoning
+        }
+    
+    CATCH api_error:
+        // Fallback to simple detection
+        RETURN detectScamSimple(listing)
 
-    // Price anomaly detection
-    price_factor = checkPriceAnomaly(listing)
-    score += price_factor * 0.3
-    IF price_factor > 0:
-        factors.append("suspicious_price")
-
-    // Description analysis
-    description_factor = analyzeDescription(listing.description)
-    score += description_factor * 0.25
-    IF description_factor > 0:
-        factors.append("suspicious_description")
-
-    // Contact information analysis
-    contact_factor = analyzeContactInfo(listing.contact_info)
-    score += contact_factor * 0.2
-    IF contact_factor > 0:
-        factors.append("suspicious_contact")
-
-    // Title analysis
-    title_factor = analyzeTitle(listing.title)
-    score += title_factor * 0.15
-    IF title_factor > 0:
-        factors.append("suspicious_title")
-
-    // Image analysis (basic)
-    image_factor = analyzeImages(listing.images)
-    score += image_factor * 0.1
-    IF image_factor > 0:
-        factors.append("suspicious_images")
-
-    RETURN min(score, 1.0), factors
-
-FUNCTION checkPriceAnomaly(listing):
-    // Get average price for neighborhood and bedroom count
-    avg_price = getAveragePrice(listing.neighborhood, listing.bedrooms)
-
-    IF avg_price == 0:  // No historical data
-        RETURN 0.0
-
-    price_ratio = listing.price / avg_price
-
-    // Too cheap (likely scam)
-    IF price_ratio < 0.5:
-        RETURN 0.8
-    IF price_ratio < 0.7:
-        RETURN 0.4
-
-    // Too expensive (possible but suspicious)
-    IF price_ratio > 3.0:
-        RETURN 0.3
-
-    RETURN 0.0
-
-FUNCTION analyzeDescription(description):
-    score = 0.0
-    text = description.toLowerCase()
-
-    // Suspicious phrases
-    scam_phrases = [
-        "wire money", "western union", "cashier check",
-        "out of country", "work overseas", "travel a lot",
-        "send money", "advance payment", "deposit immediately"
-    ]
-
+// Fallback: Simple Rule-Based Detection  
+FUNCTION detectScamSimple(listing):
+    // Check for extremely low prices (likely scam)
+    IF listing.price < 800:  // Unrealistically low for NYC
+        RETURN {isScam: true, confidence: 0.9, reasoning: "Price too low"}
+    
+    // Check for common scam phrases
+    scam_phrases = ["wire money", "western union", "send money", "out of country"]
+    description_lower = listing.description.toLowerCase()
+    
     FOR phrase in scam_phrases:
-        IF phrase in text:
-            score += 0.3
-
-    // Grammar/spelling issues (basic check)
-    IF hasExcessiveSpellingErrors(text):
-        score += 0.2
-
-    // Excessive urgency
-    urgency_words = ["urgent", "must go", "leaving today", "immediate"]
-    urgency_count = countWords(text, urgency_words)
-    IF urgency_count >= 2:
-        score += 0.3
-
-    RETURN min(score, 1.0)
-
-FUNCTION analyzeContactInfo(contact_info):
-    score = 0.0
-
-    // Email analysis
-    IF contact_info.email:
-        email = contact_info.email.toLowerCase()
-
-        // Suspicious email patterns
-        IF contains(email, numbers_only_username):
-            score += 0.3
-        IF contains(email, temporary_email_domains):
-            score += 0.5
-        IF contains(email, "noreply") OR contains(email, "donotreply"):
-            score += 0.4
-
-    // Phone analysis
-    IF contact_info.phone:
-        phone = normalizePhone(contact_info.phone)
-
-        // Invalid phone formats
-        IF NOT isValidPhoneFormat(phone):
-            score += 0.3
-
-        // Known scam phone patterns
-        IF isKnownScamPhone(phone):
-            score += 0.8
-
-    RETURN min(score, 1.0)
+        IF phrase in description_lower:
+            RETURN {isScam: true, confidence: 0.8, reasoning: "Scam phrase detected"}
+    
+    // Check for excessive caps in title
+    caps_count = countUpperCaseChars(listing.title)
+    IF caps_count > (listing.title.length * 0.5):
+        RETURN {isScam: true, confidence: 0.6, reasoning: "Excessive caps"}
+    
+    RETURN {isScam: false, confidence: 0.3, reasoning: "Appears legitimate"}
 ```
 
-#### Implementation Notes
+#### Implementation Notes (Enhanced with LLM)
 
 ```typescript
-// Scam detection service
-interface ScamAnalysis {
-  score: number;
-  factors: string[];
-  confidence: 'low' | 'medium' | 'high';
-}
+// LLM-Enhanced Scam Detection
+async function detectScamWithLLM(listing: Listing): Promise<ScamResult> {
+  const prompt = `
+Analyze this NYC apartment listing for potential scams. Consider price, description, contact info, and common scam patterns.
 
-class ScamDetector {
-  private suspiciousPhrases: string[];
-  private temporaryEmailDomains: string[];
+Title: ${listing.title}
+Price: $${listing.price}/month
+Bedrooms: ${listing.bedrooms}
+Description: ${listing.description}
+Location: ${listing.neighborhood}
 
-  async analyzeListings(listing: Listing): Promise<ScamAnalysis> {
-    const score = await this.calculateScamScore(listing);
-    const factors = this.getScamFactors(listing);
-    const confidence = this.getConfidenceLevel(score, factors);
+Rate scam probability (0-1) and provide reasoning.
+Respond in JSON: {"probability": 0.0, "reasoning": "explanation"}
+  `;
 
-    return { score, factors, confidence };
+  try {
+    // Mistral AI API
+    const response = await mistralClient.chat({
+      model: 'mistral-small-latest',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.1,
+    });
+
+    const analysis = JSON.parse(response.choices[0].message.content);
+    
+    return {
+      isScam: analysis.probability > 0.7,
+      confidence: analysis.probability,
+      reasoning: analysis.reasoning,
+      source: 'llm'
+    };
+  } catch (error) {
+    // Fallback to simple detection
+    return detectScamSimple(listing);
   }
 }
+
+// Fallback method
+function detectScamSimple(listing: Listing): ScamResult {
+  if (listing.price < 800) {
+    return { isScam: true, confidence: 0.9, reasoning: 'Price too low', source: 'rule' };
+  }
+  
+  const scamPhrases = ['wire money', 'western union', 'send money'];
+  if (scamPhrases.some(phrase => listing.description.toLowerCase().includes(phrase))) {
+    return { isScam: true, confidence: 0.8, reasoning: 'Scam phrase detected', source: 'rule' };
+  }
+  
+  return { isScam: false, confidence: 0.3, reasoning: 'Appears legitimate', source: 'rule' };
+}
+
+interface ScamResult {
+  isScam: boolean;
+  confidence: number;
+  reasoning: string;
+  source: 'llm' | 'rule';
+}
 ```
+
+### 3. Additional LLM Integration Opportunities
+
+**Other Uses for Mistral AI:**
+
+#### A. Neighborhood Normalization
+```typescript
+// Standardize neighborhood names using LLM
+async function normalizeNeighborhood(rawLocation: string): Promise<string> {
+  const prompt = `
+Normalize this NYC location to a standard neighborhood name:
+Input: "${rawLocation}"
+
+Return only the standard neighborhood name (e.g., "Upper East Side", "Williamsburg", "Astoria").
+If unclear, return the closest valid NYC neighborhood.
+  `;
+  
+  const response = await mistralClient.chat({
+    model: 'mistral-small-latest',
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.1,
+  });
+  
+  return response.choices[0].message.content.trim();
+}
+```
+
+#### B. Listing Quality Assessment
+```typescript
+// Assess overall listing quality and completeness
+async function assessListingQuality(listing: Listing): Promise<QualityScore> {
+  const prompt = `
+Rate this apartment listing quality (0-1) based on completeness, clarity, and legitimacy:
+
+Title: ${listing.title}
+Description: ${listing.description}
+Images: ${listing.images.length} photos
+
+Consider: description detail, image quality, contact info, overall professionalism.
+Respond in JSON: {"score": 0.0, "issues": ["list", "of", "issues"]}
+  `;
+  // Implementation similar to scam detection
+}
+```
+
+#### C. Description Enhancement (Future)
+- Clean up messy descriptions
+- Extract amenities automatically
+- Generate standardized summaries
+
+### 4. Future Algorithm Enhancements
+
+**Advanced Scam Detection** (Post-MVP):
+- Price anomaly detection with neighborhood averages
+- Email/phone pattern analysis  
+- Image analysis
+- Historical scam pattern learning
+
+**Advanced Matching** (Post-MVP):
+- Commute time calculation with Google Maps API
+- Match scoring and ranking with LLM reasoning
+- Price anomaly detection
+- Advanced preference weighting
+
+### 4. Simplified Data Flow (MVP)
+
+**Current Implementation Strategy**:
+
+```typescript
+// Main processing pipeline (simplified)
+async function processNewListings() {
+  // 1. Get recent listings from scraper
+  const recentListings = await scraper.getRecentListings();
+  
+  // 2. For each listing, check against all active alerts
+  for (const listing of recentListings) {
+    // Skip obvious scams
+    if (isObviousScam(listing)) continue;
+    
+    // Find matching alerts
+    const matchingAlerts = await findMatchingAlerts(listing);
+    
+    // Send notifications for matches
+    if (matchingAlerts.length > 0) {
+      await sendNotifications(listing, matchingAlerts);
+    }
+  }
+}
+
+// Simple matching function
+async function findMatchingAlerts(listing: Listing): Promise<Alert[]> {
+  const activeAlerts = await getActiveAlerts();
+  
+  return activeAlerts.filter(alert => {
+    // Basic filtering only
+    return (
+      listing.price >= alert.minPrice &&
+      listing.price <= alert.maxPrice &&
+      listing.bedrooms >= alert.minBedrooms &&
+      alert.neighborhoods.includes(listing.neighborhood) &&
+      (!alert.petFriendly || listing.petFriendly)
+    );
+  });
+}
+```
+
+**Benefits of This Approach**:
+- Simple to implement and debug
+- Fast processing
+- Easy to extend later
+- Reliable core functionality
+
+## Removed Complex Sections (For Future Development)
+
+The following algorithms were removed from MVP scope:
+
+- **Advanced Scam Detection**: Complex scoring algorithms, contact info analysis, image analysis
+- **Commute Time Calculation**: Google Maps API integration (documented separately)
+- **Notification Queue Management**: Complex queuing and rate limiting
+- **Match Scoring**: Weighted scoring and ranking systems
+- **Price Anomaly Detection**: Neighborhood-based price analysis
+
+These will be implemented in future iterations once the basic system is working reliably.
 
 ### 3. Commute Calculation Algorithm
 

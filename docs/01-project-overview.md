@@ -6,19 +6,27 @@ Burroughs Alert is a renter-focused notification service specifically designed f
 
 ## Core Value Proposition
 
+- **Immediate Results**: See current matching apartments right after creating alert
 - **Set & Forget**: Users define their perfect apartment criteria once
-- **Instant Alerts**: Get notified the moment a matching listing appears
-- **Beat the Competition**: Be first to respond to new listings
-- **Scam Protection**: Built-in detection warns about suspicious listings
-- **Commute Intelligence**: Shows travel time to work/school
+- **Instant Alerts**: Get notified the moment NEW matching listings appear
+- **Beat the Competition**: Be first to respond to fresh listings
+- **Scam Protection**: Built-in AI detection warns about suspicious listings
+- **Dual System**: Browse now + get notified later
 
-## User Journey
+## User Journey (Dual System)
 
+### **Immediate Experience:**
 1. **Setup**: User visits website, enters email and apartment criteria
-2. **Background Monitoring**: System continuously scrapes listing sites
-3. **Match Detection**: Algorithm identifies apartments meeting user criteria
-4. **Instant Notification**: Email sent immediately when match found
-5. **Quick Action**: User clicks through to listing to apply
+2. **Instant Results**: User immediately sees current matching apartments
+3. **Browse & Contact**: User can contact landlords right away
+
+### **Ongoing Benefits:**
+4. **Background Monitoring**: System continuously scrapes for NEW listings
+5. **Fresh Match Detection**: Algorithm identifies new apartments (every 30-45 min)
+6. **Email Notifications**: User gets alerted when fresh matches appear
+7. **First Responder Advantage**: User clicks through to new listing immediately
+
+**Result**: Users get immediate satisfaction + ongoing competitive advantage
 
 ## Target User
 
@@ -32,9 +40,10 @@ Burroughs Alert is a renter-focused notification service specifically designed f
 ### Core Features (Must Have)
 
 - Email collection and basic user preferences
+- **Immediate listings view** after alert creation
 - Single listing source monitoring (Craigslist NYC)
 - Simple matching algorithm (neighborhood, price, bedrooms)
-- Email notifications for matches
+- Email notifications for new matches
 - Basic scam detection (price anomalies, suspicious keywords)
 - Simple commute time estimation
 

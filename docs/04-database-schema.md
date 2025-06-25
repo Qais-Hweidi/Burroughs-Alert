@@ -3,7 +3,7 @@
 ## Database: SQLite (Simplified for MVP)
 
 **File Location**: `./data/app.db`  
-**Library**: Drizzle ORM + @libsql/client  
+**Library**: Drizzle ORM + better-sqlite3  
 **Strategy**: Direct schema setup (no migrations for MVP)
 
 ## Schema Design

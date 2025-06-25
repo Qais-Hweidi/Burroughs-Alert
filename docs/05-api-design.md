@@ -44,6 +44,26 @@
     alertId: number;
     userId: number;
     message: string;
+    // NEW: Immediate listings for dual system
+    initialMatches: {
+      listings: Array<{
+        id: number;
+        title: string;
+        price: number;
+        bedrooms: number;
+        neighborhood: string;
+        listingUrl: string;
+        postedAt: string;
+        scamAnalysis: {
+          isScam: boolean;
+          confidence: number;
+          reasoning: string;
+          provider: 'mistral' | 'rule';
+        };
+      }>;
+      total: number;
+      hasMore: boolean;
+    };
   }
 }
 ```
@@ -180,7 +200,13 @@
       petFriendly: boolean;
       listingUrl: string;
       postedAt: string;
-      scamScore: number;
+      scamAnalysis: {
+        isScam: boolean;
+        confidence: number;
+        reasoning: string;
+        provider: 'mistral' | 'rule';
+        analyzedAt: string;
+      };
     }>;
     total: number;
     page: number;
@@ -220,7 +246,61 @@
     source: string;
     postedAt: string;
     scrapedAt: string;
-    scamScore: number;
+    scamAnalysis: {
+      isScam: boolean;
+      confidence: number;
+      reasoning: string;
+      provider: 'mistral' | 'rule';
+      analyzedAt: string;
+      flags?: string[]; // Additional scam indicators
+    };
+  }
+}
+```
+
+#### POST /api/listings/search
+
+**Purpose**: Search listings by criteria (for immediate view after alert creation)
+
+**Request**:
+
+```typescript
+{
+  neighborhoods: string[];
+  minPrice?: number;
+  maxPrice?: number;
+  minBedrooms?: number;
+  maxBedrooms?: number;
+  petFriendly?: boolean;
+  limit?: number; // Default: 20, max: 100
+  offset?: number; // For pagination
+}
+```
+
+**Response Success (200)**:
+
+```typescript
+{
+  success: true;
+  data: {
+    listings: Array<{
+      id: number;
+      title: string;
+      price: number;
+      bedrooms: number;
+      neighborhood: string;
+      listingUrl: string;
+      postedAt: string;
+      scamAnalysis: {
+        isScam: boolean;
+        confidence: number;
+        reasoning: string;
+        provider: 'mistral' | 'rule';
+      };
+    }>;
+    total: number;
+    hasMore: boolean;
+    searchCriteria: object; // Echo back search criteria
   }
 }
 ```
@@ -245,6 +325,8 @@
         status: 'running' | 'stopped' | 'error';
         lastRun: string;
         lastSuccess: string;
+        interval: '30-45 minutes'; // Job interval range
+        nextRun: string; // Estimated next run time
       }
       notifications: {
         status: 'healthy' | 'error';
@@ -379,7 +461,7 @@ Content-Type: application/json
 // Zod schema for alert creation
 const CreateAlertSchema = z.object({
   email: z.string().email(),
-  neighborhoods: z.array(z.string()).min(1).max(5),
+  neighborhoods: z.array(z.string()).min(1), // Unlimited selections allowed
   minPrice: z.number().min(500).max(20000).optional(),
   maxPrice: z.number().min(500).max(20000),
   minBedrooms: z.number().min(0).max(10).optional(),
@@ -405,6 +487,17 @@ export async function POST(request: Request) {
     // Create alert
     const alert = await createAlert(user.id, validatedData);
 
+    // NEW: Search for immediate matches (dual system)
+    const initialMatches = await searchListings({
+      neighborhoods: validatedData.neighborhoods,
+      minPrice: validatedData.minPrice,
+      maxPrice: validatedData.maxPrice,
+      minBedrooms: validatedData.minBedrooms,
+      maxBedrooms: validatedData.maxBedrooms,
+      petFriendly: validatedData.petFriendly,
+      limit: 20,
+    });
+
     return NextResponse.json(
       {
         success: true,
@@ -412,6 +505,11 @@ export async function POST(request: Request) {
           alertId: alert.id,
           userId: user.id,
           message: 'Alert created successfully',
+          initialMatches: {
+            listings: initialMatches.listings,
+            total: initialMatches.total,
+            hasMore: initialMatches.hasMore,
+          },
         },
       },
       { status: 201 }

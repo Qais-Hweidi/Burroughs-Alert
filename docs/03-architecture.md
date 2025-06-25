@@ -40,16 +40,28 @@
 
 - **Landing Page**: Marketing page with email signup
 - **Alert Setup**: Form to configure apartment criteria
-- **Dashboard**: View active alerts and matches (future)
+- **Listings View**: Display current matching apartments
 - **API Routes**: Backend endpoints for CRUD operations
 
-**Data Flow**:
+**Data Flow (Dual System)**:
 
+**A. Immediate Feedback System:**
 1. User visits landing page
 2. Fills out alert preferences form
 3. Form submits to `/api/alerts` endpoint
-4. API validates and saves to database
-5. User receives confirmation
+4. API validates and saves alert to database
+5. **API searches existing listings** that match criteria
+6. **User redirected to listings view page**
+7. **Page displays current matching apartments**
+8. User can browse and contact landlords immediately
+
+**B. Ongoing Notification System:**
+1. **Alert saved for continuous monitoring**
+2. **Background job runs every 30-45 minutes**
+3. **Scrapes only new listings** (posted in last 45-60 minutes)
+4. **Matches new listings against ALL active alerts**
+5. **Sends email notifications** for fresh matches
+6. **Users get notified immediately** when new apartments appear
 
 ### 2. Database Layer (SQLite)
 
@@ -72,19 +84,17 @@
 
 **Purpose**: Automated tasks running independently
 
-**Jobs**:
+**Jobs** (Simplified Pipeline):
 
-- **Scraper Job**: Fetches new listings from Craigslist
-- **Matcher Job**: Compares listings against user alerts
-- **Notifier Job**: Sends email notifications for matches
+- **Main Job**: Combined scraper → matcher → notifier pipeline
 - **Cleanup Job**: Removes old listings and notifications
 
 **Scheduling**:
 
-- Scraper: Every 5 minutes
-- Matcher: Every 2 minutes (after scraper)
-- Notifier: Immediately when matches found
+- Main Pipeline: Random intervals 30-45 minutes
+- Only processes recent listings (last 45-60 minutes with buffer)
 - Cleanup: Daily at midnight
+- Built-in randomization to avoid detection patterns
 
 ### 4. External Services
 
@@ -98,16 +108,29 @@
 
 ## Data Flow Diagrams
 
-### User Registration Flow
+### A. Immediate Feedback Flow
 
 ```
-User → Landing Page → Alert Form → API Route → Database → Confirmation Email
+User → Alert Form → API Route → [Save Alert + Search Existing] → Listings View Page
+                                     ↓
+                              Display Current Matches → User Browses & Contacts
 ```
 
-### Listing Processing Flow
+### B. Ongoing Notification Flow
 
 ```
-Craigslist → Scraper → Database → Matcher → Notifications → Users
+Background Job (Every 30-45 min) → Scrape New Listings → Match Against All Alerts → Email Users
+```
+
+### Combined System Architecture
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   User Creates  │ → │  Immediate View   │    │ Ongoing Monitor │
+│     Alert       │    │ (Current Matches) │    │ (New Matches)   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                  ↓                      ↓
+                              Browse Now            Email Alerts
 ```
 
 ### Notification Flow
@@ -136,11 +159,12 @@ POST /api/alerts
 ### 2. Background Scraping
 
 ```typescript
-// Flow: Cron → Scraper → Database → Matcher → Notifier
-1. Scraper fetches Craigslist listings
-2. Scraper saves to listings table
-3. Matcher runs against active alerts
-4. Notifier sends emails for matches
+// Flow: Randomized Cron → Combined Pipeline
+1. Random delay (30-45 minutes) triggers main job
+2. Scraper fetches only recent Craigslist listings
+3. Each new listing immediately checked against alerts
+4. Matching listings trigger direct email notifications
+5. Process completes, schedules next random interval
 ```
 
 ### 3. Matching Algorithm
@@ -215,6 +239,14 @@ POST /api/alerts
 3. **Alerts**: Email notifications for critical failures
 4. **Metrics**: Track success rates and performance
 
+### Testing Strategy (Basic)
+
+1. **API Testing**: Ensure endpoints work correctly (create alerts, search listings)
+2. **Database Testing**: Verify CRUD operations and data integrity
+3. **Business Logic Testing**: Test matching algorithm and scam detection
+4. **Mocked Services**: External services (Mistral AI, email, scraping) are mocked
+5. **Focus**: Essential functionality only, skip complex integration scenarios
+
 ### Recovery Procedures
 
 1. **Graceful Degradation**: Continue operation with reduced functionality
@@ -238,9 +270,55 @@ POST /api/alerts
 - **Memory Management**: Efficient data structures
 - **Batch Processing**: Group operations where possible
 
-### Background Job Performance
+### Background Job Performance (Simplified)
 
-- **Concurrent Processing**: Parallel job execution
-- **Queue Management**: Priority-based job scheduling
-- **Resource Limits**: Prevent memory/CPU exhaustion
-- **Incremental Updates**: Only process changed data
+- **Single Pipeline**: One job handles scrape → match → notify
+- **Recent Data Only**: Process only listings from last 4-6 hours
+- **Randomized Timing**: 30-45 minute intervals to avoid patterns
+- **Resource Efficient**: No complex queues, direct processing
+- **Respectful Scraping**: Built-in delays and rate limiting
+
+## Simplified Background Job Implementation
+
+### Job Scheduler Design
+
+```typescript
+class SimpleJobScheduler {
+  private isRunning = false;
+  
+  start() {
+    // Initial run after random delay
+    this.scheduleNextRun();
+  }
+  
+  private scheduleNextRun() {
+    // Random interval: 30-45 minutes (1800000-2700000 ms)
+    const delay = 30 * 60 * 1000 + Math.random() * 15 * 60 * 1000;
+    
+    setTimeout(async () => {
+      if (!this.isRunning) {
+        await this.runMainPipeline();
+      }
+      this.scheduleNextRun(); // Schedule next run
+    }, delay);
+  }
+  
+  private async runMainPipeline() {
+    this.isRunning = true;
+    try {
+      // 1. Scrape recent listings only
+      const recentListings = await scraper.getRecentListings();
+      
+      // 2. For each listing, immediately check matches and notify
+      for (const listing of recentListings) {
+        const matches = await matcher.findMatches(listing);
+        if (matches.length > 0) {
+          await notifier.sendNotifications(matches);
+        }
+      }
+    } finally {
+      this.isRunning = false;
+    }
+  }
+}
+```
