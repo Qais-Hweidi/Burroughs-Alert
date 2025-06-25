@@ -24,12 +24,10 @@ function CreateAlertContent() {
 
   const handleFormSuccess = (formData: AlertFormData) => {
     const searchParams = new URLSearchParams({
-      email: formData.email,
-      neighborhoods: formData.neighborhoods.join(','),
-      success: 'true',
+      alertId: 'mock-alert-123',
     });
 
-    router.push(`/success?${searchParams.toString()}`);
+    router.push(`/listings?${searchParams.toString()}`);
   };
 
   return (
