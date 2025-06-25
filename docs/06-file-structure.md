@@ -128,6 +128,7 @@ burroughs-alert/
 ### Backend MVP Status: ❌ Not Implemented
 
 Backend components will be added in this order:
+
 1. Database setup (SQLite + Drizzle ORM)
 2. API routes for alert management
 3. Scraping system with Mistral AI
@@ -139,25 +140,30 @@ Backend components will be added in this order:
 ### Configuration Files (Current)
 
 #### `package.json`
+
 - Next.js 15, React 18, TypeScript 5.6
 - Radix UI components, Tailwind CSS, Lucide icons
 - Drizzle ORM, better-sqlite3, Mistral AI
 - ESLint, Prettier, PostCSS
 
 #### `next.config.js`
+
 - Basic Next.js 15 configuration
 - TypeScript path aliases
 
 #### `postcss.config.js` (NEW)
+
 - PostCSS configuration for Tailwind CSS
 - Autoprefixer integration
 
 #### `tailwind.config.js`
+
 - HSL color variables for theming
 - Dark mode support configuration
 - Custom animations and component styling
 
 #### `tsconfig.json`
+
 - Strict TypeScript configuration
 - Path aliases for clean imports
 - Next.js 15 App Router support
@@ -172,33 +178,39 @@ Backend components will be added in this order:
 **`not-found.tsx`**: Custom 404 page
 
 **User Flow Pages**:
+
 - `alerts/create/page.tsx`: Comprehensive alert creation form
 - `confirm/page.tsx`: Alert confirmation page
-- `success/page.tsx`: Success state page  
+- `success/page.tsx`: Success state page
 - `listings/page.tsx`: Listings view with current matches
 
 #### `src/components/` (13 UI Components)
 
 **UI Components (`components/ui/`)**:
+
 - Modern design system with Radix UI primitives
 - Consistent styling with class-variance-authority
 - TypeScript interfaces for all props
 - Responsive and accessible components
 
 **Form Components (`components/forms/`)**:
+
 - `AlertForm.tsx`: Complex form with NYC neighborhood selection, validation, multi-step flow
 
 **Layout Components (`components/layout/`)**:
+
 - Responsive header, footer, container components
 - Consistent spacing and branding
 
 **Listing Components (`components/listings/`)**:
+
 - `ListingCard.tsx`: Individual apartment listing display
 - `ListingsGrid.tsx`: Grid layout for multiple listings
 
 #### `src/lib/` (Utilities & Types)
 
 **Current Utilities (`lib/utils/`)**:
+
 - `cn.ts`: Tailwind class merging utility
 - `constants.ts`: NYC neighborhoods, form validation rules
 - `formatting.ts`: Date, price, text formatting helpers
@@ -206,6 +218,7 @@ Backend components will be added in this order:
 - `mockListings.ts`: Development mock data
 
 **Type Definitions (`lib/types/`)**:
+
 - Comprehensive TypeScript interfaces
 - Database schema types
 - API request/response types
@@ -214,31 +227,37 @@ Backend components will be added in this order:
 ### Planned Backend Implementation
 
 #### Database Layer (To Be Added)
+
 - SQLite with Drizzle ORM
 - Schema in `lib/database/schema.ts`
 - Query helpers in `lib/database/queries/`
 
 #### API Routes (To Be Added)
+
 - `app/api/alerts/route.ts`: Alert CRUD with dual system
 - `app/api/listings/search/route.ts`: Immediate listings search
 - `app/api/health/route.ts`: System health monitoring
 
 #### Scraping System (To Be Added)
+
 - `lib/scraping/craigslist-scraper.ts`: Basic Puppeteer scraper
 - `lib/scraping/scam-detector.ts`: Mistral AI integration
 - Safe scraping intervals (30-45 minutes)
 
 #### Background Jobs (To Be Added)
+
 - `lib/jobs/scraper-job.ts`: Randomized job scheduler
 - Direct processing pipeline (scrape → match → notify)
 
 #### Email System (To Be Added)
+
 - `lib/notifications/email-service.ts`: Nodemailer + Gmail SMTP
 - Notification templates and delivery
 
 ## Development Status Summary
 
 ### ✅ Completed (Frontend MVP)
+
 - Complete user experience flow
 - Professional UI component library
 - Responsive design system
@@ -247,8 +266,9 @@ Backend components will be added in this order:
 - Modern development tooling
 
 ### 🔄 Next Phase (Backend Implementation)
+
 - Database schema and connection
-- API route development  
+- API route development
 - Scraping system with AI
 - Background job scheduling
 - Email notification system

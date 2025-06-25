@@ -14,7 +14,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Using Claude Code via WSL terminal on Windows VS Code
 - **WSL/Windows File System Note**: Project files are on Windows filesystem, accessed through WSL. Some npm commands may timeout or behave differently due to cross-filesystem operations
-- **NPM Command Policy**: Never run `npm run` commands directly. Always ask the user to run them and report the output back
+- **Environment Variables Policy**:
+  - `.env.local` file exists but is not visible to Claude Code (gitignored for security)
+  - Always ensure `.env.example` contains the same keys as `.env.local` for documentation
+  - When adding new environment variables, update `.env.example` with placeholder values
+  - Never assume `.env.local` contents - always reference `.env.example` for available variables
 - Choose solutions that are less likely to cause development issues
 - Always validate links before using them
 - Check environment variable requirements before coding
@@ -75,24 +79,29 @@ npm run format           # Code formatting with Prettier
 ### Naming Conventions
 
 **Files & Directories:**
+
 - **kebab-case**: directories (`components/`, `lib/`), utility files (`next.config.js`)
 - **PascalCase**: React components (`AlertForm.tsx`, `Header.tsx`)
 - **lowercase**: UI components (`button.tsx`, `input.tsx`)
 
 **JavaScript/TypeScript:**
+
 - **camelCase**: functions (`handleSubmit`, `validateForm`), variables (`formData`, `isSubmitting`)
 - **PascalCase**: components (`AlertForm`), types/interfaces (`User`, `Alert`, `ApiResponse`)
 - **SCREAMING_SNAKE_CASE**: constants (`NYC_NEIGHBORHOODS`, `APP_CONFIG`, `ERROR_CODES`)
 
 **Database:**
+
 - **snake_case**: column names (`user_id`, `created_at`, `pet_friendly`)
 - **camelCase**: API interfaces (`minPrice`, `maxPrice`, `createdAt`)
 
 **API Routes:**
+
 - **kebab-case**: paths (`/api/alerts`, `/alerts/create`)
 - **camelCase**: JavaScript functions (`createAlert`, `getUserAlerts`)
 
 **CSS/Styling:**
+
 - **kebab-case**: CSS classes, custom properties (`--primary`, `section-spacing`)
 - **camelCase**: Tailwind config properties (`borderRadius`, `keyframes`)
 
@@ -103,6 +112,7 @@ Use semantic commit messages with consistent formatting:
 **Format:** `<type>: <description>`
 
 **Types:**
+
 - `feat:` - New features
 - `fix:` - Bug fixes
 - `chore:` - Maintenance tasks
@@ -115,12 +125,11 @@ Use semantic commit messages with consistent formatting:
 - `build:` - Build system changes
 
 **Examples:**
+
 - `feat: add commute time filtering to alert form`
 - `fix: resolve neighborhood selection validation bug`
 - `chore: update dependencies and run format`
 - `docs: add naming conventions to CLAUDE.md`
-
-**IMPORTANT**: Run `npm run format` immediately after code changes and before committing.
 
 ## High-Level Architecture
 
@@ -312,3 +321,7 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
   - **Commute Calculation Planning**: Detailed Google Maps API integration strategy documented
   - **Technology Stack**: Next.js, Drizzle ORM, SQLite, Puppeteer foundation established
   - **MVP Scope**: Simplified architecture focused on local development and core functionality
+
+## General Workflow Recommendations
+
+- When you want to install or use new tech or install dependencies, make sure to search and check what you need online

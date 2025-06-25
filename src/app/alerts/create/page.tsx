@@ -2,7 +2,16 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Bell, ArrowLeft, Mail, MapPin, DollarSign, Home, Heart, Clock } from 'lucide-react';
+import {
+  Bell,
+  ArrowLeft,
+  Mail,
+  MapPin,
+  DollarSign,
+  Home,
+  Heart,
+  Clock,
+} from 'lucide-react';
 import { APP_CONFIG } from '@/lib/utils/constants';
 import AlertForm, { AlertFormData } from '@/components/forms/AlertForm';
 
@@ -63,7 +72,8 @@ function CreateAlertContent() {
                 Create Your Apartment Alert
               </h1>
               <p className="text-blue-100 text-lg">
-                Fill out the form below to get notified about apartments that match your criteria
+                Fill out the form below to get notified about apartments that
+                match your criteria
               </p>
             </div>
           </div>
@@ -84,7 +94,13 @@ function CreateAlertContent() {
 
 export default function CreateAlertPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      }
+    >
       <CreateAlertContent />
     </Suspense>
   );

@@ -44,8 +44,8 @@ export default function HomePage() {
               Why Choose BurroughsAlert?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Our smart system monitors thousands of listings daily and sends you
-              only the apartments that match your exact requirements.
+              Our smart system monitors thousands of listings daily and sends
+              you only the apartments that match your exact requirements.
             </p>
           </div>
 
@@ -58,8 +58,8 @@ export default function HomePage() {
                 Smart Location Filtering
               </h3>
               <p className="text-gray-600">
-                Choose from 250+ NYC neighborhoods across all 5 boroughs.
-                Set commute preferences to find apartments near your work.
+                Choose from 250+ NYC neighborhoods across all 5 boroughs. Set
+                commute preferences to find apartments near your work.
               </p>
             </div>
 
@@ -71,8 +71,8 @@ export default function HomePage() {
                 Instant Notifications
               </h3>
               <p className="text-gray-600">
-                Receive email alerts within minutes of new listings.
-                Never miss a great apartment because you checked too late.
+                Receive email alerts within minutes of new listings. Never miss
+                a great apartment because you checked too late.
               </p>
             </div>
 
@@ -84,8 +84,8 @@ export default function HomePage() {
                 Scam Protection
               </h3>
               <p className="text-gray-600">
-                Built-in filters detect and remove suspicious listings.
-                Only get notifications for legitimate apartments.
+                Built-in filters detect and remove suspicious listings. Only get
+                notifications for legitimate apartments.
               </p>
             </div>
           </div>
@@ -123,8 +123,8 @@ export default function HomePage() {
             Ready to Find Your Next Home?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join thousands of NYC apartment hunters who never miss a great listing.
-            Set up your alert in under 2 minutes.
+            Join thousands of NYC apartment hunters who never miss a great
+            listing. Set up your alert in under 2 minutes.
           </p>
           <Link
             href="/alerts/create"

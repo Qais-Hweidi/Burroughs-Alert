@@ -8,23 +8,23 @@ import Container from '@/components/layout/Container';
 import ListingsGrid from '@/components/listings/ListingsGrid';
 import { ListingCardData, ListingsPageState } from '@/lib/types/listings.types';
 import { AlertFormData } from '@/components/forms/AlertForm';
-import { 
-  mockListings, 
-  getFilteredMockListings, 
-  getNewMockListings 
+import {
+  mockListings,
+  getFilteredMockListings,
+  getNewMockListings,
 } from '@/lib/utils/mockListings';
 import { formatPrice, formatBedrooms } from '@/lib/utils/listingHelpers';
 
 export default function ListingsPage() {
   const searchParams = useSearchParams();
   const alertId = searchParams?.get('alertId');
-  
+
   const [state, setState] = useState<ListingsPageState>({
     listings: [],
     isLoading: true,
     isRefreshing: false,
     lastRefresh: null,
-    error: null
+    error: null,
   });
 
   // Mock alert criteria - in real app this would come from API based on alertId
@@ -36,56 +36,61 @@ export default function ListingsPage() {
     bedrooms: 1,
     petFriendly: false,
     commuteDestination: 'Times Square',
-    maxCommuteMinutes: 30
+    maxCommuteMinutes: 30,
   });
 
   // Load initial listings
-  const loadListings = useCallback(async (isRefresh = false) => {
-    if (isRefresh) {
-      setState(prev => ({ ...prev, isRefreshing: true }));
-    } else {
-      setState(prev => ({ ...prev, isLoading: true }));
-    }
-
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, isRefresh ? 1000 : 1500));
-      
-      // Get filtered listings based on alert criteria
-      const baseListings = getFilteredMockListings({
-        neighborhoods: alertCriteria.neighborhoods,
-        minPrice: alertCriteria.minPrice,
-        maxPrice: alertCriteria.maxPrice,
-        bedrooms: alertCriteria.bedrooms,
-        petFriendly: alertCriteria.petFriendly,
-        maxCommuteMinutes: alertCriteria.maxCommuteMinutes
-      });
-
-      let finalListings = baseListings;
-
-      // If refreshing, add some new listings at the top
+  const loadListings = useCallback(
+    async (isRefresh = false) => {
       if (isRefresh) {
-        const newListings = getNewMockListings();
-        finalListings = [...newListings, ...baseListings];
+        setState((prev) => ({ ...prev, isRefreshing: true }));
+      } else {
+        setState((prev) => ({ ...prev, isLoading: true }));
       }
 
-      setState(prev => ({
-        ...prev,
-        listings: finalListings,
-        isLoading: false,
-        isRefreshing: false,
-        lastRefresh: isRefresh ? new Date() : prev.lastRefresh,
-        error: null
-      }));
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        isRefreshing: false,
-        error: 'Failed to load listings. Please try again.'
-      }));
-    }
-  }, [alertCriteria]);
+      try {
+        // Simulate API delay
+        await new Promise((resolve) =>
+          setTimeout(resolve, isRefresh ? 1000 : 1500)
+        );
+
+        // Get filtered listings based on alert criteria
+        const baseListings = getFilteredMockListings({
+          neighborhoods: alertCriteria.neighborhoods,
+          minPrice: alertCriteria.minPrice,
+          maxPrice: alertCriteria.maxPrice,
+          bedrooms: alertCriteria.bedrooms,
+          petFriendly: alertCriteria.petFriendly,
+          maxCommuteMinutes: alertCriteria.maxCommuteMinutes,
+        });
+
+        let finalListings = baseListings;
+
+        // If refreshing, add some new listings at the top
+        if (isRefresh) {
+          const newListings = getNewMockListings();
+          finalListings = [...newListings, ...baseListings];
+        }
+
+        setState((prev) => ({
+          ...prev,
+          listings: finalListings,
+          isLoading: false,
+          isRefreshing: false,
+          lastRefresh: isRefresh ? new Date() : prev.lastRefresh,
+          error: null,
+        }));
+      } catch (error) {
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          isRefreshing: false,
+          error: 'Failed to load listings. Please try again.',
+        }));
+      }
+    },
+    [alertCriteria]
+  );
 
   // Load listings on mount
   useEffect(() => {
@@ -103,7 +108,7 @@ export default function ListingsPage() {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-4">
-              <Link 
+              <Link
                 href="/alerts/create"
                 className="
                   inline-flex items-center gap-2 px-3 py-2
@@ -115,7 +120,7 @@ export default function ListingsPage() {
                 Back to Alert Setup
               </Link>
             </div>
-            
+
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Available Apartments
             </h1>
@@ -126,7 +131,9 @@ export default function ListingsPage() {
 
           {/* Alert criteria summary */}
           <div className="bg-white rounded-lg border-2 border-gray-200 p-6 mb-8">
-            <h3 className="font-semibold text-gray-900 mb-4">Your Search Criteria</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Your Search Criteria
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Neighborhoods */}
               <div className="flex items-start gap-3">
@@ -134,7 +141,9 @@ export default function ListingsPage() {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900 text-sm">Neighborhoods</div>
+                  <div className="font-medium text-gray-900 text-sm">
+                    Neighborhoods
+                  </div>
                   <div className="text-sm text-gray-600">
                     {alertCriteria.neighborhoods.length} selected
                   </div>
@@ -147,10 +156,17 @@ export default function ListingsPage() {
                   <DollarSign className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900 text-sm">Price Range</div>
+                  <div className="font-medium text-gray-900 text-sm">
+                    Price Range
+                  </div>
                   <div className="text-sm text-gray-600">
-                    {alertCriteria.minPrice ? formatPrice(alertCriteria.minPrice) : 'Any'} - {' '}
-                    {alertCriteria.maxPrice ? formatPrice(alertCriteria.maxPrice) : 'Any'}
+                    {alertCriteria.minPrice
+                      ? formatPrice(alertCriteria.minPrice)
+                      : 'Any'}{' '}
+                    -{' '}
+                    {alertCriteria.maxPrice
+                      ? formatPrice(alertCriteria.maxPrice)
+                      : 'Any'}
                   </div>
                 </div>
               </div>
@@ -161,9 +177,13 @@ export default function ListingsPage() {
                   <Home className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900 text-sm">Bedrooms</div>
+                  <div className="font-medium text-gray-900 text-sm">
+                    Bedrooms
+                  </div>
                   <div className="text-sm text-gray-600">
-                    {alertCriteria.bedrooms !== null ? formatBedrooms(alertCriteria.bedrooms) : 'Any'}
+                    {alertCriteria.bedrooms !== null
+                      ? formatBedrooms(alertCriteria.bedrooms)
+                      : 'Any'}
                   </div>
                 </div>
               </div>

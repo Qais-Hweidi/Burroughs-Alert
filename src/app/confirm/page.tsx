@@ -14,19 +14,16 @@ export default function ConfirmPage() {
               <Mail className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-2">
-            Check Your Email
-          </h1>
-          <p className="text-blue-100">
-            We've sent you a confirmation link
-          </p>
+          <h1 className="text-2xl font-bold mb-2">Check Your Email</h1>
+          <p className="text-blue-100">We've sent you a confirmation link</p>
         </div>
 
         {/* Content */}
         <div className="p-8">
           <p className="text-gray-600 mb-6 leading-relaxed text-center">
             We've sent a confirmation email to verify your address. Please click
-            the confirmation link in the email to activate your apartment search alert.
+            the confirmation link in the email to activate your apartment search
+            alert.
           </p>
 
           {/* Instructions */}
@@ -60,10 +57,12 @@ export default function ConfirmPage() {
             <div className="flex items-start">
               <Shield className="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-green-900 mb-1">Security First</h4>
+                <h4 className="font-medium text-green-900 mb-1">
+                  Security First
+                </h4>
                 <p className="text-sm text-green-800">
-                  We require email verification to protect you from spam and ensure
-                  you receive your apartment alerts.
+                  We require email verification to protect you from spam and
+                  ensure you receive your apartment alerts.
                 </p>
               </div>
             </div>

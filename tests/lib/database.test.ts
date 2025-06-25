@@ -1,9 +1,9 @@
 /**
  * Unit Tests: Database Layer
- * 
+ *
  * Comprehensive test suite for database operations and query functions.
  * Tests schema validation, CRUD operations, and data integrity.
- * 
+ *
  * Test Categories:
  * - Database connection and initialization
  * - Schema validation and constraints
@@ -11,7 +11,7 @@
  * - Query performance and optimization
  * - Transaction management
  * - Data integrity and relationships
- * 
+ *
  * Connection Tests:
  * - Database file initialization
  * - Connection pool management
@@ -19,7 +19,7 @@
  * - Schema migration testing
  * - Connection error handling
  * - Graceful shutdown procedures
- * 
+ *
  * Schema Validation Tests:
  * - Table creation and structure
  * - Column constraints and types
@@ -27,14 +27,14 @@
  * - Index creation and optimization
  * - Unique constraint enforcement
  * - Default value handling
- * 
+ *
  * User Operations Tests:
  * - User record creation
  * - Email validation and uniqueness
  * - User data retrieval
  * - User update operations
  * - User deletion and cleanup
- * 
+ *
  * Alert Operations Tests:
  * - Alert creation with validation
  * - Neighborhood array handling
@@ -42,7 +42,7 @@
  * - Alert status management
  * - Alert-to-user relationships
  * - Bulk alert operations
- * 
+ *
  * Listing Operations Tests:
  * - Listing insertion and updates
  * - Duplicate detection and handling
@@ -50,14 +50,14 @@
  * - Price validation and formatting
  * - Image URL validation
  * - Listing expiration handling
- * 
+ *
  * Notification Operations Tests:
  * - Notification record creation
  * - Delivery status tracking
  * - Notification history management
  * - User-notification relationships
  * - Batch notification operations
- * 
+ *
  * Query Performance Tests:
  * - Index usage validation
  * - Query execution time measurement
@@ -65,28 +65,28 @@
  * - Complex join operations
  * - Full-text search performance
  * - Pagination efficiency
- * 
+ *
  * Transaction Tests:
  * - ACID compliance validation
  * - Rollback functionality
  * - Concurrent transaction handling
  * - Deadlock prevention
  * - Transaction isolation levels
- * 
+ *
  * Data Integrity Tests:
  * - Foreign key constraint enforcement
  * - Cascade deletion testing
  * - Data validation rules
  * - Orphaned record prevention
  * - Referential integrity maintenance
- * 
+ *
  * Error Handling Tests:
  * - Constraint violation handling
  * - Database lock timeouts
  * - Connection loss recovery
  * - Corrupted data detection
  * - Recovery procedures
- * 
+ *
  * Related Documentation:
  * - docs/04-database-schema.md (schema specification)
  * - src/lib/database/ (implementation files)

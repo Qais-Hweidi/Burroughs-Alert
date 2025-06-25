@@ -71,7 +71,7 @@
 
 - **Why**: Simple cron job scheduler for Node.js
 - **Usage**: Schedule regular scraping tasks with safe, randomized intervals
-- **Schedule**: 
+- **Schedule**:
   - Random intervals between 30-45 minutes
   - Only scrape recent listings (posted in last 45-60 minutes with buffer)
   - Automatic delays to avoid detection patterns
@@ -91,7 +91,7 @@
 
 - **Why**: Enhanced scam detection and content analysis
 - **Model**: `mistral-small-latest` for cost-effective reasoning
-- **Primary Use**: Intelligent scam detection with structured JSON responses  
+- **Primary Use**: Intelligent scam detection with structured JSON responses
 - **Secondary Uses**: Neighborhood normalization, content quality assessment
 - **Benefits**: Excellent at structured analysis, reliable JSON parsing, cost-effective
 

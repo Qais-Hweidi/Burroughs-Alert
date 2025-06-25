@@ -1,9 +1,9 @@
 /**
  * Database Queries: Listings
- * 
+ *
  * Handles all database operations for apartment listings from scraping sources.
  * Provides search, filtering, and matching functionality for the alert system.
- * 
+ *
  * Query Functions to implement:
  * - insertListings: Bulk insert scraped listings with duplicate handling
  * - searchListings: Filter listings by user criteria
@@ -12,7 +12,7 @@
  * - deleteListing: Remove expired or invalid listings
  * - matchListingsToAlerts: Find matches for background notifications
  * - cleanupOldListings: Remove listings older than retention period
- * 
+ *
  * Search and Filtering:
  * - Neighborhood matching (exact and fuzzy)
  * - Price range filtering with validation
@@ -21,21 +21,21 @@
  * - Commute time filtering (when available)
  * - Scam detection filtering
  * - Date range filtering for freshness
- * 
+ *
  * Performance Optimizations:
  * - Full-text search indexes for descriptions
  * - Composite indexes for common filter combinations
  * - Pagination support for large result sets
  * - Query result caching for repeated searches
  * - Batch operations for bulk data processing
- * 
+ *
  * Data Quality:
  * - Duplicate detection and prevention
  * - Data validation and cleaning
  * - Scam score integration
  * - Neighborhood normalization
  * - Price validation and outlier detection
- * 
+ *
  * Related Documentation:
  * - docs/04-database-schema.md (listings table structure)
  * - docs/07-algorithms-pseudocode.md (search and matching algorithms)

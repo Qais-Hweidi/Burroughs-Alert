@@ -1,7 +1,16 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Mail, MapPin, DollarSign, Home, Heart, Clock, Check, AlertCircle } from 'lucide-react';
+import {
+  Mail,
+  MapPin,
+  DollarSign,
+  Home,
+  Heart,
+  Clock,
+  Check,
+  AlertCircle,
+} from 'lucide-react';
 import {
   VALIDATION_LIMITS,
   NYC_NEIGHBORHOODS,
@@ -147,7 +156,8 @@ export default function AlertForm({
       onSuccess(formData);
     } catch (error) {
       setErrors({
-        general: 'An error occurred while creating your alert. Please try again.',
+        general:
+          'An error occurred while creating your alert. Please try again.',
       });
     } finally {
       setIsSubmitting(false);
@@ -235,13 +245,15 @@ export default function AlertForm({
             <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3">
               <MapPin className="w-4 h-4" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">NYC Neighborhoods</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              NYC Neighborhoods
+            </h3>
           </div>
           <span className="text-sm text-gray-500">
             {formData.neighborhoods.length} selected
           </span>
         </div>
-        
+
         {errors.neighborhoods && (
           <p className="text-red-500 text-sm mb-4 flex items-center">
             <AlertCircle className="w-4 h-4 mr-1" />
@@ -251,8 +263,8 @@ export default function AlertForm({
 
         <div className="max-h-80 overflow-y-auto border-2 border-gray-200 rounded-lg p-4 space-y-4">
           {neighborhoodsByBorough.map(({ borough, neighborhoods }) => {
-            const boroughNeighborhoods = neighborhoods.map(n => n.name);
-            const selectedCount = boroughNeighborhoods.filter(name =>
+            const boroughNeighborhoods = neighborhoods.map((n) => n.name);
+            const selectedCount = boroughNeighborhoods.filter((name) =>
               formData.neighborhoods.includes(name)
             ).length;
             const allSelected = selectedCount === boroughNeighborhoods.length;
@@ -280,7 +292,9 @@ export default function AlertForm({
                 </div>
                 <div className="grid grid-cols-2 gap-2 ml-6">
                   {neighborhoods.map((neighborhood) => {
-                    const isSelected = formData.neighborhoods.includes(neighborhood.name);
+                    const isSelected = formData.neighborhoods.includes(
+                      neighborhood.name
+                    );
                     return (
                       <label
                         key={neighborhood.name}
@@ -289,13 +303,17 @@ export default function AlertForm({
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => handleNeighborhoodToggle(neighborhood.name)}
+                          onChange={() =>
+                            handleNeighborhoodToggle(neighborhood.name)
+                          }
                           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">
                           {neighborhood.name}
                           {neighborhood.popular && (
-                            <span className="ml-1 text-xs text-blue-600">★</span>
+                            <span className="ml-1 text-xs text-blue-600">
+                              ★
+                            </span>
                           )}
                         </span>
                       </label>
@@ -368,7 +386,9 @@ export default function AlertForm({
           <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
             <Home className="w-4 h-4" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Number of Bedrooms</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Number of Bedrooms
+          </h3>
         </div>
         <select
           value={formData.bedrooms?.toString() || 'any'}
@@ -396,14 +416,20 @@ export default function AlertForm({
             <Heart className="w-4 h-4" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">Pet Friendly</h3>
-            <p className="text-sm text-gray-600">Only show listings that allow pets</p>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Pet Friendly
+            </h3>
+            <p className="text-sm text-gray-600">
+              Only show listings that allow pets
+            </p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               checked={formData.petFriendly}
-              onChange={(e) => handleInputChange('petFriendly', e.target.checked)}
+              onChange={(e) =>
+                handleInputChange('petFriendly', e.target.checked)
+              }
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -417,7 +443,9 @@ export default function AlertForm({
           <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mr-3">
             <Clock className="w-4 h-4" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Commute Preferences</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Commute Preferences
+          </h3>
           <span className="ml-2 text-sm text-gray-500">(Optional)</span>
         </div>
         <div className="space-y-4">
@@ -498,7 +526,9 @@ export default function AlertForm({
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <h4 className="font-medium text-gray-900 mb-2">What happens next?</h4>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• We'll email you when apartments matching your criteria are found</li>
+          <li>
+            • We'll email you when apartments matching your criteria are found
+          </li>
           <li>• You can unsubscribe at any time</li>
           <li>• We only send relevant apartment alerts, no spam</li>
         </ul>

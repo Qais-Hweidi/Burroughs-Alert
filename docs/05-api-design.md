@@ -63,7 +63,7 @@
       }>;
       total: number;
       hasMore: boolean;
-    };
+    }
   }
 }
 ```

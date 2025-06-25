@@ -102,10 +102,12 @@ async function matchListingToAlerts(
 **Purpose**: Identify fraudulent listings using LLM-powered analysis
 
 #### Option A: Simple Rule-Based (Fallback)
+
 - Input: Listing data (title, description, price)
 - Output: Boolean (true if obviously suspicious)
 
 #### Option B: LLM-Enhanced Detection (Recommended)
+
 - Input: Full listing content
 - Output: Scam probability + reasoning
 - **API**: Mistral AI (`mistral-small-latest`)
@@ -116,41 +118,41 @@ async function matchListingToAlerts(
 // Primary: LLM-Enhanced Scam Detection
 FUNCTION detectScamWithLLM(listing):
     prompt = buildScamDetectionPrompt(listing)
-    
+
     TRY:
         // Use Mistral AI API
         response = await callMistralAPI(prompt)
         scam_analysis = parseScamResponse(response)
-        
+
         RETURN {
             isScam: scam_analysis.probability > 0.7,
             confidence: scam_analysis.probability,
             reasoning: scam_analysis.reasoning
         }
-    
+
     CATCH api_error:
         // Fallback to simple detection
         RETURN detectScamSimple(listing)
 
-// Fallback: Simple Rule-Based Detection  
+// Fallback: Simple Rule-Based Detection
 FUNCTION detectScamSimple(listing):
     // Check for extremely low prices (likely scam)
     IF listing.price < 800:  // Unrealistically low for NYC
         RETURN {isScam: true, confidence: 0.9, reasoning: "Price too low"}
-    
+
     // Check for common scam phrases
     scam_phrases = ["wire money", "western union", "send money", "out of country"]
     description_lower = listing.description.toLowerCase()
-    
+
     FOR phrase in scam_phrases:
         IF phrase in description_lower:
             RETURN {isScam: true, confidence: 0.8, reasoning: "Scam phrase detected"}
-    
+
     // Check for excessive caps in title
     caps_count = countUpperCaseChars(listing.title)
     IF caps_count > (listing.title.length * 0.5):
         RETURN {isScam: true, confidence: 0.6, reasoning: "Excessive caps"}
-    
+
     RETURN {isScam: false, confidence: 0.3, reasoning: "Appears legitimate"}
 ```
 
@@ -181,12 +183,12 @@ Respond in JSON: {"probability": 0.0, "reasoning": "explanation"}
     });
 
     const analysis = JSON.parse(response.choices[0].message.content);
-    
+
     return {
       isScam: analysis.probability > 0.7,
       confidence: analysis.probability,
       reasoning: analysis.reasoning,
-      source: 'llm'
+      source: 'llm',
     };
   } catch (error) {
     // Fallback to simple detection
@@ -197,15 +199,34 @@ Respond in JSON: {"probability": 0.0, "reasoning": "explanation"}
 // Fallback method
 function detectScamSimple(listing: Listing): ScamResult {
   if (listing.price < 800) {
-    return { isScam: true, confidence: 0.9, reasoning: 'Price too low', source: 'rule' };
+    return {
+      isScam: true,
+      confidence: 0.9,
+      reasoning: 'Price too low',
+      source: 'rule',
+    };
   }
-  
+
   const scamPhrases = ['wire money', 'western union', 'send money'];
-  if (scamPhrases.some(phrase => listing.description.toLowerCase().includes(phrase))) {
-    return { isScam: true, confidence: 0.8, reasoning: 'Scam phrase detected', source: 'rule' };
+  if (
+    scamPhrases.some((phrase) =>
+      listing.description.toLowerCase().includes(phrase)
+    )
+  ) {
+    return {
+      isScam: true,
+      confidence: 0.8,
+      reasoning: 'Scam phrase detected',
+      source: 'rule',
+    };
   }
-  
-  return { isScam: false, confidence: 0.3, reasoning: 'Appears legitimate', source: 'rule' };
+
+  return {
+    isScam: false,
+    confidence: 0.3,
+    reasoning: 'Appears legitimate',
+    source: 'rule',
+  };
 }
 
 interface ScamResult {
@@ -221,6 +242,7 @@ interface ScamResult {
 **Other Uses for Mistral AI:**
 
 #### A. Neighborhood Normalization
+
 ```typescript
 // Standardize neighborhood names using LLM
 async function normalizeNeighborhood(rawLocation: string): Promise<string> {
@@ -231,18 +253,19 @@ Input: "${rawLocation}"
 Return only the standard neighborhood name (e.g., "Upper East Side", "Williamsburg", "Astoria").
 If unclear, return the closest valid NYC neighborhood.
   `;
-  
+
   const response = await mistralClient.chat({
     model: 'mistral-small-latest',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.1,
   });
-  
+
   return response.choices[0].message.content.trim();
 }
 ```
 
 #### B. Listing Quality Assessment
+
 ```typescript
 // Assess overall listing quality and completeness
 async function assessListingQuality(listing: Listing): Promise<QualityScore> {
@@ -261,6 +284,7 @@ Respond in JSON: {"score": 0.0, "issues": ["list", "of", "issues"]}
 ```
 
 #### C. Description Enhancement (Future)
+
 - Clean up messy descriptions
 - Extract amenities automatically
 - Generate standardized summaries
@@ -268,12 +292,14 @@ Respond in JSON: {"score": 0.0, "issues": ["list", "of", "issues"]}
 ### 4. Future Algorithm Enhancements
 
 **Advanced Scam Detection** (Post-MVP):
+
 - Price anomaly detection with neighborhood averages
-- Email/phone pattern analysis  
+- Email/phone pattern analysis
 - Image analysis
 - Historical scam pattern learning
 
 **Advanced Matching** (Post-MVP):
+
 - Commute time calculation with Google Maps API
 - Match scoring and ranking with LLM reasoning
 - Price anomaly detection
@@ -288,15 +314,15 @@ Respond in JSON: {"score": 0.0, "issues": ["list", "of", "issues"]}
 async function processNewListings() {
   // 1. Get recent listings from scraper
   const recentListings = await scraper.getRecentListings();
-  
+
   // 2. For each listing, check against all active alerts
   for (const listing of recentListings) {
     // Skip obvious scams
     if (isObviousScam(listing)) continue;
-    
+
     // Find matching alerts
     const matchingAlerts = await findMatchingAlerts(listing);
-    
+
     // Send notifications for matches
     if (matchingAlerts.length > 0) {
       await sendNotifications(listing, matchingAlerts);
@@ -307,8 +333,8 @@ async function processNewListings() {
 // Simple matching function
 async function findMatchingAlerts(listing: Listing): Promise<Alert[]> {
   const activeAlerts = await getActiveAlerts();
-  
-  return activeAlerts.filter(alert => {
+
+  return activeAlerts.filter((alert) => {
     // Basic filtering only
     return (
       listing.price >= alert.minPrice &&
@@ -322,6 +348,7 @@ async function findMatchingAlerts(listing: Listing): Promise<Alert[]> {
 ```
 
 **Benefits of This Approach**:
+
 - Simple to implement and debug
 - Fast processing
 - Easy to extend later

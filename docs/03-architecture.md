@@ -46,6 +46,7 @@
 **Data Flow (Dual System)**:
 
 **A. Immediate Feedback System:**
+
 1. User visits landing page
 2. Fills out alert preferences form
 3. Form submits to `/api/alerts` endpoint
@@ -56,6 +57,7 @@
 8. User can browse and contact landlords immediately
 
 **B. Ongoing Notification System:**
+
 1. **Alert saved for continuous monitoring**
 2. **Background job runs every 30-45 minutes**
 3. **Scrapes only new listings** (posted in last 45-60 minutes)
@@ -285,16 +287,16 @@ POST /api/alerts
 ```typescript
 class SimpleJobScheduler {
   private isRunning = false;
-  
+
   start() {
     // Initial run after random delay
     this.scheduleNextRun();
   }
-  
+
   private scheduleNextRun() {
     // Random interval: 30-45 minutes (1800000-2700000 ms)
     const delay = 30 * 60 * 1000 + Math.random() * 15 * 60 * 1000;
-    
+
     setTimeout(async () => {
       if (!this.isRunning) {
         await this.runMainPipeline();
@@ -302,13 +304,13 @@ class SimpleJobScheduler {
       this.scheduleNextRun(); // Schedule next run
     }, delay);
   }
-  
+
   private async runMainPipeline() {
     this.isRunning = true;
     try {
       // 1. Scrape recent listings only
       const recentListings = await scraper.getRecentListings();
-      
+
       // 2. For each listing, immediately check matches and notify
       for (const listing of recentListings) {
         const matches = await matcher.findMatches(listing);

@@ -24,8 +24,9 @@ export default function SuccessPage() {
         <div className="p-8">
           <div className="text-center mb-8">
             <p className="text-gray-600 text-lg leading-relaxed">
-              We're now monitoring thousands of apartment listings across all 5 NYC boroughs.
-              You'll receive instant email notifications when we find apartments that match your criteria.
+              We're now monitoring thousands of apartment listings across all 5
+              NYC boroughs. You'll receive instant email notifications when we
+              find apartments that match your criteria.
             </p>
           </div>
 
@@ -36,8 +37,12 @@ export default function SuccessPage() {
                 <Clock className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Real-time Monitoring</h3>
-                <p className="text-sm text-gray-600">We check for new listings every 15 minutes</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Real-time Monitoring
+                </h3>
+                <p className="text-sm text-gray-600">
+                  We check for new listings every 15 minutes
+                </p>
               </div>
             </div>
 
@@ -46,8 +51,12 @@ export default function SuccessPage() {
                 <Mail className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Instant Notifications</h3>
-                <p className="text-sm text-gray-600">Get emailed within minutes of new matches</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Instant Notifications
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Get emailed within minutes of new matches
+                </p>
               </div>
             </div>
 
@@ -56,8 +65,12 @@ export default function SuccessPage() {
                 <Shield className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Scam Protection</h3>
-                <p className="text-sm text-gray-600">Suspicious listings filtered out automatically</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Scam Protection
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Suspicious listings filtered out automatically
+                </p>
               </div>
             </div>
 
@@ -66,8 +79,12 @@ export default function SuccessPage() {
                 <Bell className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Easy Unsubscribe</h3>
-                <p className="text-sm text-gray-600">Cancel anytime with one click</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Easy Unsubscribe
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Cancel anytime with one click
+                </p>
               </div>
             </div>
           </div>

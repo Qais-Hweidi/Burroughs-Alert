@@ -152,7 +152,7 @@ FUNCTION scrapeRecentListings():
 
 FUNCTION scrapeAreaRecent(area, time_filter):
     listings = []
-    
+
     // MVP: Start with just first 2 pages to be safe
     MAX_PAGES = 2
 

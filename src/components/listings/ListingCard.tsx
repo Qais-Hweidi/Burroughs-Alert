@@ -1,37 +1,42 @@
 'use client';
 
 import React from 'react';
-import { 
-  MapPin, 
-  Home, 
-  Clock, 
-  Heart, 
+import {
+  MapPin,
+  Home,
+  Clock,
+  Heart,
   AlertTriangle,
   ExternalLink,
-  Calendar
+  Calendar,
 } from 'lucide-react';
 import { ListingCardProps } from '@/lib/types/listings.types';
-import { 
-  formatListing, 
-  shouldShowScamWarning, 
+import {
+  formatListing,
+  shouldShowScamWarning,
   shouldShowNewBadge,
-  getListingDomain
+  getListingDomain,
 } from '@/lib/utils/listingHelpers';
 
-export default function ListingCard({ listing, className = '' }: ListingCardProps) {
+export default function ListingCard({
+  listing,
+  className = '',
+}: ListingCardProps) {
   const formatted = formatListing(listing);
   const showScamWarning = shouldShowScamWarning(listing.scamScore);
   const showNewBadge = shouldShowNewBadge(listing.postedAt);
   const domain = getListingDomain(listing.listingUrl);
 
   return (
-    <div className={`
+    <div
+      className={`
       bg-white rounded-lg border-2 border-gray-200 
       hover:border-blue-300 hover:shadow-lg 
       transition-all duration-200 cursor-pointer
       ${showScamWarning ? 'ring-2 ring-red-200' : ''}
       ${className}
-    `}>
+    `}
+    >
       {/* Header with badges */}
       <div className="p-4 pb-0">
         <div className="flex items-start justify-between mb-2">
@@ -47,12 +52,14 @@ export default function ListingCard({ listing, className = '' }: ListingCardProp
               </span>
             )}
             {showScamWarning && (
-              <span className={`
+              <span
+                className={`
                 px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1
                 ${formatted.scamIndicator.color} 
                 ${formatted.scamIndicator.bgColor} 
                 ${formatted.scamIndicator.borderColor} border
-              `}>
+              `}
+              >
                 <AlertTriangle className="w-3 h-3" />
                 {formatted.scamIndicator.label}
               </span>
@@ -71,7 +78,9 @@ export default function ListingCard({ listing, className = '' }: ListingCardProp
           </div>
           <div className="flex items-center text-gray-600">
             <Home className="w-4 h-4 mr-1" />
-            <span className="text-sm font-medium">{formatted.formattedBedrooms}</span>
+            <span className="text-sm font-medium">
+              {formatted.formattedBedrooms}
+            </span>
           </div>
         </div>
 
@@ -81,7 +90,9 @@ export default function ListingCard({ listing, className = '' }: ListingCardProp
           {listing.neighborhood && (
             <div className="flex items-center text-gray-700">
               <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span className="text-sm font-medium">{listing.neighborhood}</span>
+              <span className="text-sm font-medium">
+                {listing.neighborhood}
+              </span>
             </div>
           )}
 
@@ -89,7 +100,10 @@ export default function ListingCard({ listing, className = '' }: ListingCardProp
           <div className="flex items-center text-gray-600">
             <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
             <span className="text-sm">
-              Commute: {listing.commuteMinutes ? `${listing.commuteMinutes} minutes` : 'Not calculated'}
+              Commute:{' '}
+              {listing.commuteMinutes
+                ? `${listing.commuteMinutes} minutes`
+                : 'Not calculated'}
             </span>
           </div>
 
@@ -97,11 +111,12 @@ export default function ListingCard({ listing, className = '' }: ListingCardProp
           <div className="flex items-center text-gray-600">
             <Heart className="w-4 h-4 mr-2 flex-shrink-0" />
             <span className="text-sm">
-              Pets: {
-                listing.petFriendly === true ? 'Allowed' :
-                listing.petFriendly === false ? 'Not allowed' :
-                'Unknown'
-              }
+              Pets:{' '}
+              {listing.petFriendly === true
+                ? 'Allowed'
+                : listing.petFriendly === false
+                  ? 'Not allowed'
+                  : 'Unknown'}
             </span>
           </div>
         </div>
@@ -134,9 +149,7 @@ export default function ListingCard({ listing, className = '' }: ListingCardProp
         </div>
 
         {/* Source domain */}
-        <div className="mt-2 text-xs text-gray-400">
-          Source: {domain}
-        </div>
+        <div className="mt-2 text-xs text-gray-400">Source: {domain}</div>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 /**
  * Unit Tests: Alert Matching Logic
- * 
+ *
  * Comprehensive test suite for apartment listing to alert matching algorithms.
  * Tests matching criteria, scoring, and notification generation.
- * 
+ *
  * Test Categories:
  * - Basic criteria matching
  * - Complex multi-criteria matching
@@ -11,14 +11,14 @@
  * - Commute time integration
  * - Performance optimization
  * - Edge cases and error handling
- * 
+ *
  * Basic Criteria Tests:
  * - Price range matching (min/max bounds)
  * - Bedroom count matching (exact and flexible)
  * - Pet-friendly requirement matching
  * - Neighborhood inclusion validation
  * - Boolean criteria evaluation
- * 
+ *
  * Neighborhood Matching Tests:
  * - Exact neighborhood name matching
  * - Fuzzy neighborhood matching
@@ -26,7 +26,7 @@
  * - Multiple neighborhood selection
  * - Neighborhood normalization
  * - Case-insensitive matching
- * 
+ *
  * Price Range Tests:
  * - Within range validation
  * - Boundary condition testing
@@ -34,14 +34,14 @@
  * - Currency handling
  * - Outlier detection and handling
  * - Price comparison accuracy
- * 
+ *
  * Multi-Criteria Matching:
  * - AND logic for all criteria
  * - Partial matching scenarios
  * - Priority-based matching
  * - Flexible vs strict matching
  * - Criteria weight handling
- * 
+ *
  * Match Quality Scoring:
  * - Perfect match bonus points
  * - Partial match scoring
@@ -49,7 +49,7 @@
  * - Bonus factors (location, price)
  * - Penalty factors (edge cases)
  * - Score normalization (0-100)
- * 
+ *
  * Commute Time Integration:
  * - Google Maps API integration
  * - Transit time calculation
@@ -57,7 +57,7 @@
  * - API failure fallback handling
  * - Cache utilization testing
  * - Cost optimization validation
- * 
+ *
  * Performance Tests:
  * - Large dataset matching performance
  * - Concurrent matching operations
@@ -65,7 +65,7 @@
  * - Algorithm efficiency measurement
  * - Batch processing performance
  * - Cache effectiveness testing
- * 
+ *
  * Edge Case Tests:
  * - Empty criteria handling
  * - Missing listing data
@@ -73,7 +73,7 @@
  * - Non-existent neighborhoods
  * - Corrupted listing data
  * - Extreme values handling
- * 
+ *
  * Notification Generation Tests:
  * - Match data aggregation
  * - Multiple listing batching
@@ -81,7 +81,7 @@
  * - Duplicate prevention
  * - Notification prioritization
  * - Delivery queue management
- * 
+ *
  * Algorithm Accuracy Tests:
  * - Known good matches validation
  * - False positive detection
@@ -89,7 +89,7 @@
  * - Matching consistency
  * - Reproducible results
  * - Algorithm regression testing
- * 
+ *
  * Related Documentation:
  * - docs/07-algorithms-pseudocode.md (matching algorithms)
  * - src/lib/jobs/matcher-job.ts (implementation)

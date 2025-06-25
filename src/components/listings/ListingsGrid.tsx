@@ -6,12 +6,12 @@ import { ListingsGridProps } from '@/lib/types/listings.types';
 import ListingCard from './ListingCard';
 import { sortListingsByDate } from '@/lib/utils/listingHelpers';
 
-export default function ListingsGrid({ 
-  listings, 
-  isLoading = false, 
+export default function ListingsGrid({
+  listings,
+  isLoading = false,
   isRefreshing = false,
   onRefresh,
-  className = '' 
+  className = '',
 }: ListingsGridProps) {
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
 
@@ -34,11 +34,14 @@ export default function ListingsGrid({
           <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
           <div className="h-10 bg-gray-200 rounded w-32 animate-pulse"></div>
         </div>
-        
+
         {/* Grid skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="bg-white rounded-lg border-2 border-gray-200 p-4 animate-pulse">
+            <div
+              key={index}
+              className="bg-white rounded-lg border-2 border-gray-200 p-4 animate-pulse"
+            >
               <div className="space-y-3">
                 <div className="h-6 bg-gray-200 rounded w-3/4"></div>
                 <div className="h-8 bg-gray-200 rounded w-1/2"></div>
@@ -71,7 +74,8 @@ export default function ListingsGrid({
             No listings found
           </h3>
           <p className="text-gray-600 mb-6">
-            We couldn't find any apartments matching your criteria. Try refreshing to check for new listings.
+            We couldn't find any apartments matching your criteria. Try
+            refreshing to check for new listings.
           </p>
           {onRefresh && (
             <button
@@ -84,7 +88,9 @@ export default function ListingsGrid({
                 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               "
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`}
+              />
               {isRefreshing ? 'Refreshing...' : 'Refresh Listings'}
             </button>
           )}
@@ -103,7 +109,7 @@ export default function ListingsGrid({
             {listings.length} Listing{listings.length !== 1 ? 's' : ''} Found
           </h2>
         </div>
-        
+
         {onRefresh && (
           <div className="flex items-center gap-3">
             {lastRefreshTime && (
@@ -122,7 +128,9 @@ export default function ListingsGrid({
                 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               "
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`}
+              />
               {isRefreshing ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
@@ -142,11 +150,7 @@ export default function ListingsGrid({
       {/* Listings grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedListings.map((listing) => (
-          <ListingCard 
-            key={listing.id} 
-            listing={listing}
-            className="h-full"
-          />
+          <ListingCard key={listing.id} listing={listing} className="h-full" />
         ))}
       </div>
 
@@ -159,7 +163,10 @@ export default function ListingsGrid({
               About these listings
             </p>
             <ul className="space-y-1">
-              <li>• Listings are automatically filtered based on your alert criteria</li>
+              <li>
+                • Listings are automatically filtered based on your alert
+                criteria
+              </li>
               <li>• High-risk listings are flagged for your safety</li>
               <li>• Commute times are estimated via public transportation</li>
               <li>• Click "Refresh" to check for newly posted apartments</li>

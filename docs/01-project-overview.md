@@ -16,11 +16,13 @@ Burroughs Alert is a renter-focused notification service specifically designed f
 ## User Journey (Dual System)
 
 ### **Immediate Experience:**
+
 1. **Setup**: User visits website, enters email and apartment criteria
 2. **Instant Results**: User immediately sees current matching apartments
 3. **Browse & Contact**: User can contact landlords right away
 
 ### **Ongoing Benefits:**
+
 4. **Background Monitoring**: System continuously scrapes for NEW listings
 5. **Fresh Match Detection**: Algorithm identifies new apartments (every 30-45 min)
 6. **Email Notifications**: User gets alerted when fresh matches appear

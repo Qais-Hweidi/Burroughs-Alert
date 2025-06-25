@@ -1,22 +1,22 @@
 /**
  * API Route: /api/alerts
- * 
+ *
  * Handles CRUD operations for user apartment search alerts.
  * Implements dual system: immediate listing search + background notification setup.
- * 
+ *
  * Features to implement:
  * - POST: Create new alert with validation (email, neighborhoods, price range, etc.)
  * - GET: Retrieve user's existing alerts (by email or token)
  * - PUT: Update alert preferences
  * - DELETE: Remove alert and cleanup
- * 
+ *
  * Business Logic:
  * - Validate NYC neighborhoods against constants
  * - Price range validation ($500-$10,000)
  * - Email format validation
  * - Duplicate alert prevention
  * - Integration with database queries
- * 
+ *
  * Related Documentation:
  * - docs/05-api-design.md (detailed API specification)
  * - docs/04-database-schema.md (alerts table schema)

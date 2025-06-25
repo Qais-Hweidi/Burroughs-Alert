@@ -15,7 +15,8 @@
       "WebSearch(*)",
       "TodoRead",
       "TodoWrite",
-      "Agent(*)"
+      "Agent(*)",
+      "WebFetch(domain:www.npmjs.com)"
     ],
     "deny": []
   }
