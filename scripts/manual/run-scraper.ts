@@ -34,25 +34,47 @@ function displayResults(result: ScrapingResult) {
 
   if (result.listings.length > 0) {
     // Show enhanced data coverage stats
-    const withBedrooms = result.listings.filter(l => l.bedrooms !== undefined).length;
-    const withPetInfo = result.listings.filter(l => l.pet_friendly !== undefined).length;
-    const withCoordinates = result.listings.filter(l => l.latitude && l.longitude).length;
-    const withNeighborhoods = result.listings.filter(l => l.neighborhood && l.neighborhood !== 'Unknown').length;
+    const withBedrooms = result.listings.filter(
+      (l) => l.bedrooms !== undefined
+    ).length;
+    const withPetInfo = result.listings.filter(
+      (l) => l.pet_friendly !== undefined
+    ).length;
+    const withCoordinates = result.listings.filter(
+      (l) => l.latitude && l.longitude
+    ).length;
+    const withNeighborhoods = result.listings.filter(
+      (l) => l.neighborhood && l.neighborhood !== 'Unknown'
+    ).length;
 
     console.log('\n--- Enhanced Data Coverage ---');
-    console.log(`Bedroom count: ${withBedrooms}/${result.totalFound} (${Math.round(withBedrooms/result.totalFound*100)}%)`);
-    console.log(`Pet policy: ${withPetInfo}/${result.totalFound} (${Math.round(withPetInfo/result.totalFound*100)}%)`);
-    console.log(`Coordinates: ${withCoordinates}/${result.totalFound} (${Math.round(withCoordinates/result.totalFound*100)}%)`);
-    console.log(`Neighborhoods: ${withNeighborhoods}/${result.totalFound} (${Math.round(withNeighborhoods/result.totalFound*100)}%)`);
+    console.log(
+      `Bedroom count: ${withBedrooms}/${result.totalFound} (${Math.round((withBedrooms / result.totalFound) * 100)}%)`
+    );
+    console.log(
+      `Pet policy: ${withPetInfo}/${result.totalFound} (${Math.round((withPetInfo / result.totalFound) * 100)}%)`
+    );
+    console.log(
+      `Coordinates: ${withCoordinates}/${result.totalFound} (${Math.round((withCoordinates / result.totalFound) * 100)}%)`
+    );
+    console.log(
+      `Neighborhoods: ${withNeighborhoods}/${result.totalFound} (${Math.round((withNeighborhoods / result.totalFound) * 100)}%)`
+    );
 
     console.log('\n--- Sample Listings (Enhanced Data) ---');
     result.listings.slice(0, 5).forEach((listing, index) => {
       console.log(`\n${index + 1}. ${listing.title}`);
       console.log(`   Price: $${listing.price.toLocaleString()}`);
       console.log(`   Neighborhood: ${listing.neighborhood || 'Unknown'}`);
-      console.log(`   Bedrooms: ${listing.bedrooms !== undefined ? listing.bedrooms : 'Unknown'}`);
-      console.log(`   Pet Friendly: ${listing.pet_friendly !== undefined ? (listing.pet_friendly ? 'Yes' : 'No') : 'Unknown'}`);
-      console.log(`   Coordinates: ${listing.latitude && listing.longitude ? `${listing.latitude}, ${listing.longitude}` : 'Not available'}`);
+      console.log(
+        `   Bedrooms: ${listing.bedrooms !== undefined ? listing.bedrooms : 'Unknown'}`
+      );
+      console.log(
+        `   Pet Friendly: ${listing.pet_friendly !== undefined ? (listing.pet_friendly ? 'Yes' : 'No') : 'Unknown'}`
+      );
+      console.log(
+        `   Coordinates: ${listing.latitude && listing.longitude ? `${listing.latitude}, ${listing.longitude}` : 'Not available'}`
+      );
       console.log(`   Posted: ${listing.posted_at || 'Unknown'}`);
       console.log(`   URL: ${listing.listing_url}`);
       console.log(`   ID: ${listing.external_id}`);
@@ -62,10 +84,18 @@ function displayResults(result: ScrapingResult) {
       console.log(`\n... and ${result.listings.length - 5} more listings`);
       console.log('\n--- All Listings Summary ---');
       result.listings.forEach((listing, index) => {
-        const bedrooms = listing.bedrooms !== undefined ? `${listing.bedrooms}BR` : '?BR';
-        const pets = listing.pet_friendly !== undefined ? (listing.pet_friendly ? 'Pets:Y' : 'Pets:N') : 'Pets:?';
+        const bedrooms =
+          listing.bedrooms !== undefined ? `${listing.bedrooms}BR` : '?BR';
+        const pets =
+          listing.pet_friendly !== undefined
+            ? listing.pet_friendly
+              ? 'Pets:Y'
+              : 'Pets:N'
+            : 'Pets:?';
         const coords = listing.latitude && listing.longitude ? '📍' : '';
-        console.log(`${index + 1}. ${listing.title.substring(0, 40)}... | $${listing.price} | ${bedrooms} | ${listing.neighborhood || 'Unknown'} | ${pets} ${coords}`);
+        console.log(
+          `${index + 1}. ${listing.title.substring(0, 40)}... | $${listing.price} | ${bedrooms} | ${listing.neighborhood || 'Unknown'} | ${pets} ${coords}`
+        );
       });
     }
   }

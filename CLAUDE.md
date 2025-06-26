@@ -12,13 +12,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **FILE HEADER DOCUMENTATION RULE**: Each implementation file contains detailed header documentation describing features to implement, business logic requirements, and TODO items. When making changes to any file:
 
-2. **ALWAYS update** the documentation to reflect what has been implemented (mark with ✅ DONE)
-3. **ALWAYS update** TODO items immediately after completing them
-4. **ADD new TODOs** if you discover additional work needed during implementation
-5. **KEEP** unified sections (Features, Business Logic) with both completed and remaining items together
-6. **FORMAT COMPLETED ITEMS** as "- Description ✅ DONE" (both emoji and explicit "DONE" text)
-7. This maintains clear progress tracking and prevents work duplication
-
 ## Development Environment
 
 - Using Claude Code via WSL Ubuntu 22.04.5 LTS terminal on Windows VS Code
@@ -233,7 +226,7 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 - ✅ **Complete Craigslist Scraper** (Puppeteer, all NYC boroughs)
 - ✅ Component library and form validation
 - ❌ Background job system - **NEXT PRIORITY**
-- ❌ Email notifications - **HIGH PRIORITY** 
+- ❌ Email notifications - **HIGH PRIORITY**
 - ❌ Alert matching logic - **HIGH PRIORITY**
 - ❌ Commute time
 
@@ -288,7 +281,7 @@ PUPPETEER_EXECUTABLE_PATH="..."      # Browser path (auto-detected in WSL)
 ## Recent Major Milestones
 
 - ✅ **Frontend Foundation**: Complete UI/UX with Next.js 15, TypeScript, component library, user flows
-- ✅ **Database Infrastructure**: SQLite + Drizzle ORM with schema, API endpoints, health monitoring  
+- ✅ **Database Infrastructure**: SQLite + Drizzle ORM with schema, API endpoints, health monitoring
 - ✅ **Complete Scraping System**: Puppeteer-based Craigslist scraper for all NYC boroughs with rich data extraction
 - ✅ **Testing & Validation**: Comprehensive test suites and manual testing scripts
 

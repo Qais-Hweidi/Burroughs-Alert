@@ -494,34 +494,55 @@ async function scrapeIndividualListing(
 ): Promise<ScrapedListing> {
   try {
     console.log(`  └─ Visiting individual page for: ${listing.external_id}`);
-    
-    await page.goto(listing.listing_url, { waitUntil: 'networkidle0', timeout: 30000 });
+
+    await page.goto(listing.listing_url, {
+      waitUntil: 'networkidle0',
+      timeout: 30000,
+    });
 
     // Extract enhanced data from individual page
     const enhancedData = await page.evaluate(() => {
       // Extract coordinates from map
-      const mapElement = document.querySelector('#map[data-latitude][data-longitude]');
-      const latitude = mapElement ? parseFloat(mapElement.getAttribute('data-latitude') || '0') : undefined;
-      const longitude = mapElement ? parseFloat(mapElement.getAttribute('data-longitude') || '0') : undefined;
+      const mapElement = document.querySelector(
+        '#map[data-latitude][data-longitude]'
+      );
+      const latitude = mapElement
+        ? parseFloat(mapElement.getAttribute('data-latitude') || '0')
+        : undefined;
+      const longitude = mapElement
+        ? parseFloat(mapElement.getAttribute('data-longitude') || '0')
+        : undefined;
 
       // Extract full description text
-      const descriptionElement = document.querySelector('#postingbody, .postingbody, .userbody');
-      const fullDescription = descriptionElement ? descriptionElement.textContent?.trim() || '' : '';
+      const descriptionElement = document.querySelector(
+        '#postingbody, .postingbody, .userbody'
+      );
+      const fullDescription = descriptionElement
+        ? descriptionElement.textContent?.trim() || ''
+        : '';
 
       // Extract housing attributes (pets, amenities)
-      const housingAttrs = document.querySelector('.mapAndAttrs .attrgroup:last-child');
-      const housingText = housingAttrs ? housingAttrs.textContent?.trim() || '' : '';
+      const housingAttrs = document.querySelector(
+        '.mapAndAttrs .attrgroup:last-child'
+      );
+      const housingText = housingAttrs
+        ? housingAttrs.textContent?.trim() || ''
+        : '';
 
       // Also extract from all attribute groups to catch pet policies
-      const allAttrGroups = Array.from(document.querySelectorAll('.mapAndAttrs .attrgroup'));
-      const allAttributesText = allAttrGroups.map(group => group.textContent?.trim() || '').join(' ');
+      const allAttrGroups = Array.from(
+        document.querySelectorAll('.mapAndAttrs .attrgroup')
+      );
+      const allAttributesText = allAttrGroups
+        .map((group) => group.textContent?.trim() || '')
+        .join(' ');
 
       return {
         latitude: latitude && !isNaN(latitude) ? latitude : undefined,
         longitude: longitude && !isNaN(longitude) ? longitude : undefined,
         fullDescription,
         housingText,
-        allAttributesText
+        allAttributesText,
       };
     });
 
@@ -530,21 +551,27 @@ async function scrapeIndividualListing(
     const petFriendly = detectPetFriendly(listing.title, combinedText);
 
     // Validate coordinates are in NYC area
-    const coordinates = enhancedData.latitude && enhancedData.longitude &&
-      enhancedData.latitude >= 40.4 && enhancedData.latitude <= 40.9 &&
-      enhancedData.longitude >= -74.3 && enhancedData.longitude <= -73.7
-      ? { latitude: enhancedData.latitude, longitude: enhancedData.longitude }
-      : {};
+    const coordinates =
+      enhancedData.latitude &&
+      enhancedData.longitude &&
+      enhancedData.latitude >= 40.4 &&
+      enhancedData.latitude <= 40.9 &&
+      enhancedData.longitude >= -74.3 &&
+      enhancedData.longitude <= -73.7
+        ? { latitude: enhancedData.latitude, longitude: enhancedData.longitude }
+        : {};
 
     return {
       ...listing,
       pet_friendly: petFriendly,
       latitude: coordinates.latitude,
-      longitude: coordinates.longitude
+      longitude: coordinates.longitude,
     };
-
   } catch (error) {
-    console.warn(`    ⚠️  Failed to scrape individual page for ${listing.external_id}:`, error);
+    console.warn(
+      `    ⚠️  Failed to scrape individual page for ${listing.external_id}:`,
+      error
+    );
     return listing; // Return original listing if individual scraping fails
   }
 }
@@ -606,25 +633,32 @@ export async function scrapeRecentListings(
 
     // Enhanced mode: visit individual listing pages for additional data
     if (enhancedMode && result.listings.length > 0) {
-      console.log(`\n🔍 Enhanced mode: Visiting ${result.listings.length} individual pages for detailed data...`);
-      
+      console.log(
+        `\n🔍 Enhanced mode: Visiting ${result.listings.length} individual pages for detailed data...`
+      );
+
       const enhancedListings: ScrapedListing[] = [];
       for (let i = 0; i < result.listings.length; i++) {
         const listing = result.listings[i];
-        console.log(`  📄 Processing ${i + 1}/${result.listings.length}: ${listing.title.substring(0, 50)}...`);
-        
+        console.log(
+          `  📄 Processing ${i + 1}/${result.listings.length}: ${listing.title.substring(0, 50)}...`
+        );
+
         try {
           const enhancedListing = await scrapeIndividualListing(page, listing);
           enhancedListings.push(enhancedListing);
-          
+
           // Add delay between individual page visits to be respectful
           await new Promise((resolve) => setTimeout(resolve, 1500));
         } catch (error) {
-          console.warn(`    ⚠️  Skipping ${listing.external_id} due to error:`, error);
+          console.warn(
+            `    ⚠️  Skipping ${listing.external_id} due to error:`,
+            error
+          );
           enhancedListings.push(listing); // Keep original if enhancement fails
         }
       }
-      
+
       result.listings = enhancedListings;
       console.log(`✅ Enhanced scraping completed with individual page data.`);
     }

@@ -5,7 +5,6 @@
  * Dependencies: Drizzle ORM, Zod validation, nanoid for tokens
  */
 
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/database';
 import { users, alerts } from '@/lib/database/schema';
