@@ -106,13 +106,14 @@ const mockListings = [
     id: 2,
     external_id: 'cl_67890',
     title: 'Cheap 3BR apartment URGENT MUST GO!!!',
-    description: 'Military deployment, leaving country, God bless. Wire transfer only.',
+    description:
+      'Military deployment, leaving country, God bless. Wire transfer only.',
     price: 800,
     bedrooms: 3,
     square_feet: 1200,
     neighborhood: 'Chelsea',
     address: '456 W 23rd St, New York, NY',
-    latitude: 40.7430,
+    latitude: 40.743,
     longitude: -73.9973,
     pet_friendly: false,
     listing_url: 'https://newyork.craigslist.org/test/456',
@@ -166,7 +167,8 @@ vi.mock('../../src/lib/database', () => ({
 const validListingData = {
   external_id: 'cl_test123',
   title: 'Beautiful 1BR Apartment in Upper East Side',
-  description: 'Spacious apartment with modern amenities, great location near subway.',
+  description:
+    'Spacious apartment with modern amenities, great location near subway.',
   price: 2500,
   bedrooms: 1,
   square_feet: 800,
@@ -183,13 +185,14 @@ const validListingData = {
 const scamListingData = {
   external_id: 'cl_scam456',
   title: 'URGENT! Beautiful 3BR apartment - MUST GO - leaving country',
-  description: 'I am military deployed overseas. God bless. Need wire transfer for deposit only. Very urgent, first month only.',
+  description:
+    'I am military deployed overseas. God bless. Need wire transfer for deposit only. Very urgent, first month only.',
   price: 600,
   bedrooms: 3,
   square_feet: 1200,
   neighborhood: 'Chelsea',
   address: '456 W 23rd St, New York, NY 10011',
-  latitude: 40.7430,
+  latitude: 40.743,
   longitude: -73.9973,
   pet_friendly: false,
   listing_url: 'https://newyork.craigslist.org/test/scam',
@@ -257,7 +260,8 @@ describe('/api/listings - POST (Create Listing)', () => {
         ...validListingData,
         external_id: 'cl_legit789',
         title: 'Modern 1BR Apartment',
-        description: 'Well-maintained apartment in great building with doorman.',
+        description:
+          'Well-maintained apartment in great building with doorman.',
         price: 2800,
       };
 
@@ -367,7 +371,9 @@ describe('/api/listings - POST (Create Listing)', () => {
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
       expect(body.error).toBe(ERROR_CODES.VALIDATION_ERROR);
-      expect(body.details[0].message).toContain(`at least $${VALIDATION_LIMITS.price.min}`);
+      expect(body.details[0].message).toContain(
+        `at least $${VALIDATION_LIMITS.price.min}`
+      );
     });
 
     it('should reject price above maximum', async () => {
@@ -389,7 +395,9 @@ describe('/api/listings - POST (Create Listing)', () => {
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
       expect(body.error).toBe(ERROR_CODES.VALIDATION_ERROR);
-      expect(body.details[0].message).toContain(`at most $${VALIDATION_LIMITS.price.max}`);
+      expect(body.details[0].message).toContain(
+        `at most $${VALIDATION_LIMITS.price.max}`
+      );
     });
 
     it('should reject non-integer price', async () => {
@@ -434,7 +442,9 @@ describe('/api/listings - POST (Create Listing)', () => {
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
       expect(body.error).toBe(ERROR_CODES.VALIDATION_ERROR);
-      expect(body.details[0].message).toContain(`at least ${VALIDATION_LIMITS.bedrooms.min}`);
+      expect(body.details[0].message).toContain(
+        `at least ${VALIDATION_LIMITS.bedrooms.min}`
+      );
     });
 
     it('should reject bedroom count above maximum', async () => {
@@ -456,7 +466,9 @@ describe('/api/listings - POST (Create Listing)', () => {
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
       expect(body.error).toBe(ERROR_CODES.VALIDATION_ERROR);
-      expect(body.details[0].message).toContain(`at most ${VALIDATION_LIMITS.bedrooms.max}`);
+      expect(body.details[0].message).toContain(
+        `at most ${VALIDATION_LIMITS.bedrooms.max}`
+      );
     });
   });
 
@@ -505,7 +517,9 @@ describe('/api/listings - POST (Create Listing)', () => {
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
       expect(body.error).toBe(ERROR_CODES.VALIDATION_ERROR);
-      expect(body.details[0].message).toContain('Both latitude and longitude must be provided');
+      expect(body.details[0].message).toContain(
+        'Both latitude and longitude must be provided'
+      );
     });
   });
 
@@ -534,7 +548,7 @@ describe('/api/listings - POST (Create Listing)', () => {
 
     it('should accept valid NYC neighborhoods', async () => {
       const validNeighborhoods = getNeighborhoodNames().slice(0, 5);
-      
+
       for (const neighborhood of validNeighborhoods) {
         const validData = {
           ...validListingData,
@@ -565,7 +579,9 @@ describe('/api/listings - POST (Create Listing)', () => {
       mockDbMethods.select.mockReturnValueOnce({
         from: vi.fn(() => ({
           where: vi.fn(() => ({
-            limit: vi.fn(() => [{ id: 1, external_id: validListingData.external_id }]),
+            limit: vi.fn(() => [
+              { id: 1, external_id: validListingData.external_id },
+            ]),
           })),
         })),
       });
@@ -672,7 +688,8 @@ describe('/api/listings - Scam Detection Algorithm', () => {
       const scamDescData = {
         ...validListingData,
         external_id: 'cl_scamdesc',
-        description: 'I am military deployed overseas. Need wire transfer or western union for deposit. God bless, very urgent.',
+        description:
+          'I am military deployed overseas. Need wire transfer or western union for deposit. God bless, very urgent.',
       };
 
       const request = new NextRequest('http://localhost:3000/api/listings', {
@@ -766,7 +783,7 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     it('should include pagination metadata', async () => {
       // Reset all mocks first
       vi.clearAllMocks();
-      
+
       // Mock the main listings query to return data
       mockDbMethods.select.mockReturnValueOnce({
         from: vi.fn(() => ({
@@ -787,7 +804,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
         })),
       });
 
-      const request = new NextRequest('http://localhost:3000/api/listings?page=2&limit=10');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?page=2&limit=10'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -814,7 +833,10 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.OK);
-      expect(body.filters.neighborhoods).toEqual(['Upper East Side', 'Chelsea']);
+      expect(body.filters.neighborhoods).toEqual([
+        'Upper East Side',
+        'Chelsea',
+      ]);
     });
 
     it('should filter by price range', async () => {
@@ -831,7 +853,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should filter by bedrooms', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?bedrooms=2');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?bedrooms=2'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -841,7 +865,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should filter by pet_friendly', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?pet_friendly=true');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?pet_friendly=true'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -851,7 +877,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should filter by maximum scam score', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?max_scam_score=30');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?max_scam_score=30'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -861,7 +889,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should filter by source', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?source=craigslist');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?source=craigslist'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -889,7 +919,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
 
   describe('Pagination', () => {
     it('should handle pagination parameters', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?page=3&limit=5');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?page=3&limit=5'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -911,7 +943,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should reject invalid page numbers', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?page=0');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?page=0'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -921,7 +955,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should reject invalid limit values', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?limit=150');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?limit=150'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -957,8 +993,14 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should accept all valid sort_by fields', async () => {
-      const validSortFields = ['price', 'scraped_at', 'posted_at', 'bedrooms', 'scam_score'];
-      
+      const validSortFields = [
+        'price',
+        'scraped_at',
+        'posted_at',
+        'bedrooms',
+        'scam_score',
+      ];
+
       for (const sortField of validSortFields) {
         const request = new NextRequest(
           `http://localhost:3000/api/listings?sort_by=${sortField}`
@@ -1036,7 +1078,9 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
     });
 
     it('should reject invalid scam score values', async () => {
-      const request = new NextRequest('http://localhost:3000/api/listings?max_scam_score=150');
+      const request = new NextRequest(
+        'http://localhost:3000/api/listings?max_scam_score=150'
+      );
 
       const response = await GET(request);
       const body = await response.json();
@@ -1068,7 +1112,10 @@ describe('/api/listings - Error Handling', () => {
       const body = await response.json();
 
       // Should still work as Next.js can parse JSON without explicit header
-      expect([HTTP_STATUS.CREATED, HTTP_STATUS.INTERNAL_SERVER_ERROR]).toContain(response.status);
+      expect([
+        HTTP_STATUS.CREATED,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      ]).toContain(response.status);
     });
   });
 
@@ -1160,7 +1207,7 @@ describe('/api/listings - Error Handling', () => {
     it('should handle null and undefined values appropriately', async () => {
       // Reset mocks to ensure clean state
       vi.clearAllMocks();
-      
+
       // Mock successful duplicate check (no existing listing)
       mockDbMethods.select.mockReturnValueOnce({
         from: vi.fn(() => ({
