@@ -16,7 +16,10 @@
       "TodoRead",
       "TodoWrite",
       "Agent(*)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

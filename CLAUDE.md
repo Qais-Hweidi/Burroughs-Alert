@@ -10,10 +10,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **MILESTONE DOCUMENTATION RULE**: Always update this CLAUDE.md file after completing each development milestone or significant progress. This maintains accurate project status and prevents information drift.
 
+**FILE HEADER DOCUMENTATION RULE**: Each implementation file contains detailed header documentation describing features to implement, business logic requirements, and TODO items. When making changes to any file:
+1. **NEVER remove** the existing header documentation and TODO comments
+2. **ALWAYS update** the documentation to reflect what has been implemented (mark with ✅ DONE)
+3. **ALWAYS update** TODO items immediately after completing them
+4. **ADD new TODOs** if you discover additional work needed during implementation
+5. **KEEP** unified sections (Features, Business Logic) with both completed and remaining items together
+6. **FORMAT COMPLETED ITEMS** as "- Description ✅ DONE" (both emoji and explicit "DONE" text)
+7. This maintains clear progress tracking and prevents work duplication
+
 ## Development Environment
 
-- Using Claude Code via WSL terminal on Windows VS Code
-- **WSL/Windows File System Note**: Project files are on Windows filesystem, accessed through WSL. Some npm commands may timeout or behave differently due to cross-filesystem operations
+- Using Claude Code via WSL Ubuntu 22.04.5 LTS terminal on Windows VS Code
+- **Native WSL Environment**: Project files are now fully on WSL Ubuntu filesystem for optimal performance and compatibility
 - **Environment Variables Policy**:
   - `.env.local` file exists but is not visible to Claude Code (gitignored for security)
   - Always ensure `.env.example` contains the same keys as `.env.local` for documentation
@@ -286,9 +295,7 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
 ## Recent Development Activities
 
 - **Frontend MVP Completion**: Complete functional apartment alert system frontend
-
   - **Professional UI/UX Implementation**: Production-ready frontend foundation
-
     - **Landing Page**: Fully implemented with hero section, features, statistics, and working CTAs
     - **User Flow Pages**: Complete journey (landing → create → confirm → success) with proper navigation
     - **Design System**: Professional Tailwind CSS setup with HSL color variables and dark mode support
@@ -296,7 +303,6 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
     - **NYC Data Integration**: 254+ neighborhoods across 5 boroughs with comprehensive type definitions
 
   - **AlertForm Implementation**: Comprehensive apartment search criteria collection
-
     - **All Required Fields**: Email, neighborhoods, price range, bedrooms, pet-friendly, commute preferences
     - **Advanced Neighborhood Selection**: Borough-level selection with "select all" functionality, unlimited selections
     - **Smart Validation**: Client-side validation using application constants and business rules
@@ -304,7 +310,6 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
     - **Commute Integration**: Work/study location and maximum commute time collection (backend calculation documented)
 
   - **Technical Architecture**: Modern Next.js 15 + TypeScript setup
-
     - **App Router**: Full Next.js 15 implementation with proper routing and navigation
     - **Build Configuration**: TypeScript path aliases, PostCSS, ESLint, and Prettier setup
     - **Type Safety**: Comprehensive TypeScript definitions for NYC-specific business logic
@@ -312,9 +317,16 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
     - **Layout Optimization**: Resolved white space issues and container sizing problems
 
   - **Development Process Improvements**: Streamlined development workflow
-    - **WSL Integration**: Documented npm command policy for WSL/Windows development environment
+    - **WSL Migration**: Successfully migrated from Windows filesystem to native WSL Ubuntu 22.04.5 LTS
     - **Documentation Updates**: Comprehensive algorithm documentation for backend implementation
     - **Milestone Tracking**: Implemented systematic progress documentation requirements
+
+- **Backend Database Foundation**: Complete database infrastructure implementation
+  - **SQLite Database**: Fully functional database with better-sqlite3 compatibility in native WSL environment
+  - **Schema Implementation**: All tables created (users, alerts, listings, notifications) with proper indexes and constraints
+  - **Health Monitoring**: Working `/api/health` endpoint with comprehensive system status reporting
+  - **Database Operations**: Connection management, transaction support, and graceful shutdown handling
+  - **Development Tools**: Schema initialization, database reset utilities, and health checking
 
 - **Architecture Foundation**: Established core system design
   - **Comprehensive Documentation**: Complete system design and implementation strategy in `/docs/`
