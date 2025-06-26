@@ -1,31 +1,8 @@
 /**
  * Database Schema Definition
- *
- * Defines the complete database schema using Drizzle ORM for SQLite.
- * Includes all tables, relationships, indexes, and constraints for the apartment alert system.
- *
- * Tables implemented:
- * - users: Email-based user accounts with minimal data collection
- * - alerts: User search criteria and preferences
- * - listings: Scraped apartment listings from Craigslist
- * - notifications: Email notification history and tracking
- *
- * Key Design Principles:
- * - Privacy-first: Minimal personal data collection
- * - Email-only authentication: No passwords or complex user management
- * - Data retention: Automatic cleanup policies
- * - Performance: Proper indexing for search and matching operations
- *
- * SQLite Features Used:
- * - Foreign key constraints for data integrity
- * - JSON columns for flexible data storage (neighborhoods, amenities)
- * - Unique constraints for duplicate prevention
- * - Timestamps with automatic updates
- *
- * Related Documentation:
- * - docs/04-database-schema.md (complete schema specification)
- * - docs/03-architecture.md (database architecture overview)
- * - CLAUDE.md (data retention and privacy policies)
+ * Purpose: SQLite schema for apartment alert system (users, alerts, listings, notifications)
+ * Status: Complete implementation with all tables, indexes, and relationships
+ * Dependencies: Drizzle ORM, SQLite - uses JSON columns for flexible data storage
  */
 
 import { sql } from 'drizzle-orm';

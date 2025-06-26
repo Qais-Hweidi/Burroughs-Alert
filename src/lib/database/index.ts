@@ -1,31 +1,8 @@
 /**
- * Database Connection and Initialization
- *
- * Centralizes database connection management and provides initialization utilities.
- * Handles SQLite database setup with Drizzle ORM for the apartment alert system.
- *
- * Features implemented:
- * - Database connection singleton
- * - Schema initialization
- * - Connection health checking
- * - Transaction management utilities
- * - Development vs production configuration
- *
- * SQLite Configuration:
- * - Database file location: ./data/app.db
- * - WAL mode for better concurrency
- * - Foreign key enforcement
- * - Busy timeout configuration
- * - Memory optimization settings
- *
- * Environment Variables:
- * - DATABASE_URL: Database file path (default: file:./data/app.db)
- * - NODE_ENV: Environment-specific configuration
- *
- * Related Documentation:
- * - docs/04-database-schema.md (schema specification)
- * - docs/02-tech-stack.md (database technology choices)
- * - CLAUDE.md (database strategy and configuration)
+ * Database Connection Manager - SQLite with Drizzle ORM singleton for apartment alert system
+ * Status: ✅ FULLY IMPLEMENTED - Connection, schema init, health checks, transactions
+ * Config: DATABASE_URL (default: file:./data/app.db), WAL mode, foreign keys enabled
+ * Features: Auto-schema creation, health monitoring, dev utilities (reset), graceful shutdown
  */
 
 import { drizzle } from 'drizzle-orm/better-sqlite3';

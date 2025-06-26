@@ -1,32 +1,8 @@
 /**
- * Craigslist Apartment Scraper
- *
- * Scrapes recent apartment listings from Craigslist NYC across all 5 boroughs.
- * Uses Puppeteer for basic scraping without anti-detection measures.
- *
- * Features implemented:
- * - Multi-borough scraping (Manhattan, Brooklyn, Queens, Bronx, Staten Island) ✅ DONE
- * - Time filtering for recent listings (30-45 minutes) ✅ DONE
- * - Data extraction and normalization ✅ DONE
- * - Basic error handling ✅ DONE
- *
- * Scraping Strategy:
- * - Target URL: https://newyork.craigslist.org/search/apa
- * - Borough-specific searches for comprehensive coverage
- * - Fixed delays between requests (2 seconds)
- * - Simple Puppeteer setup without anti-detection
- * - Focus on recent listings only
- *
- * Data Extraction:
- * - Title and price parsing ✅ DONE
- * - URL and external ID extraction ✅ DONE
- * - Posting time validation ✅ DONE
- * - Basic neighborhood identification ✅ DONE
- *
- * Related Documentation:
- * - docs/08-scraping-strategy.md (detailed scraping approach)
- * - docs/07-algorithms-pseudocode.md (data processing algorithms)
- * - docs/04-database-schema.md (listings data structure)
+ * Craigslist Apartment Scraper - Puppeteer-based scraper for NYC listings (all 5 boroughs)
+ * Status: ✅ FULLY IMPLEMENTED - Multi-borough scraping, time filtering, data extraction, enhanced mode
+ * Dependencies: Puppeteer, Chromium (WSL-compatible: /usr/bin/chromium-browser)
+ * Modes: Basic (search results only) or Enhanced (visits individual pages for coordinates/details)
  */
 
 import puppeteer, { Browser, Page } from 'puppeteer';

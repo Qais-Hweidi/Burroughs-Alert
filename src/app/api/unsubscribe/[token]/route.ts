@@ -1,56 +1,8 @@
 /**
  * API Route: /api/unsubscribe/[token]
- *
- * Handles email unsubscribe functionality with secure token validation.
- * Provides one-click unsubscribe compliance for CAN-SPAM requirements.
- *
- * Features implemented:
- * - GET: Display unsubscribe confirmation page ✅ DONE
- * - POST: Process unsubscribe request ✅ DONE
- * - Token validation and security ✅ DONE
- * - Alert deactivation for user privacy ✅ DONE
- * - User feedback and confirmation ✅ DONE
- * - Database transaction safety ✅ DONE
- * - Comprehensive error handling ✅ DONE
- * - Audit logging for compliance ✅ DONE
- *
- * Security Considerations:
- * - Token uniqueness validation against database
- * - Rate limiting through simple request validation
- * - SQL injection prevention via Drizzle ORM
- * - Graceful error handling without information leakage
- * - Immediate processing for legal compliance
- *
- * Unsubscribe Flow:
- * 1. User clicks unsubscribe link in email with token
- * 2. GET request validates token and shows confirmation page
- * 3. POST request processes unsubscribe (deactivates all alerts)
- * 4. User receives immediate confirmation
- * 5. All future emails are prevented for that user
- *
- * Token Validation:
- * - Simple database lookup for token existence
- * - User must be active to process unsubscribe
- * - Validates token format (non-empty string)
- * - Returns appropriate HTTP status codes
- *
- * CAN-SPAM Compliance:
- * - One-click unsubscribe functionality (POST endpoint)
- * - Immediate processing of unsubscribe requests
- * - Clear confirmation messaging
- * - No additional information required from user
- * - Prevents all future email communications
- *
- * Database Operations:
- * - Deactivates user account (is_active = false)
- * - Deactivates all user alerts (is_active = false)
- * - Uses transactions for data consistency
- * - Preserves data for potential audit requirements
- *
- * Related Documentation:
- * - docs/05-api-design.md (unsubscribe API specification)
- * - docs/04-database-schema.md (alerts and tokens schema)
- * - CLAUDE.md (security and privacy considerations)
+ * Purpose: CAN-SPAM compliant one-click email unsubscribe with secure token validation
+ * Status: Fully implemented ✅ DONE (GET confirmation page, POST process unsubscribe)
+ * Operations: Token validation, user/alerts deactivation with transactions, HTML response pages
  */
 
 import { NextRequest, NextResponse } from 'next/server';

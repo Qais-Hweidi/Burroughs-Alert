@@ -1,39 +1,10 @@
 /**
  * API Route: /api/alerts
- *
- * Handles alert creation and retrieval for user apartment search alerts.
- * Implements email-based alert system with comprehensive validation.
- *
- * Features:
- * - POST: Create new alert with comprehensive validation ✅ DONE
- * - GET: Retrieve all alerts (basic implementation) ✅ DONE
- * - GET: Retrieve user-specific alerts (by email or token) ✅ DONE
- *
- * Business Logic:
- * - Comprehensive email format validation ✅ DONE
- * - NYC neighborhoods validation against constants ✅ DONE
- * - Price range validation ($500-$20,000) ✅ DONE
- * - Bedroom count validation (0-10) ✅ DONE
- * - Database integration with user creation/lookup ✅ DONE
- * - Alert creation with foreign key relationships ✅ DONE
- * - Unsubscribe token generation ✅ DONE
- * - Duplicate alert prevention ✅ DONE
- * - Zod schema validation for all inputs ✅ DONE
- *
- * Related Documentation:
- * - docs/05-api-design.md (detailed API specification)
- * - docs/04-database-schema.md (alerts table schema)
- * - docs/07-algorithms-pseudocode.md (alert matching logic)
+ * Purpose: Create and retrieve apartment search alerts with email-based authentication
+ * Status: Complete implementation with full validation and duplicate prevention
+ * Dependencies: Drizzle ORM, Zod validation, nanoid for tokens
  */
 
-// ✅ DONE: Alert creation and retrieval with Next.js 15 App Router (POST/GET)
-// ✅ DONE: Integrate with Drizzle ORM database queries
-// ✅ DONE: Comprehensive error handling and logging
-// ✅ DONE: Implement unsubscribe token generation
-// ✅ DONE: Add validation using Zod schemas
-// ✅ DONE: Add comprehensive validation (NYC neighborhoods, price ranges, email format)
-// ✅ DONE: Implement duplicate alert prevention
-// ✅ DONE: Add user-specific alert retrieval (by email/token)
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/database';

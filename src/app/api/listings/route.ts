@@ -1,63 +1,8 @@
 /**
  * API Route: /api/listings
- *
- * Backend-only endpoint for apartment listing data operations.
- * Used by scraper system to add listings and by matching system to retrieve listings for alert processing.
- * NOT used by frontend - users cannot search/browse listings directly.
- *
- * Features:
- * - POST: Add new apartment listings from scraper system ✅ DONE
- * - GET: Retrieve apartment listings with filtering, pagination, and sorting ✅ DONE
- * - PUT: Update existing listings (for scraper maintenance) 🔄 TODO
- * - DELETE: Remove/deactivate listings (for cleanup jobs) 🔄 TODO
- *
- * Business Logic:
- * - Comprehensive validation for all listing data fields ✅ DONE
- * - Duplicate listing prevention using external_id uniqueness ✅ DONE
- * - Basic scam detection using price and description analysis ✅ DONE
- * - Geographic validation for NYC boundaries ✅ DONE
- * - Neighborhood normalization and validation ✅ DONE
- * - Image URL validation and sanitization ✅ DONE
- * - Advanced filtering with price range, bedrooms, neighborhoods ✅ DONE
- * - Pagination support for large result sets ✅ DONE
- * - Sorting options (price, date, bedrooms, scam_score) ✅ DONE
- * - Query optimization with proper database indexes ✅ DONE
- *
- * Scraper Integration:
- * - Accept listings from Craigslist scraper system ✅ DONE
- * - Handle batch listing insertion for efficiency 🔄 TODO
- * - Track scraping metadata (scraped_at, source) ✅ DONE
- * - Support multiple listing sources (extensible) ✅ DONE
- *
- * Matching System Integration:
- * - Provide filtered listing queries for alert matching ✅ DONE
- * - Support complex filtering combinations ✅ DONE
- * - Optimize query performance for matching algorithms ✅ DONE
- * - Return listings with all necessary metadata ✅ DONE
- *
- * Data Quality & Security:
- * - SQL injection prevention using parameterized queries ✅ DONE
- * - URL sanitization and validation ✅ DONE
- * - Price range validation and scam detection ✅ DONE
- * - Text content sanitization ✅ DONE
- * - Geographic coordinate validation ✅ DONE
- *
- * TODO:
- * - Implement batch listing insertion endpoint for scraper efficiency
- * - Add listing update endpoint for scraper maintenance operations
- * - Add listing deactivation endpoint for cleanup jobs
- * - Implement advanced scam detection using ML/heuristics
- * - Add image URL validation and processing
- * - Implement listing deduplication based on address similarity
- * - Add listing quality scoring system
- * - Implement caching for frequently accessed listings
- * - Add listing analytics and reporting endpoints
- * - Support for listing image management and storage
- *
- * Related Documentation:
- * - docs/05-api-design.md (complete API specification)
- * - docs/04-database-schema.md (listings table schema)
- * - docs/07-algorithms-pseudocode.md (scam detection and matching algorithms)
+ * Purpose: Backend-only endpoint for scraper to add listings and matcher to retrieve listings (NOT for frontend use)
+ * Status: POST/GET implemented ✅ DONE | PUT/DELETE 🔄 TODO | Batch insertion TODO
+ * Features: Validation, duplicate prevention, scam detection, NYC geo-validation, filtering/pagination/sorting
  */
 
 import { NextRequest, NextResponse } from 'next/server';

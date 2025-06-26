@@ -1,35 +1,8 @@
 /**
  * API Route: /api/health
- *
- * System health monitoring endpoint for debugging and monitoring.
- * Provides status information for all system components.
- *
- * Features implemented:
- * - GET: Return system health status
- * - Database connectivity check
- * - System component status
- * - Recent activity metrics
- *
- * Health Check Components:
- * - Database: Connection status and table information
- * - Environment: Configuration validation
- * - System: Memory and uptime information
- *
- * Response Format:
- * - status: "healthy" | "degraded" | "unhealthy"
- * - components: Individual component status details
- * - timestamp: Current server time
- * - version: Application version info
- *
- * Use Cases:
- * - Development debugging
- * - Production monitoring
- * - Load balancer health checks
- * - System administration
- *
- * Related Documentation:
- * - docs/05-api-design.md (health endpoint specification)
- * - docs/03-architecture.md (system component overview)
+ * Purpose: System health monitoring endpoint returning status of database, environment, and system components
+ * Status: Fully implemented with comprehensive health checks
+ * Response: JSON with overall status ("healthy"|"degraded"|"unhealthy") and component details
  */
 
 import { NextRequest, NextResponse } from 'next/server';
