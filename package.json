@@ -11,7 +11,14 @@
     "format": "prettier --write .",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "jobs:start": "npx tsx scripts/manage-jobs.ts start",
+    "jobs:stop": "npx tsx scripts/manage-jobs.ts stop",
+    "jobs:status": "npx tsx scripts/manage-jobs.ts status",
+    "jobs:health": "npx tsx scripts/manage-jobs.ts health",
+    "jobs:scraper": "npx tsx scripts/manage-jobs.ts trigger scraper",
+    "jobs:matcher": "npx tsx scripts/manage-jobs.ts trigger matcher",
+    "jobs:cleanup": "npx tsx scripts/manage-jobs.ts trigger cleanup"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.4.0",
@@ -27,6 +34,7 @@
     "better-sqlite3": "^9.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "commander": "^14.0.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.44.2",
     "lucide-react": "^0.518.0",

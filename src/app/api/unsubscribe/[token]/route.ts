@@ -530,9 +530,9 @@ const generateSuccessPageHTML = (result: UnsubscribeResult): string => {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ): Promise<NextResponse> {
-  const { token } = params;
+  const { token } = await params;
 
   try {
     // Validate token format
@@ -617,9 +617,9 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ): Promise<NextResponse> {
-  const { token } = params;
+  const { token } = await params;
 
   try {
     // Validate token format

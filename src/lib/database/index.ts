@@ -8,7 +8,7 @@
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import Database from 'better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { schema } from './schema';
@@ -258,12 +258,12 @@ export const checkDatabaseHealth = async (): Promise<DatabaseHealth> => {
     const activeAlerts = db
       .select()
       .from(schema.alerts)
-      .where(sql`is_active = 1`)
+      .where(eq(schema.alerts.is_active, true))
       .all().length;
     const activeListings = db
       .select()
       .from(schema.listings)
-      .where(sql`is_active = 1`)
+      .where(eq(schema.listings.is_active, true))
       .all().length;
 
     // Get recent notifications (last 24 hours)

@@ -156,9 +156,19 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 - **Key Tables**: users, alerts, listings, notifications
 - **Approach**: Direct schema setup (no migrations system for MVP)
 
-### Background Job System (Simplified for MVP)
+### Background Job System ✅ COMPLETE
 
-**Note**: For local MVP, background jobs will be simplified or manual triggers instead of complex scheduling system.
+**Implementation**: Complete automated job system with sequential pipeline execution
+
+**Job Pipeline**:
+
+1. **Scraper Job** (30-45min intervals) - Fetch new Craigslist listings
+2. **Matcher Job** (triggered after scraper) - Match listings against user alerts
+3. **Notifier Job** (triggered after matcher) - Send batch emails for matches
+4. **Cleanup Job** (daily) - Remove old data and maintain database health
+5. **Health Check** (5min intervals) - Monitor system status
+
+**Features**: Error handling, graceful shutdown, monitoring, manual triggers
 
 ### API Architecture Pattern (Simplified MVP)
 
@@ -171,17 +181,26 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 
 **Note**: Users cannot search/browse listings directly - the system only supports alert creation and email notifications.
 
-### Data Flow Architecture (Simplified MVP)
+### Data Flow Architecture ✅ COMPLETE
 
 1. **User Journey**: Landing Page (Email Input) → Alert Creation Form → Confirmation
-2. **Background Flow**: Scraper → Basic Scam Detection → Database → Matcher → Direct Email Notification
-3. **Simple Flow**: No complex queues, direct processing for MVP
+2. **Background Flow**: Scraper → Database → Matcher → Notification Records → Notifier → Email Delivery
+3. **Pipeline**: Automated sequential processing with error handling and monitoring
 
 ### Scraping System ✅ DONE
 
 **Technology**: Puppeteer scraping Craigslist NYC (all 5 boroughs)
 **Data Extracted**: Neighborhoods, bedrooms, prices, coordinates, pet policies
 **Modes**: Basic (search results) vs Enhanced (individual pages) - Enhanced default
+
+### Notification System ✅ COMPLETE
+
+**Email Service**: Nodemailer with Gmail SMTP integration
+**Batch Processing**: Groups multiple listings per user into single emails
+**Duplicate Prevention**: Database tracking prevents sending same listing twice
+**Error Handling**: Failed emails marked for retry, graceful degradation
+**Status Tracking**: All notifications tracked with delivery status
+**Features**: HTML-formatted emails with unsubscribe links, delivery monitoring
 
 ### Commute Time Calculation System Design
 
@@ -225,10 +244,11 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 - ✅ Database infrastructure (SQLite + Drizzle ORM)
 - ✅ **Complete Craigslist Scraper** (Puppeteer, all NYC boroughs)
 - ✅ Component library and form validation
-- ❌ Background job system - **NEXT PRIORITY**
-- ❌ Email notifications - **HIGH PRIORITY**
-- ❌ Alert matching logic - **HIGH PRIORITY**
-- ❌ Commute time
+- ✅ **Complete Background Job System** (Scraper → Matcher → Notifier → Cleanup)
+- ✅ **Alert Matching Logic** (Price, bedrooms, neighborhoods, pets)
+- ✅ **Email Notification System** (Batch emails, duplicate prevention, error handling)
+- ✅ **Database Query Layer** (Listings, matching, notifications, cleanup)
+- ❌ Commute time integration - **NEXT PRIORITY**
 
 ## Environment Variables Required
 
@@ -283,12 +303,54 @@ PUPPETEER_EXECUTABLE_PATH="..."      # Browser path (auto-detected in WSL)
 - ✅ **Frontend Foundation**: Complete UI/UX with Next.js 15, TypeScript, component library, user flows
 - ✅ **Database Infrastructure**: SQLite + Drizzle ORM with schema, API endpoints, health monitoring
 - ✅ **Complete Scraping System**: Puppeteer-based Craigslist scraper for all NYC boroughs with rich data extraction
+- ✅ **Background Job System**: Complete automation with scraper, matcher, and cleanup jobs
+- ✅ **Alert Matching Engine**: Smart matching of listings to user criteria with duplicate prevention
+- ✅ **Database Operations Layer**: Full CRUD operations for listings, alerts, and notifications
 - ✅ **Testing & Validation**: Comprehensive test suites and manual testing scripts
 
-## Scraper Usage
+## Job System Usage
+
+### Background Jobs (Automated)
 
 ```bash
+# Start the complete job system (runs continuously)
+npx tsx scripts/run-jobs.ts system-start
+
+# Check system status and health
+npx tsx scripts/run-jobs.ts system-status
+```
+
+### Manual Job Execution (Testing/Debug)
+
+```bash
+# Individual jobs
+npx tsx scripts/run-jobs.ts scraper        # Run scraper once
+npx tsx scripts/run-jobs.ts matcher        # Run matcher once
+npx tsx scripts/run-jobs.ts cleanup        # Run cleanup once
+
+# Test all components
+npx tsx scripts/test-jobs.ts               # Comprehensive test
+
+# Legacy scraper (direct)
 npx tsx scripts/manual/run-scraper.ts --time 60        # Enhanced mode (default)
 npx tsx scripts/manual/run-scraper.ts --basic          # Basic mode (faster)
 npx tsx scripts/manual/run-scraper.ts --save           # Save to database
 ```
+
+### API Control
+
+```bash
+# Get system status
+curl http://localhost:3000/api/jobs
+
+# Start/stop job system
+curl -X POST http://localhost:3000/api/jobs -H "Content-Type: application/json" -d '{"action": "start"}'
+curl -X POST http://localhost:3000/api/jobs -H "Content-Type: application/json" -d '{"action": "stop"}'
+
+# Trigger individual jobs
+curl -X POST http://localhost:3000/api/jobs -H "Content-Type: application/json" -d '{"action": "trigger", "jobType": "scraper"}'
+```
+
+## Recent Updates
+
+- Added tests in the tests folder to improve code coverage and reliability

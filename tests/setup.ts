@@ -17,7 +17,7 @@
  * - CLAUDE.md (testing strategy and configuration)
  */
 
-import { beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -193,7 +193,7 @@ export const testDbUtils = {
 // Global test setup
 beforeAll(() => {
   // Set test environment variables
-  process.env.NODE_ENV = 'test';
+  (process.env as any).NODE_ENV = 'test';
   process.env.DATABASE_URL = TEST_DB_PATH;
 });
 
@@ -213,8 +213,6 @@ afterAll(() => {
 });
 
 // Mock the database module to use test database
-if (typeof vi !== 'undefined') {
-  vi.mock('@/lib/database', () => ({
-    getDatabase: () => testDbUtils.getConnection(),
-  }));
-}
+vi.mock('@/lib/database', () => ({
+  getDatabase: () => testDbUtils.getConnection(),
+}));

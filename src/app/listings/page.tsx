@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, MapPin, DollarSign, Home } from 'lucide-react';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import {
 } from '@/lib/utils/mockListings';
 import { formatPrice, formatBedrooms } from '@/lib/utils/listingHelpers';
 
-export default function ListingsPage() {
+function ListingsContent() {
   const searchParams = useSearchParams();
   const alertId = searchParams?.get('alertId');
 
@@ -225,5 +225,20 @@ export default function ListingsPage() {
         </div>
       </Container>
     </div>
+  );
+}
+
+export default function ListingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading listings...</p>
+        </div>
+      </div>
+    }>
+      <ListingsContent />
+    </Suspense>
   );
 }

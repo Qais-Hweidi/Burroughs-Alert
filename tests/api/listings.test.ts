@@ -502,7 +502,7 @@ describe('/api/listings - POST (Create Listing)', () => {
         latitude: 40.7831,
         // longitude missing
       };
-      delete invalidData.longitude;
+      delete (invalidData as any).longitude;
 
       const request = new NextRequest('http://localhost:3000/api/listings', {
         method: 'POST',
@@ -798,9 +798,22 @@ describe('/api/listings - GET (Retrieve Listings)', () => {
       });
 
       // Mock count query to return total count
-      mockDbMethods.select.mockReturnValueOnce({
+      (mockDbMethods.select as any).mockReturnValueOnce({
         from: vi.fn(() => ({
-          where: vi.fn(() => [{ count: 25 }]),
+          where: vi.fn(() => ({
+            orderBy: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                offset: vi.fn(() => [{ count: 25 }]),
+              })),
+            })),
+            limit: vi.fn(() => [{ count: 25 }]),
+          })),
+          orderBy: vi.fn(() => ({
+            limit: vi.fn(() => ({
+              offset: vi.fn(() => [{ count: 25 }]),
+            })),
+          })),
+          limit: vi.fn(() => [{ count: 25 }]),
         })),
       });
 
