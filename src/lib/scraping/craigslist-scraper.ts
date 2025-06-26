@@ -43,6 +43,10 @@ export interface ScrapedListing {
   listing_url: string;
   posted_at: string | null;
   neighborhood?: string;
+  bedrooms?: number;
+  pet_friendly?: boolean;
+  latitude?: number;
+  longitude?: number;
   source: string;
 }
 
@@ -191,17 +195,173 @@ function extractExternalId(url: string): string {
 }
 
 /**
- * Basic neighborhood extraction from title
+ * Extract neighborhood from listing title and location text
  */
 function extractNeighborhood(
   title: string,
+  locationText: string,
   boroughName: string
 ): string | undefined {
+  if (!title && !locationText) return boroughName;
+
+  const combinedText = `${title} ${locationText}`.toLowerCase();
+
+  // Common NYC neighborhood patterns
+  const neighborhoodPatterns = [
+    // Manhattan neighborhoods
+    /\b(upper east side|ues|upper west side|uws|midtown|times square|financial district|tribeca|soho|nolita|little italy|chinatown|lower east side|les|east village|west village|greenwich village|chelsea|flatiron|gramercy|union square|murray hill|kips bay|turtle bay|sutton place|yorkville|lenox hill|carnegie hill|hamilton heights|washington heights|inwood|harlem|east harlem|spanish harlem)\b/,
+
+    // Brooklyn neighborhoods
+    /\b(williamsburg|greenpoint|bushwick|bed stuy|bedford stuyvesant|crown heights|prospect heights|park slope|gowanus|red hook|carroll gardens|cobble hill|boerum hill|fort greene|clinton hill|brooklyn heights|dumbo|sunset park|bay ridge|bensonhurst|coney island|brighton beach|sheepshead bay|marine park|flatbush|east flatbush|flatlands|canarsie|east new york|brownsville|ocean hill)\b/,
+
+    // Queens neighborhoods
+    /\b(long island city|lic|astoria|sunnyside|woodside|elmhurst|jackson heights|corona|flushing|forest hills|kew gardens|richmond hill|ozone park|howard beach|rockaway|far rockaway|jamaica|hollis|queens village|bayside|whitestone|college point|fresh meadows)\b/,
+
+    // Bronx neighborhoods
+    /\b(mott haven|melrose|morrisania|concourse|high bridge|morris heights|university heights|fordham|belmont|tremont|mount hope|east tremont|west farms|soundview|castle hill|parkchester|unionport|westchester square|throggs neck|co op city|riverdale|kingsbridge|marble hill)\b/,
+
+    // Staten Island neighborhoods
+    /\b(st george|stapleton|clifton|port richmond|west brighton|new brighton|livingston|bulls head|chelsea|travis|richmond valley|tottenville|pleasant plains|prince bay|annadale|eltingville|great kills|arden heights|rossville|charleston)\b/,
+  ];
+
+  for (const pattern of neighborhoodPatterns) {
+    const match = combinedText.match(pattern);
+    if (match) {
+      return match[1]
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }
+  }
+
+  // If no specific neighborhood found, return borough
+  return boroughName;
+}
+
+/**
+ * Extract bedroom count from listing title
+ */
+function extractBedrooms(title: string): number | undefined {
   if (!title) return undefined;
 
-  // For now, just return the borough name
-  // TODO: Implement more sophisticated neighborhood detection
-  return boroughName;
+  const text = title.toLowerCase();
+
+  // Common bedroom patterns
+  const patterns = [
+    /(\d+)\s*(?:br|bed|bedroom)s?/,
+    /(\d+)\s*bedroom/,
+    /\b(\d+)br\b/,
+    /studio/,
+    /efficiency/,
+  ];
+
+  // Check for studio/efficiency first
+  if (text.includes('studio') || text.includes('efficiency')) {
+    return 0;
+  }
+
+  // Check for numbered bedrooms
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      const count = parseInt(match[1], 10);
+      if (count >= 0 && count <= 6) {
+        // Reasonable range
+        return count;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Detect if listing is pet-friendly
+ */
+function detectPetFriendly(
+  title: string,
+  description?: string
+): boolean | undefined {
+  if (!title && !description) return undefined;
+
+  const text = `${title} ${description || ''}`.toLowerCase();
+
+  // Pet-friendly indicators
+  const petFriendlyPatterns = [
+    /pets? (?:ok|okay|allowed|welcome)/,
+    /pet friendly/,
+    /pet-friendly/,
+    /dogs? (?:ok|okay|allowed|welcome)/,
+    /cats? (?:ok|okay|allowed|welcome)/,
+    /dogs? are (?:ok|okay|allowed|welcome)/,
+    /cats? are (?:ok|okay|allowed|welcome)/,
+    /accepts? pets?/,
+    /pet deposit/,
+    /pet-friendly/,
+    /\bpets ok\b/,
+    /\bdogs ok\b/,
+    /\bcats ok\b/,
+  ];
+
+  // Pet-not-allowed indicators
+  const noPetPatterns = [
+    /no pets?/,
+    /pets? not allowed/,
+    /no dogs?/,
+    /no cats?/,
+    /pet-free/,
+    /no animals/,
+  ];
+
+  // Check for explicit no-pet policies first
+  for (const pattern of noPetPatterns) {
+    if (text.match(pattern)) {
+      return false;
+    }
+  }
+
+  // Check for pet-friendly indicators
+  for (const pattern of petFriendlyPatterns) {
+    if (text.match(pattern)) {
+      return true;
+    }
+  }
+
+  // If no explicit mention, return undefined
+  return undefined;
+}
+
+/**
+ * Extract coordinates from listing page (if available)
+ */
+function extractCoordinates(mapUrl?: string): {
+  latitude?: number;
+  longitude?: number;
+} {
+  if (!mapUrl) return {};
+
+  // Try to extract lat/lng from map URLs
+  const patterns = [
+    /lat=([^&]+).*lng=([^&]+)/,
+    /ll=([^,]+),([^&]+)/,
+    /@([^,]+),([^,]+)/,
+    /q=([^,]+),([^&]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = mapUrl.match(pattern);
+    if (match) {
+      const lat = parseFloat(match[1]);
+      const lng = parseFloat(match[2]);
+
+      // Validate NYC area coordinates
+      if (lat >= 40.4 && lat <= 40.9 && lng >= -74.3 && lng <= -73.7) {
+        return { latitude: lat, longitude: lng };
+      }
+    }
+  }
+
+  return {};
 }
 
 // ================================
@@ -233,7 +393,7 @@ async function scrapeBorough(
         missingTitle: 0,
         missingPrice: 0,
         missingLink: 0,
-        extracted: 0
+        extracted: 0,
       };
 
       listingElements.forEach((element, index) => {
@@ -241,8 +401,15 @@ async function scrapeBorough(
           // Extract basic information using updated selectors
           const titleElement = element.querySelector('.posting-title .label');
           const priceElement = element.querySelector('.priceinfo');
-          const timeElement = element.querySelector('.meta span[title*="2024"], .meta span[title*="2025"]');
+          const timeElement = element.querySelector(
+            '.meta span[title*="2024"], .meta span[title*="2025"]'
+          );
           const linkElement = element.querySelector('.cl-app-anchor');
+
+          // Extract additional information for enhanced data
+          const locationElement = element.querySelector('.meta');
+          const housingElement = element.querySelector('.housing');
+          const mapElement = element.querySelector('a[href*="maps.google"]');
 
           if (!titleElement) debugInfo.missingTitle++;
           if (!priceElement) debugInfo.missingPrice++;
@@ -255,7 +422,7 @@ async function scrapeBorough(
                 hasTitle: !!titleElement,
                 hasPrice: !!priceElement,
                 hasLink: !!linkElement,
-                innerHTML: element.innerHTML.substring(0, 200)
+                innerHTML: element.innerHTML.substring(0, 200),
               });
             }
             return;
@@ -265,6 +432,11 @@ async function scrapeBorough(
           const priceText = priceElement.textContent?.trim() || '';
           const timeText = timeElement?.textContent?.trim() || '';
           const url = (linkElement as HTMLAnchorElement).href;
+          const locationText = locationElement?.textContent?.trim() || '';
+          const housingText = housingElement?.textContent?.trim() || '';
+          const mapUrl = mapElement
+            ? (mapElement as HTMLAnchorElement).href
+            : undefined;
 
           debugInfo.extracted++;
           extractedListings.push({
@@ -272,6 +444,9 @@ async function scrapeBorough(
             priceText,
             url,
             timeText,
+            locationText,
+            housingText,
+            mapUrl,
           });
         } catch (error) {
           console.warn('Error extracting listing:', error);
@@ -287,12 +462,25 @@ async function scrapeBorough(
 
     for (const listing of listings) {
       // Check if listing is recent enough
-      if (listing.timeText && !isWithinTimeRange(listing.timeText, maxMinutes)) {
+      if (
+        listing.timeText &&
+        !isWithinTimeRange(listing.timeText, maxMinutes)
+      ) {
         continue; // Skip old listings
       }
 
       const price = extractPrice(listing.priceText);
       if (!price) continue; // Skip listings without valid price
+
+      // Extract enhanced data
+      const bedrooms = extractBedrooms(listing.title);
+      const petFriendly = detectPetFriendly(listing.title, listing.housingText);
+      const coordinates = extractCoordinates(listing.mapUrl);
+      const neighborhood = extractNeighborhood(
+        listing.title,
+        listing.locationText,
+        borough.name
+      );
 
       const scrapedListing: ScrapedListing = {
         external_id: extractExternalId(listing.url),
@@ -300,7 +488,11 @@ async function scrapeBorough(
         price,
         listing_url: listing.url,
         posted_at: parsePostingTime(listing.timeText),
-        neighborhood: extractNeighborhood(listing.title, borough.name),
+        neighborhood,
+        bedrooms,
+        pet_friendly: petFriendly,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
         source: 'craigslist',
       };
 
@@ -318,10 +510,75 @@ async function scrapeBorough(
 }
 
 /**
+ * Enhanced data extraction from individual listing page
+ */
+async function scrapeIndividualListing(
+  page: Page,
+  listing: ScrapedListing
+): Promise<ScrapedListing> {
+  try {
+    console.log(`  └─ Visiting individual page for: ${listing.external_id}`);
+    
+    await page.goto(listing.listing_url, { waitUntil: 'networkidle0', timeout: 30000 });
+
+    // Extract enhanced data from individual page
+    const enhancedData = await page.evaluate(() => {
+      // Extract coordinates from map
+      const mapElement = document.querySelector('#map[data-latitude][data-longitude]');
+      const latitude = mapElement ? parseFloat(mapElement.getAttribute('data-latitude') || '0') : undefined;
+      const longitude = mapElement ? parseFloat(mapElement.getAttribute('data-longitude') || '0') : undefined;
+
+      // Extract full description text
+      const descriptionElement = document.querySelector('#postingbody, .postingbody, .userbody');
+      const fullDescription = descriptionElement ? descriptionElement.textContent?.trim() || '' : '';
+
+      // Extract housing attributes (pets, amenities)
+      const housingAttrs = document.querySelector('.mapAndAttrs .attrgroup:last-child');
+      const housingText = housingAttrs ? housingAttrs.textContent?.trim() || '' : '';
+
+      // Also extract from all attribute groups to catch pet policies
+      const allAttrGroups = Array.from(document.querySelectorAll('.mapAndAttrs .attrgroup'));
+      const allAttributesText = allAttrGroups.map(group => group.textContent?.trim() || '').join(' ');
+
+      return {
+        latitude: latitude && !isNaN(latitude) ? latitude : undefined,
+        longitude: longitude && !isNaN(longitude) ? longitude : undefined,
+        fullDescription,
+        housingText,
+        allAttributesText
+      };
+    });
+
+    // Enhanced pet-friendly detection with full description and attributes
+    const combinedText = `${listing.title} ${enhancedData.fullDescription} ${enhancedData.housingText} ${enhancedData.allAttributesText}`;
+    const petFriendly = detectPetFriendly(listing.title, combinedText);
+
+    // Validate coordinates are in NYC area
+    const coordinates = enhancedData.latitude && enhancedData.longitude &&
+      enhancedData.latitude >= 40.4 && enhancedData.latitude <= 40.9 &&
+      enhancedData.longitude >= -74.3 && enhancedData.longitude <= -73.7
+      ? { latitude: enhancedData.latitude, longitude: enhancedData.longitude }
+      : {};
+
+    return {
+      ...listing,
+      pet_friendly: petFriendly,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude
+    };
+
+  } catch (error) {
+    console.warn(`    ⚠️  Failed to scrape individual page for ${listing.external_id}:`, error);
+    return listing; // Return original listing if individual scraping fails
+  }
+}
+
+/**
  * Main function to scrape recent listings from all NYC boroughs
  */
 export async function scrapeRecentListings(
-  maxMinutes: number = 45
+  maxMinutes: number = 45,
+  enhancedMode: boolean = true
 ): Promise<ScrapingResult> {
   let browser: Browser | null = null;
   const result: ScrapingResult = {
@@ -346,9 +603,10 @@ export async function scrapeRecentListings(
         '--no-first-run',
         '--no-zygote',
         '--single-process', // This helps in WSL
-        '--disable-gpu'
+        '--disable-gpu',
       ],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
     });
 
     const page = await browser.newPage();
@@ -370,11 +628,37 @@ export async function scrapeRecentListings(
       }
     }
 
+    // Enhanced mode: visit individual listing pages for additional data
+    if (enhancedMode && result.listings.length > 0) {
+      console.log(`\n🔍 Enhanced mode: Visiting ${result.listings.length} individual pages for detailed data...`);
+      
+      const enhancedListings: ScrapedListing[] = [];
+      for (let i = 0; i < result.listings.length; i++) {
+        const listing = result.listings[i];
+        console.log(`  📄 Processing ${i + 1}/${result.listings.length}: ${listing.title.substring(0, 50)}...`);
+        
+        try {
+          const enhancedListing = await scrapeIndividualListing(page, listing);
+          enhancedListings.push(enhancedListing);
+          
+          // Add delay between individual page visits to be respectful
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        } catch (error) {
+          console.warn(`    ⚠️  Skipping ${listing.external_id} due to error:`, error);
+          enhancedListings.push(listing); // Keep original if enhancement fails
+        }
+      }
+      
+      result.listings = enhancedListings;
+      console.log(`✅ Enhanced scraping completed with individual page data.`);
+    }
+
     result.totalFound = result.listings.length;
     result.success = result.totalFound > 0 || result.errors.length === 0;
 
+    const mode = enhancedMode ? 'Enhanced' : 'Basic';
     console.log(
-      `Scraping completed. Found ${result.totalFound} recent listings total.`
+      `${mode} scraping completed. Found ${result.totalFound} recent listings total.`
     );
   } catch (error) {
     const errorMsg = `Scraper failed: ${error}`;
@@ -393,4 +677,12 @@ export async function scrapeRecentListings(
 // Export Functions
 // ================================
 
-export { NYC_BOROUGHS, isWithinTimeRange, extractPrice, extractExternalId };
+export {
+  NYC_BOROUGHS,
+  isWithinTimeRange,
+  extractPrice,
+  extractExternalId,
+  extractBedrooms,
+  detectPetFriendly,
+  extractCoordinates,
+};

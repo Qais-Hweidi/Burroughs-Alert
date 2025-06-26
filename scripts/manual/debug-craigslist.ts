@@ -2,7 +2,7 @@
 
 /**
  * Debug Craigslist Structure
- * 
+ *
  * Quick script to see what selectors are available on current Craigslist pages
  */
 
@@ -18,22 +18,22 @@ async function debugCraigslist() {
       '--disable-accelerated-2d-canvas',
       '--no-first-run',
       '--no-zygote',
-      '--disable-gpu'
+      '--disable-gpu',
     ],
     executablePath: '/usr/bin/chromium-browser',
   });
 
   const page = await browser.newPage();
-  
+
   try {
     console.log('Loading Manhattan Craigslist...');
-    await page.goto('https://newyork.craigslist.org/search/mnh/apa', { 
-      waitUntil: 'networkidle0', 
-      timeout: 30000 
+    await page.goto('https://newyork.craigslist.org/search/mnh/apa', {
+      waitUntil: 'networkidle0',
+      timeout: 30000,
     });
 
     console.log('Page loaded. Checking available selectors...');
-    
+
     // Check for various possible selectors
     const selectors = [
       '.result-row',
@@ -42,11 +42,11 @@ async function debugCraigslist() {
       '[data-cl-app-anchor]',
       '.result-title',
       '.titlestring',
-      '.cl-search-view-item'
+      '.cl-search-view-item',
     ];
 
     for (const selector of selectors) {
-      const count = await page.$$eval(selector, elements => elements.length);
+      const count = await page.$$eval(selector, (elements) => elements.length);
       console.log(`${selector}: ${count} elements found`);
     }
 
@@ -58,8 +58,10 @@ async function debugCraigslist() {
 
     // Check if there are any listings at all
     const bodyText = await page.evaluate(() => document.body.innerText);
-    console.log('\nPage contains listings?', bodyText.includes('apartment') || bodyText.includes('listing'));
-
+    console.log(
+      '\nPage contains listings?',
+      bodyText.includes('apartment') || bodyText.includes('listing')
+    );
   } catch (error) {
     console.error('Debug failed:', error);
   } finally {

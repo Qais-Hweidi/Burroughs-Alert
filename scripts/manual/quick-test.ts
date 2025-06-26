@@ -10,13 +10,16 @@ async function quickTest() {
   });
 
   const page = await browser.newPage();
-  
+
   try {
     console.log('Loading Manhattan list view...');
-    await page.goto('https://newyork.craigslist.org/search/mnh/apa#search=1~list~0', { 
-      waitUntil: 'networkidle0', 
-      timeout: 30000 
-    });
+    await page.goto(
+      'https://newyork.craigslist.org/search/mnh/apa#search=1~list~0',
+      {
+        waitUntil: 'networkidle0',
+        timeout: 30000,
+      }
+    );
 
     const counts = await page.evaluate(() => {
       return {
@@ -24,7 +27,7 @@ async function quickTest() {
         postingTitles: document.querySelectorAll('.posting-title').length,
         priceInfos: document.querySelectorAll('.priceinfo').length,
         metaSpans: document.querySelectorAll('.meta span').length,
-        links: document.querySelectorAll('.cl-app-anchor').length
+        links: document.querySelectorAll('.cl-app-anchor').length,
       };
     });
 
@@ -37,18 +40,22 @@ async function quickTest() {
         const titleEl = firstListing.querySelector('.posting-title .label');
         const priceEl = firstListing.querySelector('.priceinfo');
         const linkEl = firstListing.querySelector('.cl-app-anchor');
-        
+
         // Test different time selectors
-        const timeEl2024 = firstListing.querySelector('.meta span[title*="2024"]');
-        const timeEl2025 = firstListing.querySelector('.meta span[title*="2025"]');
+        const timeEl2024 = firstListing.querySelector(
+          '.meta span[title*="2024"]'
+        );
+        const timeEl2025 = firstListing.querySelector(
+          '.meta span[title*="2025"]'
+        );
         const allTimeSpans = firstListing.querySelectorAll('.meta span');
-        
-        const timeSpanInfo = Array.from(allTimeSpans).map(span => ({
+
+        const timeSpanInfo = Array.from(allTimeSpans).map((span) => ({
           text: span.textContent?.trim(),
           title: span.getAttribute('title'),
-          hasTitle: !!span.getAttribute('title')
+          hasTitle: !!span.getAttribute('title'),
         }));
-        
+
         return {
           hasTitle: !!titleEl,
           titleText: titleEl?.textContent?.trim(),
@@ -59,14 +66,13 @@ async function quickTest() {
           fullText: firstListing.textContent?.substring(0, 100),
           timeEl2024: !!timeEl2024,
           timeEl2025: !!timeEl2025,
-          timeSpanInfo
+          timeSpanInfo,
         };
       }
       return null;
     });
 
     console.log('First listing sample:', sample);
-
   } catch (error) {
     console.error('Test failed:', error);
   } finally {

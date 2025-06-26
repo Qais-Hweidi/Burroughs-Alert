@@ -12,7 +12,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **FILE HEADER DOCUMENTATION RULE**: Each implementation file contains detailed header documentation describing features to implement, business logic requirements, and TODO items. When making changes to any file:
 
-1. **NEVER remove** the existing header documentation and TODO comments
 2. **ALWAYS update** the documentation to reflect what has been implemented (mark with ✅ DONE)
 3. **ALWAYS update** TODO items immediately after completing them
 4. **ADD new TODOs** if you discover additional work needed during implementation
@@ -185,12 +184,11 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 2. **Background Flow**: Scraper → Basic Scam Detection → Database → Matcher → Direct Email Notification
 3. **Simple Flow**: No complex queues, direct processing for MVP
 
-### Scraping System Design
+### Scraping System ✅ DONE
 
-**Technology Stack**: Puppeteer (primary) + Axios/Cheerio (fallback)
-**Target**: Craigslist NYC (all 5 boroughs)
-**Anti-Detection**: User agent rotation, delays, rate limiting
-**Data Processing**: Title cleaning, neighborhood normalization, scam detection
+**Technology**: Puppeteer scraping Craigslist NYC (all 5 boroughs)
+**Data Extracted**: Neighborhoods, bedrooms, prices, coordinates, pet policies
+**Modes**: Basic (search results) vs Enhanced (individual pages) - Enhanced default
 
 ### Commute Time Calculation System Design
 
@@ -228,25 +226,16 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 - Distance Matrix: ~$10 per 1000 requests
 - Implement caching and rate limiting to minimize costs
 
-### Key Implementation Status (Updated for MVP)
+### Current Status
 
-**CRITICAL**: This is a simplified MVP focused on local development only. Current status:
-
-- ✅ Simplified project structure (removed migrations, testing, complex scripts)
-- ✅ Database schema and basic Drizzle setup
-- ✅ Type definitions and constants
-- ✅ Documentation and project structure
-- ✅ Complete frontend foundation with professional UI/UX
-- ✅ Landing page with full user journey flow and navigation
-- ✅ Design system and component library (13 UI components)
-- ✅ Comprehensive AlertForm component with all apartment search criteria
-- ✅ NYC neighborhoods selection with borough-level controls (unlimited selections)
-- ✅ Complete user flow from landing page through alert creation
-- ✅ Resolved page layout and white space issues
-- ⚠️ Build system has stability issues (memory/SIGBUS errors)
-- ❌ API routes and backend integration - **IMMEDIATE PRIORITY**
-- ❌ Core business logic implementations (jobs, scraper, matcher) - **HIGH PRIORITY**
-- ❌ Commute time calculation system - **BACKEND PRIORITY** (documented in algorithms)
+- ✅ Frontend UI/UX with full user journey (Next.js + TypeScript)
+- ✅ Database infrastructure (SQLite + Drizzle ORM)
+- ✅ **Complete Craigslist Scraper** (Puppeteer, all NYC boroughs)
+- ✅ Component library and form validation
+- ❌ Background job system - **NEXT PRIORITY**
+- ❌ Email notifications - **HIGH PRIORITY** 
+- ❌ Alert matching logic - **HIGH PRIORITY**
+- ❌ Commute time
 
 ## Environment Variables Required
 
@@ -264,6 +253,7 @@ SMTP_PASS="your-app-password"        # SMTP password
 ```bash
 GOOGLE_MAPS_API_KEY="..."            # For commute calculations
 SCRAPING_INTERVAL="15"               # Minutes between scrapes
+PUPPETEER_EXECUTABLE_PATH="..."      # Browser path (auto-detected in WSL)
 ```
 
 ## NYC-Specific Implementation Notes
@@ -295,48 +285,17 @@ SCRAPING_INTERVAL="15"               # Minutes between scrapes
 - **Automatic Cleanup**: Privacy compliance through data retention policies
 - **Unsubscribe Tokens**: Secure unsubscribe mechanism
 
-## Recent Development Activities
+## Recent Major Milestones
 
-- **Frontend MVP Completion**: Complete functional apartment alert system frontend
-  - **Professional UI/UX Implementation**: Production-ready frontend foundation
-    - **Landing Page**: Fully implemented with hero section, features, statistics, and working CTAs
-    - **User Flow Pages**: Complete journey (landing → create → confirm → success) with proper navigation
-    - **Design System**: Professional Tailwind CSS setup with HSL color variables and dark mode support
-    - **Component Library**: 13 comprehensive UI components using Radix UI and class-variance-authority
-    - **NYC Data Integration**: 254+ neighborhoods across 5 boroughs with comprehensive type definitions
+- ✅ **Frontend Foundation**: Complete UI/UX with Next.js 15, TypeScript, component library, user flows
+- ✅ **Database Infrastructure**: SQLite + Drizzle ORM with schema, API endpoints, health monitoring  
+- ✅ **Complete Scraping System**: Puppeteer-based Craigslist scraper for all NYC boroughs with rich data extraction
+- ✅ **Testing & Validation**: Comprehensive test suites and manual testing scripts
 
-  - **AlertForm Implementation**: Comprehensive apartment search criteria collection
-    - **All Required Fields**: Email, neighborhoods, price range, bedrooms, pet-friendly, commute preferences
-    - **Advanced Neighborhood Selection**: Borough-level selection with "select all" functionality, unlimited selections
-    - **Smart Validation**: Client-side validation using application constants and business rules
-    - **Enhanced UX**: Real-time feedback, progress indicators, responsive design
-    - **Commute Integration**: Work/study location and maximum commute time collection (backend calculation documented)
+## Scraper Usage
 
-  - **Technical Architecture**: Modern Next.js 15 + TypeScript setup
-    - **App Router**: Full Next.js 15 implementation with proper routing and navigation
-    - **Build Configuration**: TypeScript path aliases, PostCSS, ESLint, and Prettier setup
-    - **Type Safety**: Comprehensive TypeScript definitions for NYC-specific business logic
-    - **Icon System**: Lucide React icons integrated throughout application
-    - **Layout Optimization**: Resolved white space issues and container sizing problems
-
-  - **Development Process Improvements**: Streamlined development workflow
-    - **WSL Migration**: Successfully migrated from Windows filesystem to native WSL Ubuntu 22.04.5 LTS
-    - **Documentation Updates**: Comprehensive algorithm documentation for backend implementation
-    - **Milestone Tracking**: Implemented systematic progress documentation requirements
-
-- **Backend Database Foundation**: Complete database infrastructure implementation
-  - **SQLite Database**: Fully functional database with better-sqlite3 compatibility in native WSL environment
-  - **Schema Implementation**: All tables created (users, alerts, listings, notifications) with proper indexes and constraints
-  - **Health Monitoring**: Working `/api/health` endpoint with comprehensive system status reporting
-  - **Database Operations**: Connection management, transaction support, and graceful shutdown handling
-  - **Development Tools**: Schema initialization, database reset utilities, and health checking
-
-- **Architecture Foundation**: Established core system design
-  - **Comprehensive Documentation**: Complete system design and implementation strategy in `/docs/`
-  - **Commute Calculation Planning**: Detailed Google Maps API integration strategy documented
-  - **Technology Stack**: Next.js, Drizzle ORM, SQLite, Puppeteer foundation established
-  - **MVP Scope**: Simplified architecture focused on local development and core functionality
-
-## General Workflow Recommendations
-
-- When you want to install or use new tech or install dependencies, make sure to search and check what you need online
+```bash
+npx tsx scripts/manual/run-scraper.ts --time 60        # Enhanced mode (default)
+npx tsx scripts/manual/run-scraper.ts --basic          # Basic mode (faster)
+npx tsx scripts/manual/run-scraper.ts --save           # Save to database
+```
