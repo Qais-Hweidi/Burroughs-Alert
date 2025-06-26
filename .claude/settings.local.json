@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
+      "*",
       "Bash(*)",
+      "Bash",
+      "Bash*",
+      "Bash(**)",
+      "Bash(.*)",
+      "bash*",
+      "BASH(*)",
+      "*bash*",
+      "*Bash*",
       "Read(*)",
       "Write(*)",
       "Edit(*)",
@@ -19,7 +28,11 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npm run dev:*)",
       "Bash(curl:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run format:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)"
     ],
     "deny": []
   }

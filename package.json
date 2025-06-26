@@ -49,6 +49,7 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
+    "@types/supertest": "^6.0.3",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.1",
@@ -56,6 +57,7 @@
     "eslint-config-next": "^15.3.4",
     "postcss": "^8.5.2",
     "prettier": "^3.4.2",
+    "supertest": "^7.1.1",
     "tsx": "^4.20.3",
     "vitest": "^3.2.4"
   }

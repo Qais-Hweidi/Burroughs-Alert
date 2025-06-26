@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **MILESTONE DOCUMENTATION RULE**: Always update this CLAUDE.md file after completing each development milestone or significant progress. This maintains accurate project status and prevents information drift.
 
 **FILE HEADER DOCUMENTATION RULE**: Each implementation file contains detailed header documentation describing features to implement, business logic requirements, and TODO items. When making changes to any file:
+
 1. **NEVER remove** the existing header documentation and TODO comments
 2. **ALWAYS update** the documentation to reflect what has been implemented (mark with ✅ DONE)
 3. **ALWAYS update** TODO items immediately after completing them
@@ -173,8 +174,10 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 **Essential Routes Only**:
 
 - `/api/alerts` - CRUD for user search criteria
-- `/api/listings` - Basic apartment listing data
+- `/api/listings` - Backend apartment listing operations (scraper input, matching queries)
 - `/api/unsubscribe/[token]` - Email unsubscribe handling
+
+**Note**: Users cannot search/browse listings directly - the system only supports alert creation and email notifications.
 
 ### Data Flow Architecture (Simplified MVP)
 
