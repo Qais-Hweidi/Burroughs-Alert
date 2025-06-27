@@ -349,30 +349,38 @@ function checkPetFriendlyMatch(
   listing: ListingSelect,
   alertPetFriendly: boolean | null
 ): { passed: boolean; reason: string } {
-  // If alert doesn't specify pet requirement, always match
+  // If alert doesn't specify pet requirement (null = "doesn't matter"), always match
   if (alertPetFriendly === null) {
-    return { passed: true, reason: 'No pet policy restrictions' };
+    return { passed: true, reason: "Pet policy doesn't matter" };
   }
 
-  // If listing has no pet policy data, be cautious
-  if (listing.pet_friendly === null) {
-    return {
-      passed: false,
-      reason: `Listing has no pet policy data, but alert requires ${alertPetFriendly ? 'pet-friendly' : 'no pets allowed'}`,
-    };
+  // If alert requires pet-friendly (true = "must allow pets")
+  if (alertPetFriendly === true) {
+    if (listing.pet_friendly === true) {
+      return {
+        passed: true,
+        reason: 'Listing allows pets as required',
+      };
+    } else if (listing.pet_friendly === null) {
+      // If listing doesn't mention pets, be permissive (include it)
+      return {
+        passed: true,
+        reason: 'Listing pet policy not mentioned (included to be safe)',
+      };
+    } else {
+      // listing.pet_friendly === false
+      return {
+        passed: false,
+        reason: 'Listing does not allow pets, but alert requires pet-friendly',
+      };
+    }
   }
 
-  // Check if pet policies match
-  if (listing.pet_friendly === alertPetFriendly) {
-    return {
-      passed: true,
-      reason: `Pet policy matches: ${alertPetFriendly ? 'pet-friendly' : 'no pets allowed'}`,
-    };
-  }
-
+  // This shouldn't happen with our new logic (we only send null or true)
+  // But keeping for backward compatibility
   return {
     passed: false,
-    reason: `Pet policy mismatch: listing is ${listing.pet_friendly ? 'pet-friendly' : 'no pets allowed'}, alert wants ${alertPetFriendly ? 'pet-friendly' : 'no pets allowed'}`,
+    reason: 'Unexpected pet preference value',
   };
 }
 

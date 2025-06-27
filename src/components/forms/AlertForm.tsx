@@ -173,7 +173,7 @@ export default function AlertForm({
           min_price: formData.minPrice,
           max_price: formData.maxPrice,
           bedrooms: formData.bedrooms,
-          pet_friendly: formData.petFriendly,
+          pet_friendly: formData.petFriendly ? true : null,
           max_commute_minutes: formData.maxCommuteMinutes,
           commute_destination: formData.commuteDestination,
           commute_destination_place_id: formData.commuteDestinationPlaceId,
@@ -470,29 +470,36 @@ export default function AlertForm({
 
       {/* Pet Friendly Section */}
       <div className="mb-8">
-        <div className="flex items-center p-4 bg-pink-50 rounded-lg">
-          <div className="w-8 h-8 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mr-3">
-            <Heart className="w-4 h-4" />
+        <div className="p-4 bg-pink-50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mr-3">
+                <Heart className="w-4 h-4" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Pet Preference
+              </h3>
+            </div>
+            <div className="flex flex-col items-center">
+              <label className="relative inline-flex items-center cursor-pointer mb-1">
+                <input
+                  type="checkbox"
+                  checked={formData.petFriendly}
+                  onChange={(e) =>
+                    handleInputChange('petFriendly', e.target.checked)
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+              <p className="text-xs text-gray-600 text-center">
+                {formData.petFriendly 
+                  ? "Must allow pets" 
+                  : "Doesn't matter"
+                }
+              </p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Pet Friendly
-            </h3>
-            <p className="text-sm text-gray-600">
-              Only show listings that allow pets
-            </p>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={formData.petFriendly}
-              onChange={(e) =>
-                handleInputChange('petFriendly', e.target.checked)
-              }
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
         </div>
       </div>
 
