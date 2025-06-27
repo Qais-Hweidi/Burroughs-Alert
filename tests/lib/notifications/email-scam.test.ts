@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest';
 
 // Test the email formatting indirectly by testing the risk level function
-import { getScamRiskLevel, shouldShowScamWarning } from '../../../src/lib/utils/listingHelpers';
+import {
+  getScamRiskLevel,
+  shouldShowScamWarning,
+} from '../../../src/lib/utils/listingHelpers';
 
 describe('Email Scam Integration', () => {
   describe('getScamRiskLevel function for emails', () => {
@@ -67,7 +70,7 @@ describe('Email Scam Integration', () => {
       // The original issue: score 3 should now show "Verified" badge
       const score3ShouldShow = shouldShowScamWarning(3);
       const score3Level = getScamRiskLevel(3);
-      
+
       expect(score3ShouldShow).toBe(true);
       expect(score3Level).toBe('low'); // Should show green "Verified" badge
     });

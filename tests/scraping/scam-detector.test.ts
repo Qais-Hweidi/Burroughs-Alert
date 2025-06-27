@@ -3,7 +3,7 @@ import {
   calculateScamScore,
   isHighRiskListing,
   batchDetectScams,
-} from '../../../src/lib/scraping/scam-detector';
+} from '../../src/lib/scraping/scam-detector';
 
 describe('Scam Detection System', () => {
   describe('calculateScamScore', () => {
