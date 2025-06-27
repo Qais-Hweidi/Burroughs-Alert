@@ -7,6 +7,7 @@
 
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { VALIDATION_LIMITS } from '../utils/constants';
+import { calculateScamScore } from './scam-detector';
 
 // ================================
 // Types and Interfaces
@@ -24,6 +25,8 @@ export interface ScrapedListing {
   latitude?: number;
   longitude?: number;
   source: string;
+  scam_score?: number;
+  description?: string;
 }
 
 export interface ScrapingResult {
@@ -501,6 +504,15 @@ async function scrapeBorough(
         borough.name
       );
 
+      // Calculate scam score
+      const scamResult = calculateScamScore({
+        title: listing.title,
+        description: listing.housingText || '',
+        price,
+        bedrooms: bedrooms || 0,
+        neighborhood: neighborhood || '',
+      });
+
       const scrapedListing: ScrapedListing = {
         external_id: extractExternalId(listing.url),
         title: listing.title,
@@ -513,6 +525,8 @@ async function scrapeBorough(
         latitude: coordinates.latitude,
         longitude: coordinates.longitude,
         source: 'craigslist',
+        scam_score: scamResult.score,
+        description: listing.housingText,
       };
 
       processedListings.push(scrapedListing);
@@ -617,12 +631,23 @@ async function scrapeIndividualListing(
         ? { latitude: enhancedData.latitude, longitude: enhancedData.longitude }
         : {};
 
+    // Calculate scam score with enhanced description data
+    const scamResult = calculateScamScore({
+      title: listing.title,
+      description: enhancedData.fullDescription || combinedText,
+      price: listing.price,
+      bedrooms: bedrooms || 0,
+      neighborhood: listing.neighborhood || '',
+    });
+
     return {
       ...listing,
       bedrooms,
       pet_friendly: petFriendly,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
+      scam_score: scamResult.score,
+      description: enhancedData.fullDescription || combinedText,
     };
   } catch (error) {
     console.warn(

@@ -22,11 +22,13 @@ export interface Alert {
   neighborhoods: string; // JSON array stored as string
   min_price: number | null;
   max_price: number | null;
-  min_bedrooms: number | null;
-  max_bedrooms: number | null;
+  bedrooms: number | null; // Updated field name to match schema
   pet_friendly: boolean | null;
   max_commute_minutes: number | null;
   commute_destination: string | null;
+  commute_destination_place_id: string | null;
+  commute_destination_lat: number | null;
+  commute_destination_lng: number | null;
   created_at: string;
   updated_at: string;
   is_active: boolean;

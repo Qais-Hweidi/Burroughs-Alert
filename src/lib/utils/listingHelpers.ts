@@ -212,8 +212,13 @@ export function getListingDomain(url: string): string {
 // Badge Utilities
 // ================================
 
+export function shouldShowScamBadge(scamScore: number): boolean {
+  return scamScore >= 0; // Show badge for all listings to indicate they've been checked
+}
+
+// Legacy alias for backward compatibility
 export function shouldShowScamWarning(scamScore: number): boolean {
-  return scamScore >= 4;
+  return shouldShowScamBadge(scamScore);
 }
 
 export function shouldShowNewBadge(postedAt: string | null): boolean {

@@ -94,7 +94,7 @@ export async function insertListings(
           posted_at: listing.posted_at,
           scraped_at: sql`CURRENT_TIMESTAMP`,
           is_active: true,
-          scam_score: 0,
+          scam_score: listing.scam_score || 0,
         });
         result.newListingsCount++;
       } catch (error) {

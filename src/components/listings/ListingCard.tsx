@@ -33,7 +33,6 @@ export default function ListingCard({
       bg-white rounded-lg border-2 border-gray-200 
       hover:border-blue-300 hover:shadow-lg 
       transition-all duration-200 cursor-pointer
-      ${showScamWarning ? 'ring-2 ring-red-200' : ''}
       ${className}
     `}
     >
@@ -58,7 +57,15 @@ export default function ListingCard({
                 ${formatted.scamIndicator.color} 
                 ${formatted.scamIndicator.bgColor} 
                 ${formatted.scamIndicator.borderColor} border
+                cursor-help
               `}
+                title={
+                  formatted.scamIndicator.level === 'high'
+                    ? 'High risk - verify carefully'
+                    : formatted.scamIndicator.level === 'medium'
+                    ? 'Medium risk - check details'
+                    : 'Low risk - appears legitimate'
+                }
               >
                 <AlertTriangle className="w-3 h-3" />
                 {formatted.scamIndicator.label}

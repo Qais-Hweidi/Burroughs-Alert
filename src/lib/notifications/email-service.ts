@@ -7,7 +7,7 @@
 
 import * as nodemailer from 'nodemailer';
 import { ParsedListing } from '../types/database.types';
-import { formatBedrooms } from '../utils/listingHelpers';
+import { formatBedrooms, getScamRiskLevel } from '../utils/listingHelpers';
 
 // ================================
 // Types
@@ -103,6 +103,16 @@ function formatListingNotificationEmail(listings: ParsedListing[]): string {
     if (listing.posted_at) {
       const postedDate = new Date(listing.posted_at);
       emailBody += `   Posted: ${postedDate.toLocaleDateString()}\n`;
+    }
+
+    // Add scam risk information
+    const riskLevel = getScamRiskLevel(listing.scam_score);
+    if (riskLevel === 'high') {
+      emailBody += `   ⚠️  HIGH RISK - Exercise caution, verify details carefully\n`;
+    } else if (riskLevel === 'medium') {
+      emailBody += `   ⚠️  MEDIUM RISK - Verify details before proceeding\n`;
+    } else {
+      emailBody += `   ✅ LOW RISK - Listing appears legitimate\n`;
     }
 
     emailBody += `   Craigslist Link: ${listing.listing_url}\n\n`;
