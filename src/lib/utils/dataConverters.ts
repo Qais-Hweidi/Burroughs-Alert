@@ -25,6 +25,7 @@ export interface DatabaseListing {
   scraped_at: string;
   is_active: boolean;
   scam_score: number;
+  commuteMinutes?: number | null;
 }
 
 // Alert from database/API
@@ -39,6 +40,8 @@ export interface DatabaseAlert {
   pet_friendly: boolean | null;
   max_commute_minutes: number | null;
   commute_destination: string | null;
+  commute_destination_lat?: number | null;
+  commute_destination_lng?: number | null;
   is_active: boolean;
   created_at: string;
 }
@@ -56,7 +59,7 @@ export function convertDatabaseListingToCardData(
     price: dbListing.price,
     bedrooms: dbListing.bedrooms,
     petFriendly: dbListing.pet_friendly,
-    commuteMinutes: null, // TODO: Implement commute calculation
+    commuteMinutes: dbListing.commuteMinutes ?? null,
     scamScore: dbListing.scam_score,
     postedAt: dbListing.posted_at,
     listingUrl: dbListing.listing_url,
@@ -104,6 +107,12 @@ export function convertAlertToListingsParams(
   }
   // Skip pet_friendly filter when alert.pet_friendly is false or null
   // This allows all apartments (pet-friendly, not pet-friendly, or unknown) to show
+
+  // Commute parameters
+  if (alert.commute_destination_lat && alert.commute_destination_lng) {
+    params.work_lat = alert.commute_destination_lat.toString();
+    params.work_lng = alert.commute_destination_lng.toString();
+  }
 
   // Default filtering
   params.active_only = 'true';

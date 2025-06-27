@@ -62,6 +62,9 @@ export const alerts = sqliteTable(
     pet_friendly: integer('pet_friendly', { mode: 'boolean' }),
     max_commute_minutes: integer('max_commute_minutes'),
     commute_destination: text('commute_destination'),
+    commute_destination_place_id: text('commute_destination_place_id'),
+    commute_destination_lat: real('commute_destination_lat'),
+    commute_destination_lng: real('commute_destination_lng'),
     created_at: text('created_at')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

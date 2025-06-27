@@ -8,6 +8,8 @@
 import type { ListingSelect } from '../database/schema';
 import type { AlertWithUser } from '../database/queries/alerts';
 import { parseNeighborhoods } from '../database/queries/alerts';
+import { getCommuteTime } from '../services/google-maps';
+import { NYC_NEIGHBORHOODS } from '../utils/constants';
 
 // ================================
 // Types
@@ -39,6 +41,7 @@ export interface MatchDebugInfo {
     price: { passed: boolean; reason: string };
     bedrooms: { passed: boolean; reason: string };
     petFriendly: { passed: boolean; reason: string };
+    commute: { passed: boolean; reason: string };
   };
 }
 
@@ -55,11 +58,11 @@ export interface MatchedPair {
 /**
  * Check if a single listing matches a single alert
  */
-export function isListingMatch(
+export async function isListingMatch(
   listing: ListingSelect,
   alert: AlertWithUser,
   debug: boolean = false
-): MatchResult {
+): Promise<MatchResult> {
   const reasons: string[] = [];
   const debugInfo: MatchDebugInfo | undefined = debug
     ? {
@@ -82,6 +85,7 @@ export function isListingMatch(
           price: { passed: false, reason: '' },
           bedrooms: { passed: false, reason: '' },
           petFriendly: { passed: false, reason: '' },
+          commute: { passed: false, reason: '' },
         },
       }
     : undefined;
@@ -125,6 +129,15 @@ export function isListingMatch(
     if (debugInfo) debugInfo.checks.petFriendly = petCheck;
   }
 
+  // Check 5: Commute time matching
+  const commuteCheck = await checkCommuteMatch(listing, alert);
+  if (!commuteCheck.passed) {
+    reasons.push(commuteCheck.reason);
+    if (debugInfo) debugInfo.checks.commute = commuteCheck;
+  } else {
+    if (debugInfo) debugInfo.checks.commute = commuteCheck;
+  }
+
   const isMatch = reasons.length === 0;
 
   return {
@@ -137,7 +150,7 @@ export function isListingMatch(
 /**
  * Match multiple listings against multiple alerts
  */
-export function matchListingsToAlerts(
+export async function matchListingsToAlerts(
   listings: ListingSelect[],
   alerts: AlertWithUser[],
   options: {
@@ -145,7 +158,7 @@ export function matchListingsToAlerts(
     maxMatchesPerAlert?: number;
     includeNonMatches?: boolean;
   } = {}
-): MatchedPair[] {
+): Promise<MatchedPair[]> {
   const {
     debug = false,
     maxMatchesPerAlert,
@@ -164,7 +177,7 @@ export function matchListingsToAlerts(
         }
       }
 
-      const matchResult = isListingMatch(listing, alert, debug);
+      const matchResult = await isListingMatch(listing, alert, debug);
 
       if (matchResult.isMatch) {
         matches.push({ listing, alert, matchResult });
@@ -205,12 +218,49 @@ function checkNeighborhoodMatch(
     };
   }
 
-  // Check if listing neighborhood is in alert's allowed neighborhoods
+  // Direct match: Check if listing neighborhood is in alert's allowed neighborhoods
   if (alertNeighborhoods.includes(listing.neighborhood)) {
     return {
       passed: true,
       reason: `Neighborhood '${listing.neighborhood}' matches alert criteria`,
     };
+  }
+
+  // Borough-level matching: If listing has a borough name, check if user selected any neighborhoods in that borough
+  const boroughNames = [
+    'Manhattan',
+    'Brooklyn',
+    'Queens',
+    'Bronx',
+    'Staten Island',
+  ];
+  if (boroughNames.includes(listing.neighborhood)) {
+    // Check if any of the alert's selected neighborhoods belong to this borough
+    const hasNeighborhoodInBorough = alertNeighborhoods.some(
+      (alertNeighborhood) => {
+        const neighborhoodData = NYC_NEIGHBORHOODS.find(
+          (n) => n.name === alertNeighborhood
+        );
+        return (
+          neighborhoodData && neighborhoodData.borough === listing.neighborhood
+        );
+      }
+    );
+
+    if (hasNeighborhoodInBorough) {
+      return {
+        passed: true,
+        reason: `Listing is in ${listing.neighborhood} borough, which contains selected neighborhoods`,
+      };
+    }
+
+    // Also check if the user directly selected the borough itself
+    if (alertNeighborhoods.includes(listing.neighborhood)) {
+      return {
+        passed: true,
+        reason: `Borough '${listing.neighborhood}' matches alert criteria`,
+      };
+    }
   }
 
   return {
@@ -324,6 +374,67 @@ function checkPetFriendlyMatch(
     passed: false,
     reason: `Pet policy mismatch: listing is ${listing.pet_friendly ? 'pet-friendly' : 'no pets allowed'}, alert wants ${alertPetFriendly ? 'pet-friendly' : 'no pets allowed'}`,
   };
+}
+
+/**
+ * Check if listing commute time is within alert limits
+ */
+async function checkCommuteMatch(
+  listing: ListingSelect,
+  alert: AlertWithUser
+): Promise<{ passed: boolean; reason: string }> {
+  // If no commute requirements, always pass
+  if (
+    !alert.max_commute_minutes ||
+    !alert.commute_destination_lat ||
+    !alert.commute_destination_lng
+  ) {
+    return { passed: true, reason: 'No commute restrictions' };
+  }
+
+  // If listing has no coordinates, fail commute check
+  if (!listing.latitude || !listing.longitude) {
+    return {
+      passed: false,
+      reason: 'Listing has no location data for commute calculation',
+    };
+  }
+
+  try {
+    // Calculate commute time
+    const commuteMinutes = await getCommuteTime(
+      { lat: listing.latitude, lng: listing.longitude },
+      { lat: alert.commute_destination_lat, lng: alert.commute_destination_lng }
+    );
+
+    // If API failed, be permissive (don't filter out apartment)
+    if (commuteMinutes === null) {
+      return {
+        passed: true,
+        reason: 'Commute calculation unavailable (included to be safe)',
+      };
+    }
+
+    // Check if within limits
+    if (commuteMinutes <= alert.max_commute_minutes) {
+      return {
+        passed: true,
+        reason: `Commute time ${commuteMinutes}min is within ${alert.max_commute_minutes}min limit`,
+      };
+    }
+
+    return {
+      passed: false,
+      reason: `Commute time ${commuteMinutes}min exceeds ${alert.max_commute_minutes}min limit`,
+    };
+  } catch (error) {
+    console.warn('[AlertMatcher] Commute calculation error:', error);
+    // Be permissive on errors
+    return {
+      passed: true,
+      reason: 'Commute calculation failed (included to be safe)',
+    };
+  }
 }
 
 // ================================

@@ -92,10 +92,14 @@ export async function runMatcherJob(
     }
 
     // Step 2: Perform matching with comprehensive logic
-    const matchedPairs = matchListingsToAlerts(recentListings, activeAlerts, {
-      debug: process.env.NODE_ENV === 'development',
-      maxMatchesPerAlert: 10, // Limit to prevent spam
-    });
+    const matchedPairs = await matchListingsToAlerts(
+      recentListings,
+      activeAlerts,
+      {
+        debug: process.env.NODE_ENV === 'development',
+        maxMatchesPerAlert: 10, // Limit to prevent spam
+      }
+    );
 
     // Filter out matches that already have notifications
     const newMatches = await filterExistingNotifications(
@@ -343,7 +347,10 @@ export async function getRecentMatches(
       return [];
     }
 
-    const matchedPairs = matchListingsToAlerts(recentListings, activeAlerts);
+    const matchedPairs = await matchListingsToAlerts(
+      recentListings,
+      activeAlerts
+    );
 
     return matchedPairs
       .filter((pair) => pair.matchResult.isMatch)

@@ -56,6 +56,7 @@ function ListingsContent() {
       }
 
       const alert: DatabaseAlert = data.alert;
+      // Store the full alert data for later use
       setAlertCriteria({
         email: alert.email,
         neighborhoods: alert.neighborhoods,
@@ -65,6 +66,14 @@ function ListingsContent() {
         petFriendly: alert.pet_friendly || false,
         commuteDestination: alert.commute_destination || '',
         maxCommuteMinutes: alert.max_commute_minutes,
+        // Store coordinates in the correct format for AlertFormData
+        commuteDestinationCoordinates:
+          alert.commute_destination_lat && alert.commute_destination_lng
+            ? {
+                lat: alert.commute_destination_lat,
+                lng: alert.commute_destination_lng,
+              }
+            : null,
       });
       setAlertError(null);
     } catch (error) {
@@ -95,6 +104,10 @@ function ListingsContent() {
           pet_friendly: alertCriteria.petFriendly,
           max_commute_minutes: alertCriteria.maxCommuteMinutes,
           commute_destination: alertCriteria.commuteDestination,
+          commute_destination_lat:
+            alertCriteria.commuteDestinationCoordinates?.lat || null,
+          commute_destination_lng:
+            alertCriteria.commuteDestinationCoordinates?.lng || null,
           is_active: true,
           created_at: '',
         };

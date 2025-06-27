@@ -70,7 +70,7 @@ export const VALIDATION_LIMITS = {
   },
   commute: {
     minMinutes: 1,
-    maxMinutes: 120,
+    maxMinutes: 200,
   },
   neighborhoods: {
     minSelection: 1,
@@ -413,9 +413,15 @@ export function isValidNeighborhood(name: string): boolean {
   if (NYC_NEIGHBORHOODS.some((n) => n.name === name)) {
     return true;
   }
-  
+
   // Also accept generic borough names
-  const genericBoroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+  const genericBoroughs = [
+    'Manhattan',
+    'Brooklyn',
+    'Queens',
+    'Bronx',
+    'Staten Island',
+  ];
   return genericBoroughs.includes(name);
 }
 

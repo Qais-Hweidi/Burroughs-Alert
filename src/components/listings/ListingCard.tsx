@@ -63,8 +63,8 @@ export default function ListingCard({
                   formatted.scamIndicator.level === 'high'
                     ? 'High risk - verify carefully'
                     : formatted.scamIndicator.level === 'medium'
-                    ? 'Medium risk - check details'
-                    : 'Low risk - appears legitimate'
+                      ? 'Medium risk - check details'
+                      : 'Low risk - appears legitimate'
                 }
               >
                 <AlertTriangle className="w-3 h-3" />

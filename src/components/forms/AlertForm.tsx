@@ -17,6 +17,9 @@ import {
   getPopularNeighborhoods,
 } from '@/lib/utils/constants';
 import { NYCBorough } from '@/lib/types/database.types';
+import GooglePlacesAutocomplete, {
+  PlaceResult,
+} from './GooglePlacesAutocomplete';
 
 // Form data interface
 export interface AlertFormData {
@@ -28,6 +31,9 @@ export interface AlertFormData {
   petFriendly: boolean;
   commuteDestination: string | null;
   maxCommuteMinutes: number | null;
+  // Enhanced commute data from Places API
+  commuteDestinationPlaceId?: string | null;
+  commuteDestinationCoordinates?: { lat: number; lng: number } | null;
 }
 
 // Form validation errors interface
@@ -74,6 +80,9 @@ export default function AlertForm({
     petFriendly: initialData?.petFriendly || false,
     commuteDestination: initialData?.commuteDestination || null,
     maxCommuteMinutes: initialData?.maxCommuteMinutes || null,
+    commuteDestinationPlaceId: initialData?.commuteDestinationPlaceId || null,
+    commuteDestinationCoordinates:
+      initialData?.commuteDestinationCoordinates || null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -167,6 +176,9 @@ export default function AlertForm({
           pet_friendly: formData.petFriendly,
           max_commute_minutes: formData.maxCommuteMinutes,
           commute_destination: formData.commuteDestination,
+          commute_destination_place_id: formData.commuteDestinationPlaceId,
+          commute_destination_coordinates:
+            formData.commuteDestinationCoordinates,
         }),
       });
 
@@ -231,6 +243,30 @@ export default function AlertForm({
         ...new Set([...formData.neighborhoods, ...boroughNeighborhoods]),
       ];
       handleInputChange('neighborhoods', newNeighborhoods);
+    }
+  };
+
+  // Handle Google Places selection
+  const handlePlaceSelect = (placeResult: PlaceResult | null) => {
+    if (placeResult) {
+      setFormData((prev) => ({
+        ...prev,
+        commuteDestination: placeResult.address,
+        commuteDestinationPlaceId: placeResult.placeId || null,
+        commuteDestinationCoordinates: placeResult.coordinates || null,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        commuteDestination: null,
+        commuteDestinationPlaceId: null,
+        commuteDestinationCoordinates: null,
+      }));
+    }
+
+    // Clear commute destination error if it exists
+    if (errors.commuteDestination) {
+      setErrors((prev) => ({ ...prev, commuteDestination: undefined }));
     }
   };
 
@@ -476,23 +512,14 @@ export default function AlertForm({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Work/Study Location
             </label>
-            <input
-              type="text"
-              placeholder="e.g., Times Square, Manhattan or Columbia University"
+            <GooglePlacesAutocomplete
               value={formData.commuteDestination || ''}
-              onChange={(e) =>
-                handleInputChange('commuteDestination', e.target.value || null)
-              }
-              className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                errors.commuteDestination ? 'border-red-300' : 'border-gray-200'
-              }`}
+              onChange={handlePlaceSelect}
+              placeholder="e.g., Times Square, Manhattan or Columbia University"
+              className="w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors border-gray-200"
+              error={errors.commuteDestination}
+              disabled={isSubmitting}
             />
-            {errors.commuteDestination && (
-              <p className="text-red-500 text-sm mt-2 flex items-center">
-                <AlertCircle className="w-4 h-4 mr-1" />
-                {errors.commuteDestination}
-              </p>
-            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

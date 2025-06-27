@@ -108,6 +108,18 @@ const createAlertSchema = z
       )
       .nullable()
       .optional(),
+    commute_destination_place_id: z
+      .string()
+      .max(500, 'Place ID too long')
+      .nullable()
+      .optional(),
+    commute_destination_coordinates: z
+      .object({
+        lat: z.number().min(-90).max(90),
+        lng: z.number().min(-180).max(180),
+      })
+      .nullable()
+      .optional(),
   })
   .refine(
     (data) => {
@@ -184,6 +196,8 @@ export async function POST(request: NextRequest) {
       pet_friendly,
       max_commute_minutes,
       commute_destination,
+      commute_destination_place_id,
+      commute_destination_coordinates,
     } = validation.data;
 
     // Create or find user
@@ -523,6 +537,9 @@ export async function POST(request: NextRequest) {
         pet_friendly: pet_friendly ?? null,
         max_commute_minutes: max_commute_minutes ?? null,
         commute_destination: commute_destination ?? null,
+        commute_destination_place_id: commute_destination_place_id ?? null,
+        commute_destination_lat: commute_destination_coordinates?.lat ?? null,
+        commute_destination_lng: commute_destination_coordinates?.lng ?? null,
       })
       .returning();
 

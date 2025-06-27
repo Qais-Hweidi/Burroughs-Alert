@@ -28,6 +28,7 @@ import {
   NYC_BOUNDS,
   isValidNeighborhood,
 } from '@/lib/utils/constants';
+import { getCommuteTime } from '@/lib/services/google-maps';
 
 // ================================
 // Zod Validation Schemas
@@ -205,6 +206,18 @@ const getListingsSchema = z.object({
     .string()
     .transform((str) => str.toLowerCase() !== 'false')
     .default('true'),
+
+  // Commute calculation parameters
+  work_lat: z
+    .string()
+    .transform((str) => parseFloat(str))
+    .refine((num) => !isNaN(num) && num >= -90 && num <= 90)
+    .optional(),
+  work_lng: z
+    .string()
+    .transform((str) => parseFloat(str))
+    .refine((num) => !isNaN(num) && num >= -180 && num <= 180)
+    .optional(),
 });
 
 // ================================
@@ -423,6 +436,8 @@ export async function GET(request: NextRequest) {
       sort_by,
       sort_order,
       active_only,
+      work_lat,
+      work_lng,
     } = validation.data;
 
     // Build where conditions
@@ -497,6 +512,53 @@ export async function GET(request: NextRequest) {
 
     const listingsResult = await listingsQuery;
 
+    // Add commute times if work location provided
+    let listingsWithCommute = listingsResult;
+    if (work_lat && work_lng) {
+      console.log(
+        `[ListingsAPI] Calculating commute times for ${listingsResult.length} listings`
+      );
+
+      listingsWithCommute = await Promise.all(
+        listingsResult.map(async (listing) => {
+          // Only calculate if listing has coordinates
+          if (listing.latitude && listing.longitude) {
+            try {
+              const commuteMinutes = await getCommuteTime(
+                { lat: listing.latitude, lng: listing.longitude },
+                { lat: work_lat, lng: work_lng }
+              );
+
+              return {
+                ...listing,
+                commuteMinutes,
+              };
+            } catch (error) {
+              console.warn(
+                `[ListingsAPI] Commute calculation failed for listing ${listing.id}:`,
+                error
+              );
+              return {
+                ...listing,
+                commuteMinutes: null,
+              };
+            }
+          }
+
+          return {
+            ...listing,
+            commuteMinutes: null,
+          };
+        })
+      );
+    } else {
+      // Add null commute times when no work location provided
+      listingsWithCommute = listingsResult.map((listing) => ({
+        ...listing,
+        commuteMinutes: null,
+      }));
+    }
+
     // Get total count for pagination
     const countQuery = db
       .select({ count: sql<number>`count(*)` })
@@ -514,7 +576,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        listings: listingsResult,
+        listings: listingsWithCommute,
         pagination: {
           page,
           limit,
