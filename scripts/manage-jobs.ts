@@ -11,6 +11,11 @@
  *   npm run jobs:trigger scraper  # Trigger specific job
  */
 
+import { config } from 'dotenv';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
+
 import { Command } from 'commander';
 import {
   startBackgroundJobs,

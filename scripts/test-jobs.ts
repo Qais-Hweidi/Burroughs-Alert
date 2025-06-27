@@ -5,6 +5,11 @@
  * Usage: npx tsx scripts/test-jobs.ts
  */
 
+import { config } from 'dotenv';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
+
 import { checkDatabaseHealth } from '../src/lib/database/index';
 import { runScraperJob } from '../src/lib/jobs/scraper-job';
 import { runMatcherJob } from '../src/lib/jobs/matcher-job';
