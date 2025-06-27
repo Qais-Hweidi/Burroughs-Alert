@@ -149,11 +149,16 @@ export default function ListingsGrid({
     <div className={`space-y-6 ${className}`}>
       {/* Header with count and refresh button */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Home className="w-5 h-5 text-gray-600" />
-          <h2 className="text-xl font-semibold text-gray-900">
-            {listings.length} Listing{listings.length !== 1 ? 's' : ''} Found
-          </h2>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <Home className="w-5 h-5 text-gray-600" />
+            <h2 className="text-xl font-semibold text-gray-900">
+              {listings.length} Listing{listings.length !== 1 ? 's' : ''} Found
+            </h2>
+          </div>
+          <p className="text-sm text-gray-500">
+            Showing newest 50 matches - subscribe for more
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
