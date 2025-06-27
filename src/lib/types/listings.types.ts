@@ -54,6 +54,7 @@ export interface ListingsGridProps {
   isLoading?: boolean;
   isRefreshing?: boolean;
   onRefresh?: () => void;
+  refreshStatus?: string;
   className?: string;
 }
 

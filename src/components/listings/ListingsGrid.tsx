@@ -11,6 +11,7 @@ export default function ListingsGrid({
   isLoading = false,
   isRefreshing = false,
   onRefresh,
+  refreshStatus = '',
   className = '',
 }: ListingsGridProps) {
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
@@ -139,11 +140,18 @@ export default function ListingsGrid({
 
       {/* Refresh status indicator */}
       {isRefreshing && (
-        <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
-          <span className="text-sm text-blue-700">
-            Checking for new listings...
-          </span>
+        <div className="flex flex-col gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
+            <span className="text-sm font-medium text-blue-700">
+              {refreshStatus || 'Refreshing listings...'}
+            </span>
+          </div>
+          {!refreshStatus && (
+            <div className="text-xs text-blue-600 ml-6">
+              ⏱️ This may take 1-3 minutes as we check individual apartment pages
+            </div>
+          )}
         </div>
       )}
 
