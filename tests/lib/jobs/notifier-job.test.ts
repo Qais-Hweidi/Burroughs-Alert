@@ -5,7 +5,10 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { runNotifierJob, getPendingNotificationStats } from '../../../src/lib/jobs/notifier-job';
+import {
+  runNotifierJob,
+  getPendingNotificationStats,
+} from '../../../src/lib/jobs/notifier-job';
 import * as emailService from '../../../src/lib/notifications/email-service';
 import * as notificationQueries from '../../../src/lib/database/queries/notifications';
 

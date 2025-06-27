@@ -287,6 +287,28 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    // Send welcome email for first alert (don't block on email failure)
+    try {
+      // Check if this is the user's first alert
+      const existingAlerts = await db
+        .select()
+        .from(alerts)
+        .where(eq(alerts.user_id, user[0].id))
+        .limit(2);
+
+      if (existingAlerts.length === 1) {
+        // This is their first alert - send welcome email
+        const { sendWelcomeEmail } = await import(
+          '@/lib/notifications/email-service'
+        );
+        await sendWelcomeEmail(email);
+        console.log(`Welcome email sent to ${email} for first alert`);
+      }
+    } catch (emailError) {
+      console.error('Welcome email failed:', emailError);
+      // Don't fail the API call if email fails
+    }
+
     return NextResponse.json(
       {
         success: true,

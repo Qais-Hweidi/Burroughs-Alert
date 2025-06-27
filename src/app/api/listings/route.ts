@@ -1,6 +1,6 @@
 /**
  * API Route: /api/listings
- * Purpose: Backend-only endpoint for scraper to add listings and matcher to retrieve listings (NOT for frontend use)
+ * Purpose: Endpoint for scraper to add listings and frontend/matcher to retrieve listings
  * Status: POST/GET implemented ✅ DONE | PUT/DELETE 🔄 TODO | Batch insertion TODO
  * Features: Validation, duplicate prevention, scam detection, NYC geo-validation, filtering/pagination/sorting
  */

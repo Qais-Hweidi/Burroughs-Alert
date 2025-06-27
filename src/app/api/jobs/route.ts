@@ -113,11 +113,45 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           );
         }
 
+        // Allow triggering individual jobs even if job system isn't started
         if (!isJobSystemStarted) {
-          return NextResponse.json(
-            { success: false, error: 'Job system not started' },
-            { status: 400 }
-          );
+          // Import and run the job directly
+          try {
+            if (jobType === 'scraper') {
+              const { runScraperJob } = await import('@/lib/jobs/scraper-job');
+              const result = await runScraperJob({
+                maxMinutes: 120, // 2 hours for refresh - more listings for users
+                enhancedMode: true, // Keep enhanced mode for better data
+              });
+              return NextResponse.json({
+                success: true,
+                message: `Scraper job completed: ${result.newListings} new listings found`,
+                data: result,
+              });
+            } else if (jobType === 'matcher') {
+              const { runMatcherJob } = await import('@/lib/jobs/matcher-job');
+              const result = await runMatcherJob();
+              return NextResponse.json({
+                success: true,
+                message: `Matcher job completed: ${result.newMatches} new matches found`,
+                data: result,
+              });
+            } else if (jobType === 'cleanup') {
+              const { runCleanupJob } = await import('@/lib/jobs/cleanup-job');
+              const result = await runCleanupJob();
+              return NextResponse.json({
+                success: true,
+                message: `Cleanup job completed: ${result.deletedListings} listings cleaned`,
+                data: result,
+              });
+            }
+          } catch (error) {
+            console.error(`Error running ${jobType} job:`, error);
+            return NextResponse.json(
+              { success: false, error: `Failed to run ${jobType} job` },
+              { status: 500 }
+            );
+          }
         }
 
         await triggerJob(jobType);

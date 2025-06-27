@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: 'BurroughsAlert - Never Miss Your Perfect NYC Apartment',
   description:
     'Get instant notifications for NYC apartments that match your criteria. Smart filtering, scam detection, and real-time alerts across all 5 boroughs.',
+  icons: {
+    icon: '/bell.png',
+    shortcut: '/bell.png',
+    apple: '/bell.png',
+  },
 };
 
 export default function RootLayout({

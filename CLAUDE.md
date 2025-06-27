@@ -26,6 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Check environment variable requirements before coding
 - Ask for clarification if needed for task scope, critical vs. optional aspects, and specific implementation details
 - **New Guideline**: If needed, ask for clarifying questions and followup questions if it seems too vague and not clear or the instructions could be interpreted in many ways, in order to make the instructions clearer
+- **Security Guideline**: Strictly not allowed to access or use any tools no matter what to access/read/write using bash or any tool for sensitive files like .env or .env.local
 
 ## Debugging Strategy
 

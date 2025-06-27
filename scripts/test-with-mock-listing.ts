@@ -22,7 +22,8 @@ async function testWithMockListing() {
     const mockListing: ListingInsert = {
       external_id: 'test-listing-' + Date.now(),
       title: 'Beautiful 1BR in Williamsburg - Perfect Match!',
-      description: 'Stunning 1-bedroom apartment in the heart of Williamsburg. Modern amenities, great location.',
+      description:
+        'Stunning 1-bedroom apartment in the heart of Williamsburg. Modern amenities, great location.',
       price: 2800, // Within $1800-3500 range
       bedrooms: 1, // Matches 1 bedroom requirement
       square_feet: 750,
@@ -36,15 +37,17 @@ async function testWithMockListing() {
       posted_at: new Date().toISOString(),
       scraped_at: new Date().toISOString(),
       is_active: true,
-      scam_score: 0
+      scam_score: 0,
     };
 
-    console.log('\n📝 Step 1: Creating mock listing that matches your criteria');
+    console.log(
+      '\n📝 Step 1: Creating mock listing that matches your criteria'
+    );
     const listingResult = await insertListings([mockListing]);
     console.log('✅ Mock listing created:', {
       success: listingResult.success,
       inserted: listingResult.inserted,
-      duplicates: listingResult.duplicates
+      duplicates: listingResult.duplicates,
     });
 
     // Step 2: Run matcher to find matches
@@ -53,7 +56,7 @@ async function testWithMockListing() {
     console.log('✅ Matcher completed:', {
       success: matcherResult.success,
       matchesFound: matcherResult.matchesFound,
-      duration: matcherResult.duration
+      duration: matcherResult.duration,
     });
 
     // Step 3: Run notifier to send emails
@@ -64,7 +67,7 @@ async function testWithMockListing() {
       emailsSent: notifierResult.emailsSent,
       usersNotified: notifierResult.usersNotified,
       notificationsProcessed: notifierResult.notificationsProcessed,
-      errors: notifierResult.errors
+      errors: notifierResult.errors,
     });
 
     // Summary
@@ -74,12 +77,16 @@ async function testWithMockListing() {
     console.log(`   - Mock listing created: ${listingResult.success}`);
     console.log(`   - Matches found: ${matcherResult.matchesFound || 0}`);
     console.log(`   - Emails sent: ${notifierResult.emailsSent || 0}`);
-    
+
     if (notifierResult.emailsSent && notifierResult.emailsSent > 0) {
-      console.log('\n✉️  EMAIL SENT! Check hweidiqais@pm.me for apartment notification.');
+      console.log(
+        '\n✉️  EMAIL SENT! Check hweidiqais@pm.me for apartment notification.'
+      );
       console.log('📋 Email should contain:');
       console.log('   - Subject: New Apartment Matches Found');
-      console.log('   - Listing: Beautiful 1BR in Williamsburg - Perfect Match!');
+      console.log(
+        '   - Listing: Beautiful 1BR in Williamsburg - Perfect Match!'
+      );
       console.log('   - Price: $2,800');
       console.log('   - Bedrooms: 1');
       console.log('   - Neighborhood: Williamsburg');
@@ -89,7 +96,6 @@ async function testWithMockListing() {
         console.log('   Errors:', notifierResult.errors);
       }
     }
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     process.exit(1);

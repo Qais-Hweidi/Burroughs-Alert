@@ -17,7 +17,7 @@ import { runNotifierJob } from '../src/lib/jobs/notifier-job';
 async function testProductionFlow() {
   console.log('🚀 Starting Production Flow Test');
   console.log('================================');
-  
+
   // Check SMTP config
   console.log('📧 SMTP Configuration:');
   console.log(`   Host: ${process.env.SMTP_HOST || 'NOT SET'}`);
@@ -30,11 +30,16 @@ async function testProductionFlow() {
     console.log('\n📝 Step 1: Creating alert for hweidiqais@pm.me');
     const alert = await createAlert({
       email: 'hweidiqais@pm.me',
-      neighborhoods: ['Williamsburg', 'Park Slope', 'East Village', 'Brooklyn Heights'],
+      neighborhoods: [
+        'Williamsburg',
+        'Park Slope',
+        'East Village',
+        'Brooklyn Heights',
+      ],
       min_price: 1800,
       max_price: 3500,
       bedrooms: 1,
-      pet_friendly: null
+      pet_friendly: null,
     });
     console.log('✅ Alert created:', alert);
 
@@ -44,16 +49,18 @@ async function testProductionFlow() {
     console.log('✅ Scraper completed:', {
       success: scraperResult.success,
       duration: scraperResult.duration,
-      errors: scraperResult.errors
+      errors: scraperResult.errors,
     });
 
     // Step 3: Run matcher to find matches
-    console.log('\n🎯 Step 3: Running matcher to find matches for hweidiqais@pm.me');
+    console.log(
+      '\n🎯 Step 3: Running matcher to find matches for hweidiqais@pm.me'
+    );
     const matcherResult = await runMatcherJob({ maxHours: 24 }); // Check last 24 hours
     console.log('✅ Matcher completed:', {
       success: matcherResult.success,
       matchesFound: matcherResult.matchesFound,
-      duration: matcherResult.duration
+      duration: matcherResult.duration,
     });
 
     // Step 4: Run notifier to send emails
@@ -64,7 +71,7 @@ async function testProductionFlow() {
       emailsSent: notifierResult.emailsSent,
       usersNotified: notifierResult.usersNotified,
       notificationsProcessed: notifierResult.notificationsProcessed,
-      errors: notifierResult.errors
+      errors: notifierResult.errors,
     });
 
     // Summary
@@ -75,16 +82,17 @@ async function testProductionFlow() {
     console.log(`   - Scraper success: ${scraperResult.success}`);
     console.log(`   - Matches found: ${matcherResult.matchesFound || 0}`);
     console.log(`   - Emails sent: ${notifierResult.emailsSent || 0}`);
-    
+
     if (notifierResult.emailsSent && notifierResult.emailsSent > 0) {
-      console.log('\n✉️  EMAIL SENT! Check hweidiqais@pm.me for apartment notifications.');
+      console.log(
+        '\n✉️  EMAIL SENT! Check hweidiqais@pm.me for apartment notifications.'
+      );
     } else {
       console.log('\n📭 No emails sent - checking reasons...');
       if (notifierResult.errors && notifierResult.errors.length > 0) {
         console.log('   Errors:', notifierResult.errors);
       }
     }
-
   } catch (error) {
     console.error('❌ Production flow test failed:', error);
     process.exit(1);

@@ -31,12 +31,16 @@ function CreateAlertContent() {
     router.push('/');
   };
 
-  const handleFormSuccess = (formData: AlertFormData) => {
-    const searchParams = new URLSearchParams({
-      alertId: 'mock-alert-123',
-    });
-
-    router.push(`/listings?${searchParams.toString()}`);
+  const handleFormSuccess = (formData: AlertFormData, alertId?: number) => {
+    if (alertId) {
+      const searchParams = new URLSearchParams({
+        alertId: alertId.toString(),
+      });
+      router.push(`/listings?${searchParams.toString()}`);
+    } else {
+      // Fallback to success page if no alert ID
+      router.push('/success');
+    }
   };
 
   return (

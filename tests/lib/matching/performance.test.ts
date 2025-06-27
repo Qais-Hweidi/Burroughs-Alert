@@ -5,7 +5,10 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { matchListingsToAlerts, getMatchStatistics } from '../../../src/lib/matching/alert-matcher';
+import {
+  matchListingsToAlerts,
+  getMatchStatistics,
+} from '../../../src/lib/matching/alert-matcher';
 import type { ListingSelect } from '../../../src/lib/database/schema';
 import type { AlertWithUser } from '../../../src/lib/database/queries/alerts';
 

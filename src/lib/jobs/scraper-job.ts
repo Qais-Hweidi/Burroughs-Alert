@@ -45,7 +45,7 @@ export async function runScraperJob(
   options: ScraperJobOptions = {}
 ): Promise<ScraperJobResult> {
   const {
-    maxMinutes = 60,
+    maxMinutes = 180, // Default to 3 hours for scheduled jobs
     enhancedMode = true,
     saveToDatabase = true,
   } = options;

@@ -45,7 +45,7 @@ interface FormErrors {
 
 // Component props interface
 export interface AlertFormProps {
-  onSuccess: (data: AlertFormData) => void;
+  onSuccess: (data: AlertFormData, alertId?: number) => void;
   initialData?: Partial<AlertFormData>;
   className?: string;
 }
@@ -152,8 +152,31 @@ export default function AlertForm({
     setErrors({});
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      onSuccess(formData);
+      // Call real API to create alert
+      const response = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          neighborhoods: formData.neighborhoods,
+          min_price: formData.minPrice,
+          max_price: formData.maxPrice,
+          bedrooms: formData.bedrooms,
+          pet_friendly: formData.petFriendly,
+          max_commute_minutes: formData.maxCommuteMinutes,
+          commute_destination: formData.commuteDestination,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create alert');
+      }
+
+      const data = await response.json();
+      onSuccess(formData, data.alert.id);
     } catch (error) {
       setErrors({
         general:

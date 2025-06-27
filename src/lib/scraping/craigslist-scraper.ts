@@ -81,7 +81,10 @@ const NYC_BOROUGHS: BoroughConfig[] = [
  * @param timeText - Text like "15 minutes ago", "1 hour ago", etc.
  * @param maxMinutes - Maximum age in minutes (default: 45)
  */
-function isWithinTimeRange(timeText: string, maxMinutes: number = 45): boolean {
+function isWithinTimeRange(
+  timeText: string,
+  maxMinutes: number = 1440
+): boolean {
   if (!timeText) return false;
 
   const text = timeText.toLowerCase().trim();
@@ -93,10 +96,20 @@ function isWithinTimeRange(timeText: string, maxMinutes: number = 45): boolean {
     return minutes <= maxMinutes;
   }
 
-  // Handle "X hours ago" or "Xh ago" format (reject if more than 1 hour)
+  // Handle "X hours ago" or "Xh ago" format
   const hoursMatch = text.match(/(\d+)\s*(?:hours?|h)\s*ago/);
   if (hoursMatch) {
-    return false; // More than 1 hour, reject
+    const hours = parseInt(hoursMatch[1], 10);
+    const hoursInMinutes = hours * 60;
+    return hoursInMinutes <= maxMinutes;
+  }
+
+  // Handle "X days ago" format
+  const daysMatch = text.match(/(\d+)\s*(?:days?|d)\s*ago/);
+  if (daysMatch) {
+    const days = parseInt(daysMatch[1], 10);
+    const daysInMinutes = days * 24 * 60;
+    return daysInMinutes <= maxMinutes;
   }
 
   // Handle "just now" or similar
@@ -104,7 +117,7 @@ function isWithinTimeRange(timeText: string, maxMinutes: number = 45): boolean {
     return true;
   }
 
-  // If we can't parse it, assume it's too old
+  // If we can't parse it, exclude it (likely old listing with date format like "6/27")
   return false;
 }
 
@@ -377,9 +390,8 @@ async function scrapeBorough(
           // Extract basic information using updated selectors
           const titleElement = element.querySelector('.posting-title .label');
           const priceElement = element.querySelector('.priceinfo');
-          const timeElement = element.querySelector(
-            '.meta span[title*="2024"], .meta span[title*="2025"]'
-          );
+          // Get time from the meta element - time is usually the first text before other info
+          const timeElement = element.querySelector('.meta');
           const linkElement = element.querySelector('.cl-app-anchor');
 
           // Extract additional information for enhanced data
@@ -406,7 +418,10 @@ async function scrapeBorough(
 
           const title = titleElement.textContent?.trim() || '';
           const priceText = priceElement.textContent?.trim() || '';
-          const timeText = timeElement?.textContent?.trim() || '';
+          // Extract just the time part from meta text (e.g., "25m ago" from "25m ago2br$4,800pichide")
+          const metaText = timeElement?.textContent?.trim() || '';
+          const timeMatch = metaText.match(/^(\d+\s*[mhd]\s*ago|just\s*now)/i);
+          const timeText = timeMatch ? timeMatch[0] : '';
           const url = (linkElement as HTMLAnchorElement).href;
           const locationText = locationElement?.textContent?.trim() || '';
           const housingText = housingElement?.textContent?.trim() || '';
@@ -435,14 +450,20 @@ async function scrapeBorough(
 
     // Process the extracted data
     const processedListings: ScrapedListing[] = [];
+    let skippedByTime = 0;
+    let emptyTimeText = 0;
 
     for (const listing of listings) {
+      
+      // Track listings without time text
+      if (!listing.timeText) {
+        emptyTimeText++;
+      }
+      
       // Check if listing is recent enough
-      if (
-        listing.timeText &&
-        !isWithinTimeRange(listing.timeText, maxMinutes)
-      ) {
-        continue; // Skip old listings
+      if (!listing.timeText || !isWithinTimeRange(listing.timeText, maxMinutes)) {
+        skippedByTime++;
+        continue; // Skip old listings or listings without time info
       }
 
       const price = extractPrice(listing.priceText);
@@ -476,7 +497,7 @@ async function scrapeBorough(
     }
 
     console.log(
-      `Found ${processedListings.length} recent listings in ${borough.name}`
+      `Found ${processedListings.length} recent listings in ${borough.name} (skipped ${skippedByTime} by time filter, ${emptyTimeText} with no time, max: ${maxMinutes}min)`
     );
     return processedListings;
   } catch (error) {
@@ -580,7 +601,7 @@ async function scrapeIndividualListing(
  * Main function to scrape recent listings from all NYC boroughs
  */
 export async function scrapeRecentListings(
-  maxMinutes: number = 45,
+  maxMinutes: number = 1440, // Default to 24 hours (1440 minutes)
   enhancedMode: boolean = true
 ): Promise<ScrapingResult> {
   let browser: Browser | null = null;
