@@ -204,10 +204,249 @@ export async function POST(request: NextRequest) {
       user = newUser;
     }
 
+    // Add generic borough names to neighborhoods
+    const enhancedNeighborhoods = [...neighborhoods];
+
+    // Check if any Manhattan neighborhoods are selected
+    const manhattanNeighborhoods = [
+      'Upper East Side',
+      'Upper West Side',
+      'Midtown',
+      'Lower East Side',
+      'Greenwich Village',
+      'SoHo',
+      'TriBeCa',
+      'Financial District',
+      'Chelsea',
+      'Flatiron',
+      'Gramercy',
+      'Murray Hill',
+      'Kips Bay',
+      'Tudor City',
+      "Hell's Kitchen",
+      'Times Square',
+      'Lincoln Square',
+      'Yorkville',
+      'East Harlem',
+      'Central Harlem',
+      'West Harlem',
+      'Washington Heights',
+      'Inwood',
+      'Chinatown',
+      'Little Italy',
+      'NoLita',
+      'Bowery',
+      'East Village',
+      'West Village',
+    ];
+
+    const brooklynNeighborhoods = [
+      'Williamsburg',
+      'DUMBO',
+      'Brooklyn Heights',
+      'Park Slope',
+      'Prospect Heights',
+      'Crown Heights',
+      'Bedford-Stuyvesant',
+      'Fort Greene',
+      'Boerum Hill',
+      'Carroll Gardens',
+      'Red Hook',
+      'Gowanus',
+      'Sunset Park',
+      'Bay Ridge',
+      'Bensonhurst',
+      'Coney Island',
+      'Brighton Beach',
+      'Sheepshead Bay',
+      'Flatbush',
+      'Midwood',
+      'Borough Park',
+      'Bushwick',
+      'East New York',
+      'Brownsville',
+      'Canarsie',
+      'Mill Basin',
+      'Marine Park',
+      'Gravesend',
+    ];
+
+    const bronxNeighborhoods = [
+      'South Bronx',
+      'Mott Haven',
+      'Port Morris',
+      'Melrose',
+      'Morrisania',
+      'Hunts Point',
+      'Longwood',
+      'Concourse',
+      'High Bridge',
+      'Morris Heights',
+      'University Heights',
+      'Fordham',
+      'Belmont',
+      'Tremont',
+      'Mount Hope',
+      'Claremont',
+      'Soundview',
+      'Castle Hill',
+      'Parkchester',
+      'Westchester Square',
+      'Throggs Neck',
+      'Country Club',
+      'Pelham Bay',
+      'Williamsbridge',
+      'Norwood',
+      'Bedford Park',
+      'Kingsbridge',
+      'Riverdale',
+      'Spuyten Duyvil',
+    ];
+
+    const queensNeighborhoods = [
+      'Astoria',
+      'Long Island City',
+      'Sunnyside',
+      'Woodside',
+      'Jackson Heights',
+      'Elmhurst',
+      'Corona',
+      'Forest Hills',
+      'Rego Park',
+      'Kew Gardens',
+      'Flushing',
+      'Whitestone',
+      'College Point',
+      'Bayside',
+      'Douglaston',
+      'Little Neck',
+      'Jamaica',
+      'Hollis',
+      'Queens Village',
+      'Cambria Heights',
+      'Laurelton',
+      'Rosedale',
+      'Springfield Gardens',
+      'Howard Beach',
+      'Ozone Park',
+      'Richmond Hill',
+      'Woodhaven',
+      'Ridgewood',
+      'Glendale',
+      'Middle Village',
+      'Maspeth',
+      'Fresh Meadows',
+      'Briarwood',
+      'Bellerose',
+      'Kew Gardens Hills',
+      'Pomonok',
+      'Electchester',
+      'Glen Oaks',
+      'Floral Park',
+      'New Hyde Park',
+      'Far Rockaway',
+      'Rockaway Beach',
+      'Rockaway Park',
+      'Breezy Point',
+      'Belle Harbor',
+      'Neponsit',
+      'Arverne',
+      'Edgemere',
+    ];
+
+    const statenIslandNeighborhoods = [
+      'St. George',
+      'Tompkinsville',
+      'Stapleton',
+      'Clifton',
+      'Concord',
+      'Fort Wadsworth',
+      'Rosebank',
+      'Shore Acres',
+      'Arrochar',
+      'Grasmere',
+      'South Beach',
+      'Old Town',
+      'Dongan Hills',
+      'Grant City',
+      'New Dorp',
+      'Oakwood',
+      'Midland Beach',
+      'Bay Terrace',
+      'Great Kills',
+      'Eltingville',
+      'Annadale',
+      'Arden Heights',
+      'Huguenot',
+      "Prince's Bay",
+      'Pleasant Plains',
+      'Richmond Valley',
+      'Tottenville',
+      'Charleston',
+      'Rossville',
+      'Woodrow',
+      'Travis',
+      'Egbertville',
+      'Heartland Village',
+      'Chelsea',
+      'Bloomfield',
+      'Bulls Head',
+      'New Brighton',
+      'West Brighton',
+      'Port Richmond',
+      'Mariners Harbor',
+      'Elm Park',
+      'Graniteville',
+      'Port Ivory',
+      'Howland Hook',
+      'Arlington',
+      'Westerleigh',
+      'Castleton Corners',
+      'New Springville',
+      'Willowbrook',
+      'Lighthouse Hill',
+      'Todt Hill',
+      'Emerson Hill',
+      'Grymes Hill',
+      'Silver Lake',
+    ];
+
+    // Add generic borough names if specific neighborhoods from that borough are selected
+    if (
+      neighborhoods.some((n) => manhattanNeighborhoods.includes(n)) &&
+      !enhancedNeighborhoods.includes('Manhattan')
+    ) {
+      enhancedNeighborhoods.push('Manhattan');
+    }
+    if (
+      neighborhoods.some((n) => brooklynNeighborhoods.includes(n)) &&
+      !enhancedNeighborhoods.includes('Brooklyn')
+    ) {
+      enhancedNeighborhoods.push('Brooklyn');
+    }
+    if (
+      neighborhoods.some((n) => bronxNeighborhoods.includes(n)) &&
+      !enhancedNeighborhoods.includes('Bronx')
+    ) {
+      enhancedNeighborhoods.push('Bronx');
+    }
+    if (
+      neighborhoods.some((n) => queensNeighborhoods.includes(n)) &&
+      !enhancedNeighborhoods.includes('Queens')
+    ) {
+      enhancedNeighborhoods.push('Queens');
+    }
+    if (
+      neighborhoods.some((n) => statenIslandNeighborhoods.includes(n)) &&
+      !enhancedNeighborhoods.includes('Staten Island')
+    ) {
+      enhancedNeighborhoods.push('Staten Island');
+    }
+
     // Check for duplicate alerts
     const whereConditions = [
       eq(alerts.user_id, user[0].id),
-      eq(alerts.neighborhoods, JSON.stringify(neighborhoods)),
+      eq(alerts.neighborhoods, JSON.stringify(enhancedNeighborhoods)),
       eq(alerts.is_active, true),
     ];
 
@@ -272,12 +511,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new alert
+    // Create new alert with enhanced neighborhoods
     const alert = await db
       .insert(alerts)
       .values({
         user_id: user[0].id,
-        neighborhoods: JSON.stringify(neighborhoods),
+        neighborhoods: JSON.stringify(enhancedNeighborhoods),
         min_price: min_price ?? null,
         max_price: max_price ?? null,
         bedrooms: bedrooms ?? null,

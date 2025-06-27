@@ -7,6 +7,7 @@
 
 import * as nodemailer from 'nodemailer';
 import { ParsedListing } from '../types/database.types';
+import { formatBedrooms } from '../utils/listingHelpers';
 
 // ================================
 // Types
@@ -84,7 +85,7 @@ function formatListingNotificationEmail(listings: ParsedListing[]): string {
     emailBody += `   Price: $${listing.price.toLocaleString()}\n`;
 
     if (listing.bedrooms !== null) {
-      emailBody += `   Bedrooms: ${listing.bedrooms}\n`;
+      emailBody += `   Bedrooms: ${formatBedrooms(listing.bedrooms)}\n`;
     }
 
     if (listing.neighborhood) {

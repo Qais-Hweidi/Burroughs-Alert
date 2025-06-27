@@ -448,7 +448,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (bedrooms !== undefined) {
-      whereConditions.push(eq(listings.bedrooms, bedrooms));
+      // Treat null bedrooms as studios (0 bedrooms)
+      if (bedrooms === 0) {
+        whereConditions.push(
+          or(eq(listings.bedrooms, 0), isNull(listings.bedrooms))
+        );
+      } else {
+        whereConditions.push(eq(listings.bedrooms, bedrooms));
+      }
     }
 
     if (pet_friendly !== undefined) {

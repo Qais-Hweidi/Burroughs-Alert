@@ -10,6 +10,11 @@
  *   npx tsx scripts/run-jobs.ts system-status  # Show system status
  */
 
+import { config } from 'dotenv';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
+
 import {
   runScraperJob,
   formatJobSummary as formatScraperSummary,

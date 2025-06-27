@@ -265,6 +265,26 @@ function extractBedrooms(title: string): number | undefined {
 }
 
 /**
+ * Extract bedroom count from attrgroup bedroom info (e.g., "2BR / 1Ba")
+ */
+function extractBedroomsFromAttrGroup(bedroomInfo: string): number | undefined {
+  if (!bedroomInfo) return undefined;
+
+  const text = bedroomInfo.toLowerCase();
+
+  // Pattern for "2BR / 1Ba", "2 BR / 1 Ba", "2BR/1Ba" format
+  const brPattern = text.match(/(\d+)\s*br\s*\/\s*\d+\s*ba/i);
+  if (brPattern) {
+    const count = parseInt(brPattern[1], 10);
+    if (count >= 0 && count <= 6) {
+      return count;
+    }
+  }
+
+  return undefined;
+}
+
+/**
  * Detect if listing is pet-friendly
  */
 function detectPetFriendly(
@@ -454,14 +474,16 @@ async function scrapeBorough(
     let emptyTimeText = 0;
 
     for (const listing of listings) {
-      
       // Track listings without time text
       if (!listing.timeText) {
         emptyTimeText++;
       }
-      
+
       // Check if listing is recent enough
-      if (!listing.timeText || !isWithinTimeRange(listing.timeText, maxMinutes)) {
+      if (
+        !listing.timeText ||
+        !isWithinTimeRange(listing.timeText, maxMinutes)
+      ) {
         skippedByTime++;
         continue; // Skip old listings or listings without time info
       }
@@ -558,18 +580,31 @@ async function scrapeIndividualListing(
         .map((group) => group.textContent?.trim() || '')
         .join(' ');
 
+      // Extract bedroom information from attrgroup with "BR / Ba" pattern
+      const bedroomInfo = allAttrGroups
+        .map((group) => group.textContent?.trim() || '')
+        .find((text) => text.match(/\d+BR\s*\/\s*\d+Ba/i));
+
       return {
         latitude: latitude && !isNaN(latitude) ? latitude : undefined,
         longitude: longitude && !isNaN(longitude) ? longitude : undefined,
         fullDescription,
         housingText,
         allAttributesText,
+        bedroomInfo,
       };
     });
 
     // Enhanced pet-friendly detection with full description and attributes
     const combinedText = `${listing.title} ${enhancedData.fullDescription} ${enhancedData.housingText} ${enhancedData.allAttributesText}`;
     const petFriendly = detectPetFriendly(listing.title, combinedText);
+
+    // Enhanced bedroom extraction - prefer attrgroup data over title
+    const bedroomsFromAttr = extractBedroomsFromAttrGroup(
+      enhancedData.bedroomInfo || ''
+    );
+    const bedrooms =
+      bedroomsFromAttr !== undefined ? bedroomsFromAttr : listing.bedrooms;
 
     // Validate coordinates are in NYC area
     const coordinates =
@@ -584,6 +619,7 @@ async function scrapeIndividualListing(
 
     return {
       ...listing,
+      bedrooms,
       pet_friendly: petFriendly,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
@@ -714,6 +750,7 @@ export {
   extractPrice,
   extractExternalId,
   extractBedrooms,
+  extractBedroomsFromAttrGroup,
   detectPetFriendly,
   extractCoordinates,
 };

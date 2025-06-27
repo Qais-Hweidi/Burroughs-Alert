@@ -116,7 +116,7 @@ export default function ListingCard({
                 ? 'Allowed'
                 : listing.petFriendly === false
                   ? 'Not allowed'
-                  : 'Unknown'}
+                  : 'Not mentioned'}
             </span>
           </div>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { RefreshCw, Home, Search, AlertCircle } from 'lucide-react';
+import { RefreshCw, Home, Search, AlertCircle, UserMinus } from 'lucide-react';
 import { ListingsGridProps } from '@/lib/types/listings.types';
 import ListingCard from './ListingCard';
 import { sortListingsByDate } from '@/lib/utils/listingHelpers';
@@ -11,10 +11,14 @@ export default function ListingsGrid({
   isLoading = false,
   isRefreshing = false,
   onRefresh,
+  onUnsubscribe,
   refreshStatus = '',
   className = '',
+  alertId,
 }: ListingsGridProps) {
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
+  const [showUnsubscribeConfirm, setShowUnsubscribeConfirm] = useState(false);
+  const [isUnsubscribing, setIsUnsubscribing] = useState(false);
 
   const handleRefresh = useCallback(() => {
     if (onRefresh && !isRefreshing) {
@@ -22,6 +26,47 @@ export default function ListingsGrid({
       onRefresh();
     }
   }, [onRefresh, isRefreshing]);
+
+  const handleUnsubscribe = useCallback(async () => {
+    if (!alertId || isUnsubscribing) return;
+
+    setIsUnsubscribing(true);
+
+    try {
+      const response = await fetch(`/api/alerts/${alertId}/unsubscribe`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(
+          'You have been successfully unsubscribed. You will be redirected to the homepage.'
+        );
+        // Redirect to homepage after successful unsubscribe
+        window.location.href = '/';
+      } else {
+        alert(`Unsubscribe failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Unsubscribe error:', error);
+      alert('An error occurred while unsubscribing. Please try again.');
+    } finally {
+      setIsUnsubscribing(false);
+      setShowUnsubscribeConfirm(false);
+    }
+  }, [alertId, isUnsubscribing]);
+
+  const handleUnsubscribeClick = useCallback(() => {
+    setShowUnsubscribeConfirm(true);
+  }, []);
+
+  const handleCancelUnsubscribe = useCallback(() => {
+    setShowUnsubscribeConfirm(false);
+  }, []);
 
   // Sort listings by date (newest first)
   const sortedListings = sortListingsByDate(listings, false);
@@ -111,13 +156,14 @@ export default function ListingsGrid({
           </h2>
         </div>
 
-        {onRefresh && (
-          <div className="flex items-center gap-3">
-            {lastRefreshTime && (
-              <span className="text-sm text-gray-500">
-                Last updated: {lastRefreshTime.toLocaleTimeString()}
-              </span>
-            )}
+        <div className="flex items-center gap-3">
+          {lastRefreshTime && (
+            <span className="text-sm text-gray-500">
+              Last updated: {lastRefreshTime.toLocaleTimeString()}
+            </span>
+          )}
+
+          {onRefresh && (
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
@@ -134,8 +180,25 @@ export default function ListingsGrid({
               />
               {isRefreshing ? 'Refreshing...' : 'Refresh'}
             </button>
-          </div>
-        )}
+          )}
+
+          {alertId && (
+            <button
+              onClick={handleUnsubscribeClick}
+              disabled={isUnsubscribing}
+              className="
+                inline-flex items-center gap-2 px-4 py-2
+                bg-white border-2 border-red-300 hover:border-red-400 hover:bg-red-50
+                disabled:border-gray-200 disabled:bg-gray-50
+                text-red-700 font-medium rounded-lg
+                transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+              "
+            >
+              <UserMinus className="w-4 h-4" />
+              {isUnsubscribing ? 'Unsubscribing...' : 'Unsubscribe'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Refresh status indicator */}
@@ -147,11 +210,74 @@ export default function ListingsGrid({
               {refreshStatus || 'Refreshing listings...'}
             </span>
           </div>
-          {!refreshStatus && (
-            <div className="text-xs text-blue-600 ml-6">
-              ⏱️ This may take 1-3 minutes as we check individual apartment pages
+        </div>
+      )}
+
+      {/* Unsubscribe confirmation modal */}
+      {showUnsubscribeConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <UserMinus className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Confirm Unsubscribe
+                </h3>
+                <p className="text-sm text-gray-600">
+                  This action cannot be undone
+                </p>
+              </div>
             </div>
-          )}
+
+            <div className="mb-6">
+              <p className="text-gray-700 mb-2">
+                Are you sure you want to unsubscribe from all apartment alerts?
+              </p>
+              <p className="text-sm text-gray-600">
+                This will permanently delete your account and all your alert
+                preferences. You will stop receiving email notifications
+                immediately.
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleCancelUnsubscribe}
+                disabled={isUnsubscribing}
+                className="
+                  px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200
+                  disabled:bg-gray-50 disabled:text-gray-400
+                  rounded-lg font-medium transition-colors
+                "
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUnsubscribe}
+                disabled={isUnsubscribing}
+                className="
+                  px-4 py-2 bg-red-600 hover:bg-red-700 text-white
+                  disabled:bg-red-300
+                  rounded-lg font-medium transition-colors
+                  inline-flex items-center gap-2
+                "
+              >
+                {isUnsubscribing ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Unsubscribing...
+                  </>
+                ) : (
+                  <>
+                    <UserMinus className="w-4 h-4" />
+                    Yes, Unsubscribe
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

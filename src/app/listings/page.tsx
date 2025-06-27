@@ -154,12 +154,16 @@ function ListingsContent() {
     if (!alertCriteria) return;
 
     setState((prev) => ({ ...prev, isRefreshing: true }));
-    setRefreshStatus('Checking for new listings...');
+    setRefreshStatus(
+      'Checking for new listings - this could take up to 3 minutes...'
+    );
 
     try {
       // Step 1: Trigger scraper job to get fresh listings
-      setRefreshStatus('Scanning Craigslist for new apartments...');
-      
+      setRefreshStatus(
+        'Scanning Craigslist for new apartments - this could take up to 3 minutes...'
+      );
+
       // Create a timeout promise
       const timeoutPromise = new Promise(
         (_, reject) =>
@@ -195,7 +199,6 @@ function ListingsContent() {
       // Step 2: Load listings with fresh data
       await loadListings(true);
       setRefreshStatus('');
-      
     } catch (error) {
       console.error('Error during refresh:', error);
       setRefreshStatus('');
@@ -333,6 +336,7 @@ function ListingsContent() {
               isRefreshing={state.isRefreshing}
               onRefresh={handleRefresh}
               refreshStatus={refreshStatus}
+              alertId={alertId || undefined}
             />
           ) : (
             !alertError && (

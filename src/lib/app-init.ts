@@ -145,6 +145,19 @@ export function registerShutdownHandlers(): void {
     return;
   }
 
+  // Check current listener count before adding more
+  const sigintListeners = process.listenerCount('SIGINT');
+  const sigtermListeners = process.listenerCount('SIGTERM');
+
+  // Only register if we don't already have too many listeners
+  if (sigintListeners >= 10 || sigtermListeners >= 10) {
+    console.log(
+      '⚠️ Too many signal listeners already registered, skipping shutdown handler registration'
+    );
+    shutdownHandlersRegistered = true;
+    return;
+  }
+
   const gracefulShutdown = async (signal: string) => {
     console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
 
@@ -161,18 +174,21 @@ export function registerShutdownHandlers(): void {
     process.exit(0);
   };
 
-  // Handle different termination signals
-  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-  process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // nodemon restart
+  // Increase max listeners to prevent warnings
+  process.setMaxListeners(20);
+
+  // Handle different termination signals (use once() to prevent multiple registrations)
+  process.once('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.once('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.once('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // nodemon restart
 
   // Handle uncaught exceptions
-  process.on('uncaughtException', (error) => {
+  process.once('uncaughtException', (error) => {
     console.error('💥 Uncaught Exception:', error);
     gracefulShutdown('uncaughtException');
   });
 
-  process.on('unhandledRejection', (reason, promise) => {
+  process.once('unhandledRejection', (reason, promise) => {
     console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
     gracefulShutdown('unhandledRejection');
   });

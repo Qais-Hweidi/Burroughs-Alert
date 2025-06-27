@@ -13,14 +13,21 @@ import { initializeApp, registerShutdownHandlers } from '@/lib/app-init';
  * is protected by a singleton pattern to prevent multiple runs
  */
 export default async function AppInitializer() {
-  // Only run on server side
+  // Only run on server side and in production or when explicitly enabled
   if (typeof window === 'undefined') {
     try {
-      // Register shutdown handlers (safe to call multiple times)
-      registerShutdownHandlers();
+      // Only register shutdown handlers in production or when background jobs are enabled
+      const shouldInit =
+        process.env.NODE_ENV === 'production' ||
+        process.env.ENABLE_BACKGROUND_JOBS_DEV === 'true';
 
-      // Initialize the app (job system, etc.)
-      await initializeApp();
+      if (shouldInit) {
+        // Register shutdown handlers (safe to call multiple times)
+        registerShutdownHandlers();
+
+        // Initialize the app (job system, etc.)
+        await initializeApp();
+      }
     } catch (error) {
       // Log error but don't crash the app
       console.error('App initialization error:', error);

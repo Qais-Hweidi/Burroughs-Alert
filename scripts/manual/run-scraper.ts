@@ -105,6 +105,7 @@ async function saveToDatabase(listings: ScrapedListing[]): Promise<void> {
   console.log('\n=== SAVING TO DATABASE ===');
 
   let successCount = 0;
+  let duplicateCount = 0;
   let errorCount = 0;
 
   for (const listing of listings) {
@@ -126,6 +127,7 @@ async function saveToDatabase(listings: ScrapedListing[]): Promise<void> {
           errorData.message.includes('already exists')
         ) {
           console.log(`⚠️  Duplicate listing skipped: ${listing.external_id}`);
+          duplicateCount++;
         } else {
           console.log(
             `❌ Failed to save listing ${listing.external_id}:`,
@@ -140,8 +142,12 @@ async function saveToDatabase(listings: ScrapedListing[]): Promise<void> {
     }
   }
 
-  console.log(`\n✅ Successfully saved: ${successCount} listings`);
-  console.log(`❌ Errors: ${errorCount} listings`);
+  console.log(
+    `\nDatabase save completed: ${successCount} new listings, ${duplicateCount} duplicates`
+  );
+  if (errorCount > 0) {
+    console.log(`❌ Errors: ${errorCount} listings`);
+  }
 }
 
 // ================================

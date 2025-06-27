@@ -28,8 +28,8 @@ export function formatPrice(price: number): string {
 // ================================
 
 export function formatBedrooms(bedrooms: number | null): string {
-  if (bedrooms === null || bedrooms === undefined) return 'N/A';
-  if (bedrooms === 0) return 'Studio';
+  if (bedrooms === null || bedrooms === undefined || bedrooms === 0)
+    return 'Studio';
   if (bedrooms === 1) return '1 Bedroom';
   return `${bedrooms} Bedrooms`;
 }

@@ -273,16 +273,12 @@ function checkBedroomMatch(
     return { passed: true, reason: 'No bedroom restrictions' };
   }
 
-  // If listing has no bedroom data, we can't match
-  if (listing.bedrooms === null) {
-    return {
-      passed: false,
-      reason: `Listing has no bedroom data, but alert requires ${alertBedrooms === 0 ? 'studio' : `${alertBedrooms} bedroom${alertBedrooms !== 1 ? 's' : ''}`}`,
-    };
-  }
+  // Treat null bedrooms as studios (0 bedrooms)
+  const normalizedListingBedrooms =
+    listing.bedrooms === null ? 0 : listing.bedrooms;
 
   // Exact match required
-  if (listing.bedrooms === alertBedrooms) {
+  if (normalizedListingBedrooms === alertBedrooms) {
     const bedroomLabel =
       alertBedrooms === 0
         ? 'studio'
@@ -292,7 +288,7 @@ function checkBedroomMatch(
 
   return {
     passed: false,
-    reason: `Bedroom count mismatch: listing has ${listing.bedrooms === 0 ? 'studio' : `${listing.bedrooms} bedroom${listing.bedrooms !== 1 ? 's' : ''}`}, alert wants ${alertBedrooms === 0 ? 'studio' : `${alertBedrooms} bedroom${alertBedrooms !== 1 ? 's' : ''}`}`,
+    reason: `Bedroom count mismatch: listing has ${normalizedListingBedrooms === 0 ? 'studio' : `${normalizedListingBedrooms} bedroom${normalizedListingBedrooms !== 1 ? 's' : ''}`}, alert wants ${alertBedrooms === 0 ? 'studio' : `${alertBedrooms} bedroom${alertBedrooms !== 1 ? 's' : ''}`}`,
   };
 }
 

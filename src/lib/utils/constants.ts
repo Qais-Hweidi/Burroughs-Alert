@@ -409,7 +409,14 @@ export function getNeighborhoodNames(): string[] {
 }
 
 export function isValidNeighborhood(name: string): boolean {
-  return NYC_NEIGHBORHOODS.some((n) => n.name === name);
+  // Check if it's a valid neighborhood from our list
+  if (NYC_NEIGHBORHOODS.some((n) => n.name === name)) {
+    return true;
+  }
+  
+  // Also accept generic borough names
+  const genericBoroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+  return genericBoroughs.includes(name);
 }
 
 export function getBoroughForNeighborhood(name: string): NYCBorough | null {
