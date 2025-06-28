@@ -5,6 +5,14 @@ echo "Starting Burroughs-Alert in production..."
 echo "PORT environment variable: ${PORT:-not set}"
 echo "Using port: ${PORT:-3000}"
 
+# Run database migrations first
+echo "Running database migrations..."
+npx tsx scripts/migrate-database.ts
+if [ $? -ne 0 ]; then
+    echo "ERROR: Database migration failed"
+    exit 1
+fi
+
 # Start Next.js server
 echo "Starting Next.js server..."
 npm run start &
