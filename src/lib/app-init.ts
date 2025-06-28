@@ -11,6 +11,7 @@
  */
 
 import { autoStartBackgroundJobs, getJobSystemStatus } from './jobs/startup';
+import { getDatabase } from './database';
 
 // ================================
 // Initialization State
@@ -18,6 +19,20 @@ import { autoStartBackgroundJobs, getJobSystemStatus } from './jobs/startup';
 
 let isInitialized = false;
 let initializationPromise: Promise<void> | null = null;
+
+/**
+ * Initialize database (for external scripts)
+ */
+export async function initializeDatabase(): Promise<void> {
+  try {
+    // Simply getting the database triggers schema initialization
+    getDatabase();
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Database initialization failed:', error);
+    throw error;
+  }
+}
 
 /**
  * Initialize the application - safe to call multiple times

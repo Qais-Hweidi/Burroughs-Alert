@@ -145,6 +145,9 @@ const initializeSchema = () => {
           pet_friendly INTEGER,
           max_commute_minutes INTEGER,
           commute_destination TEXT,
+          commute_destination_place_id TEXT,
+          commute_destination_lat REAL,
+          commute_destination_lng REAL,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
           updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
           is_active INTEGER DEFAULT 1 NOT NULL
