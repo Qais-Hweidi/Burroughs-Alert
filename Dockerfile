@@ -93,5 +93,8 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 # Expose port
 EXPOSE 3000
 
-# Initialize database and start services
-CMD ["sh", "-c", "npx tsx scripts/init-database.ts && npm run start & npm run jobs:start"]
+# Make start script executable
+RUN chmod +x /app/scripts/start-production.sh
+
+# Start services using production script
+CMD ["/app/scripts/start-production.sh"]
