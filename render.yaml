@@ -1,0 +1,59 @@
+services:
+  # Web service for the Next.js application
+  - type: web
+    name: burroughs-alert
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: sqlite-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:/app/data/app.db
+      - key: NEXT_PUBLIC_APP_URL
+        fromService:
+          type: web
+          name: burroughs-alert
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: JOBS_ENABLED
+        value: "true"
+      - key: JOBS_SCRAPER_INTERVAL
+        value: "45"
+      - key: JOBS_SCRAPER_INITIAL_DELAY
+        value: "5"
+      - key: JOBS_HEALTH_CHECK_INTERVAL
+        value: "5"
+      - key: JOBS_CLEANUP_CRON
+        value: "0 2 * * *"
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=512"
+    healthCheckPath: /api/health
+    autoDeploy: false
+
+  # Background worker for the job system (if you want to separate it)
+  # Uncomment if you prefer running jobs as a separate service
+  # - type: worker
+  #   name: burroughs-alert-jobs
+  #   runtime: docker
+  #   dockerfilePath: ./Dockerfile.worker
+  #   disk:
+  #     name: sqlite-data
+  #     mountPath: /app/data
+  #     sizeGB: 1
+  #   envVars:
+  #     # Same env vars as above
