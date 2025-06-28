@@ -65,7 +65,7 @@ npm run build            # Production build
 npm start                # Start production server
 ```
 
-**Note**: Complex database operations, job system, and testing infrastructure have been removed for MVP simplicity.
+**Note**: The MVP includes complete database operations, automated job system, and testing infrastructure.
 
 ### Testing & Validation
 
@@ -73,6 +73,9 @@ npm start                # Start production server
 npm run lint             # ESLint validation
 npm run type-check       # TypeScript compilation check
 npm run format           # Code formatting with Prettier
+npm run test             # Run test suite with Vitest
+npm run test:watch       # Run tests in watch mode
+npm run test:ui          # Run tests with UI interface
 ```
 
 **IMPORTANT**: Run `npm run format` immediately after making code changes to maintain consistent formatting.
@@ -152,7 +155,7 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 
 ### Database Architecture (Simplified for MVP)
 
-- **Schema Location**: `/src/lib/database/schema.sql.ts`
+- **Schema Location**: `/src/lib/database/schema.ts`
 - **Connection**: SQLite with file path `./data/app.db`
 - **Key Tables**: users, alerts, listings, notifications
 - **Approach**: Direct schema setup (no migrations system for MVP)
@@ -249,7 +252,9 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 - ✅ **Alert Matching Logic** (Price, bedrooms, neighborhoods, pets)
 - ✅ **Email Notification System** (Batch emails, duplicate prevention, error handling)
 - ✅ **Database Query Layer** (Listings, matching, notifications, cleanup)
-- ❌ Commute time integration - **NEXT PRIORITY**
+- ✅ **Testing Infrastructure** (Vitest with comprehensive test suites)
+- ✅ **API Testing** (Complete test coverage for all endpoints)
+- ✅ Commute time integration
 
 ## Environment Variables Required
 
@@ -260,14 +265,6 @@ DATABASE_URL="file:./data/app.db"     # SQLite database path
 SMTP_HOST="smtp.gmail.com"           # Email server
 SMTP_USER="your-email@gmail.com"     # SMTP authentication
 SMTP_PASS="your-app-password"        # SMTP password
-```
-
-### Optional Services
-
-```bash
-GOOGLE_MAPS_API_KEY="..."            # For commute calculations
-SCRAPING_INTERVAL="15"               # Minutes between scrapes
-PUPPETEER_EXECUTABLE_PATH="..."      # Browser path (auto-detected in WSL)
 ```
 
 ## NYC-Specific Implementation Notes
@@ -351,7 +348,3 @@ curl -X POST http://localhost:3000/api/jobs -H "Content-Type: application/json" 
 # Trigger individual jobs
 curl -X POST http://localhost:3000/api/jobs -H "Content-Type: application/json" -d '{"action": "trigger", "jobType": "scraper"}'
 ```
-
-## Recent Updates
-
-- Added tests in the tests folder to improve code coverage and reliability
