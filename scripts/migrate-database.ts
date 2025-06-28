@@ -25,8 +25,9 @@ try {
   `).get();
 
   if (!tableExists) {
-    console.log('❌ Alerts table does not exist. Run the app first to create the schema.');
-    process.exit(1);
+    console.log('⏭️ Alerts table does not exist. Fresh deployment - skipping migrations.');
+    console.log('✅ Migration complete (no tables to migrate)');
+    process.exit(0);
   }
 
   // Get current columns
