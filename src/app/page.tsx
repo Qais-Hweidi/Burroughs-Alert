@@ -2,6 +2,8 @@ import { Search, MapPin, Bell, Shield, Clock, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
+  console.log('BurroughsAlert HomePage loaded - testing issue.md command');
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Hero Section */}
