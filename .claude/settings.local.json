@@ -38,7 +38,9 @@
       "Bash(npm run lint)",
       "Bash(npm run format:*)",
       "mcp__ide__getDiagnostics",
-      "mcp__puppeteer__puppeteer_evaluate"
+      "mcp__puppeteer__puppeteer_evaluate",
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_screenshot"
     ],
     "deny": []
   }
