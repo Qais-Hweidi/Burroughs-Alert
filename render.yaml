@@ -21,7 +21,7 @@ services:
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
-        value: "465"
+        value: '465'
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASS
@@ -31,17 +31,17 @@ services:
       - key: GOOGLE_MAPS_API_KEY
         sync: false
       - key: JOBS_ENABLED
-        value: "true"
+        value: 'true'
       - key: JOBS_SCRAPER_INTERVAL
-        value: "45"
+        value: '45'
       - key: JOBS_SCRAPER_INITIAL_DELAY
-        value: "5"
+        value: '5'
       - key: JOBS_HEALTH_CHECK_INTERVAL
-        value: "5"
+        value: '5'
       - key: JOBS_CLEANUP_CRON
-        value: "0 2 * * *"
+        value: '0 2 * * *'
       - key: NODE_OPTIONS
-        value: "--max-old-space-size=512"
+        value: '--max-old-space-size=512'
     healthCheckPath: /api/health
     autoDeploy: false
 

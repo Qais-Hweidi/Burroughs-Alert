@@ -9,8 +9,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      reportsDirectory: './coverage'
-    }
+      reportsDirectory: './coverage',
+    },
   },
   resolve: {
     alias: {
