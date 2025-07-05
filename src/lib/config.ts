@@ -22,7 +22,8 @@ export const config = {
     user: process.env.SMTP_USER || '',
     pass: process.env.SMTP_PASS || '',
     from: process.env.SMTP_FROM || process.env.SMTP_USER || '',
-    secure: process.env.SMTP_PORT === '465' || process.env.SMTP_SECURE === 'true',
+    secure:
+      process.env.SMTP_PORT === '465' || process.env.SMTP_SECURE === 'true',
   },
 
   // Google Maps API
@@ -66,7 +67,9 @@ export function validateConfig() {
 
   // Warn about optional but recommended configurations
   if (!config.googleMaps.apiKey && config.app.isProduction) {
-    console.warn('Warning: GOOGLE_MAPS_API_KEY not set - commute time filtering will be disabled');
+    console.warn(
+      'Warning: GOOGLE_MAPS_API_KEY not set - commute time filtering will be disabled'
+    );
   }
 
   if (errors.length > 0) {
