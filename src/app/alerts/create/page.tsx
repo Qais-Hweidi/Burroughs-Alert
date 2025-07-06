@@ -17,24 +17,73 @@ import AlertForm, { AlertFormData } from '@/components/forms/AlertForm';
 
 function CreateAlertContent() {
   const [email, setEmail] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [alertId, setAlertId] = useState<number | null>(null);
+  const [initialAlertData, setInitialAlertData] = useState<any>(null);
+  const [isLoadingAlert, setIsLoadingAlert] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const emailParam = searchParams.get('email');
+    const editParam = searchParams.get('edit');
+    const modeParam = searchParams.get('mode');
+    
     if (emailParam) {
       setEmail(emailParam);
     }
+    
+    if (editParam && modeParam === 'edit') {
+      setIsEditMode(true);
+      setAlertId(parseInt(editParam, 10));
+      fetchAlertForEdit(parseInt(editParam, 10));
+    }
   }, [searchParams]);
+
+  const fetchAlertForEdit = async (id: number) => {
+    setIsLoadingAlert(true);
+    try {
+      const response = await fetch(`/api/alerts/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.alert) {
+          const alert = data.alert;
+          // Transform the API response to match AlertFormData format
+          setInitialAlertData({
+            email: alert.email,
+            neighborhoods: alert.neighborhoods,
+            minPrice: alert.min_price,
+            maxPrice: alert.max_price,
+            bedrooms: alert.bedrooms,
+            petFriendly: alert.pet_friendly === true,
+            commuteDestination: alert.commute_destination,
+            maxCommuteMinutes: alert.max_commute_minutes,
+            commuteDestinationPlaceId: null, // These may not be available
+            commuteDestinationCoordinates: alert.commute_destination_lat && alert.commute_destination_lng
+              ? { lat: alert.commute_destination_lat, lng: alert.commute_destination_lng }
+              : null,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch alert for editing:', error);
+    } finally {
+      setIsLoadingAlert(false);
+    }
+  };
 
   const handleBack = () => {
     router.push('/');
   };
 
-  const handleFormSuccess = (formData: AlertFormData, alertId?: number) => {
-    if (alertId) {
+  const handleFormSuccess = (formData: AlertFormData, alertIdFromResponse?: number) => {
+    if (isEditMode) {
+      // Redirect back to manage page after successful edit
+      const params = new URLSearchParams({ email: formData.email });
+      router.push(`/alerts/manage?${params.toString()}`);
+    } else if (alertIdFromResponse) {
       const searchParams = new URLSearchParams({
-        alertId: alertId.toString(),
+        alertId: alertIdFromResponse.toString(),
       });
       router.push(`/listings?${searchParams.toString()}`);
     } else {
@@ -73,22 +122,33 @@ function CreateAlertContent() {
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-8 text-white">
             <div className="text-center">
               <h1 className="text-3xl font-bold mb-2">
-                Create Your Apartment Alert
+                {isEditMode ? 'Edit Your Apartment Alert' : 'Create Your Apartment Alert'}
               </h1>
               <p className="text-blue-100 text-lg">
-                Fill out the form below to get notified about apartments that
-                match your criteria
+                {isEditMode 
+                  ? 'Update your alert criteria to receive better apartment matches'
+                  : 'Fill out the form below to get notified about apartments that match your criteria'
+                }
               </p>
             </div>
           </div>
 
           {/* Form Section */}
           <div className="p-8">
-            <AlertForm
-              onSuccess={handleFormSuccess}
-              initialData={{ email }}
-              className="space-y-6"
-            />
+            {isLoadingAlert ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600">Loading alert data...</span>
+              </div>
+            ) : (
+              <AlertForm
+                onSuccess={handleFormSuccess}
+                initialData={isEditMode ? initialAlertData : { email }}
+                className="space-y-6"
+                isEditMode={isEditMode}
+                alertId={alertId || undefined}
+              />
+            )}
           </div>
         </div>
       </main>
