@@ -33,6 +33,21 @@ Follow these steps:
 
 # DEPLOY
 
-- Open a PR and request a review.
+- Open a PR and request a review
+
+# REVIEW
+
+Spawn a subagent using dispatch tool to analyze the PR. The subagent should:
+1. Use 'gh pr diff' to analyze all changes made
+2. Compare changes against the original issue requirements
+3. Check if changes are scoped correctly - did the agent only modify what was necessary?
+4. Verify all tests are present for new functionality
+5. Identify any unnecessary modifications or overreach
+6. Make a decision:
+- ✅ Approve: Changes match requirements, well-tested, no overreach
+- 🔧 Fix: Minor corrections needed - implement fixes and push to same PR
+- 🔄 Rollback: Major overreach detected - close PR, rollback, and retry from PLAN phase
+7. If fixes are made, re-run TEST phase before finalizing
+8. Document review findings in PR comments for transparency
 
 Remember to use the GitHub CLI (`gh`) for all GitHub-related tasks.
