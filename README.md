@@ -52,18 +52,18 @@ graph TB
         Form[Alert Creation Form]
         Landing[Landing Page]
     end
-    
+
     subgraph "API Layer"
         API[Next.js API Routes]
         Auth[Email Authentication]
         Unsub[Unsubscribe Handler]
     end
-    
+
     subgraph "Data Layer"
         DB[(SQLite Database)]
         Cache[In-Memory Cache]
     end
-    
+
     subgraph "Background Jobs"
         Scheduler[Job Scheduler]
         Scraper[Craigslist Scraper]
@@ -71,40 +71,40 @@ graph TB
         Notifier[Email Notifier]
         Cleanup[Data Cleanup]
     end
-    
+
     subgraph "External Services"
         CL[Craigslist NYC]
         Gmail[Gmail SMTP]
         Maps[Google Maps API]
     end
-    
+
     %% User interactions
     UI --> Form
     Form --> API
     Landing --> API
-    
+
     %% API connections
     API --> DB
     API --> Auth
     API --> Unsub
-    
+
     %% Job system flow
     Scheduler --> Scraper
     Scraper --> CL
     Scraper --> DB
-    
+
     Scheduler --> Matcher
     Matcher --> DB
     Matcher --> Maps
     Matcher --> Cache
-    
+
     Scheduler --> Notifier
     Notifier --> DB
     Notifier --> Gmail
-    
+
     Scheduler --> Cleanup
     Cleanup --> DB
-    
+
     %% Data flow
     DB --> Matcher
     Cache --> Matcher
@@ -122,13 +122,13 @@ sequenceDiagram
     participant N as Notifier Job
     participant E as Email Service
     participant C as Cleanup Job
-    
+
     Note over S: Every 30-45 minutes
     S->>SC: Trigger Scraper
     SC->>SC: Scrape all 5 NYC boroughs
     SC->>DB: Insert new listings
     SC-->>S: Complete (trigger next)
-    
+
     S->>M: Trigger Matcher
     M->>DB: Get active alerts
     M->>DB: Get unmatched listings
@@ -139,7 +139,7 @@ sequenceDiagram
     end
     M->>DB: Save matches
     M-->>S: Complete (trigger next)
-    
+
     S->>N: Trigger Notifier
     N->>DB: Get pending notifications
     N->>N: Group by user
@@ -147,7 +147,7 @@ sequenceDiagram
     E-->>N: Delivery status
     N->>DB: Update status
     N-->>S: Complete
-    
+
     Note over S: Daily at 3 AM
     S->>C: Trigger Cleanup
     C->>DB: Delete old data
@@ -162,7 +162,7 @@ graph LR
         A[User enters email] --> B[Creates alert criteria]
         B --> C[Saves to database]
     end
-    
+
     subgraph "Automated Processing"
         D[Scraper fetches listings] --> E[Listings saved to DB]
         E --> F[Matcher runs]
@@ -172,7 +172,7 @@ graph LR
         H --> J[Send emails]
         J --> K[Mark as sent]
     end
-    
+
     subgraph "User Actions"
         L[User receives email] --> M{Action?}
         M -->|View listing| N[Redirects to Craigslist]
@@ -209,29 +209,33 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/burroughs-alert.git
    cd burroughs-alert
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    ```
 
 4. **Configure `.env.local`**
+
    ```env
    # Essential Configuration
    DATABASE_URL="file:./data/app.db"
    SMTP_HOST="smtp.gmail.com"
    SMTP_USER="your-email@gmail.com"
    SMTP_PASS="your-app-password"
-   
+
    # Optional: Google Maps for commute calculations
    GOOGLE_MAPS_API_KEY="your-api-key"
    ```
@@ -246,9 +250,11 @@ Frontend (Next.js) ↔ API Routes ↔ SQLite Database
 ### Development Mode
 
 1. **Start the development server**
+
    ```bash
    npm run dev
    ```
+
    Visit [http://localhost:3000](http://localhost:3000)
 
 2. **Start background jobs** (in separate terminal)
@@ -278,15 +284,18 @@ npx tsx scripts/run-jobs.ts system-status
 ## 🔌 API Endpoints
 
 ### Public Endpoints
+
 - `GET /api/unsubscribe/[token]` - Unsubscribe from email notifications
 
 ### Protected Endpoints
+
 - `POST /api/alerts` - Create new alert
 - `GET /api/alerts` - List user alerts
 - `PUT /api/alerts/[id]` - Update alert
 - `DELETE /api/alerts/[id]` - Delete alert
 
 ### Admin Endpoints
+
 - `GET /api/jobs` - Get job system status
 - `POST /api/jobs` - Control job system (start/stop/trigger)
 

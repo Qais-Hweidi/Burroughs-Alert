@@ -20,6 +20,7 @@ import { NYCBorough } from '@/lib/types/database.types';
 import GooglePlacesAutocomplete, {
   PlaceResult,
 } from './GooglePlacesAutocomplete';
+import { Spinner } from '@/components/ui/spinner';
 
 // Form data interface
 export interface AlertFormData {
@@ -271,7 +272,11 @@ export default function AlertForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={className}>
+    <form
+      onSubmit={handleSubmit}
+      className={className}
+      aria-busy={isSubmitting}
+    >
       {/* Email Section */}
       <div className="mb-8">
         <div className="flex items-center mb-4">
@@ -285,9 +290,11 @@ export default function AlertForm({
           placeholder="Enter your email address"
           value={formData.email}
           onChange={(e) => handleInputChange('email', e.target.value)}
+          disabled={isSubmitting}
+          aria-disabled={isSubmitting}
           className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
             errors.email ? 'border-red-300' : 'border-gray-200'
-          }`}
+          } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
         />
         {errors.email && (
           <p className="text-red-500 text-sm mt-2 flex items-center">
@@ -340,7 +347,9 @@ export default function AlertForm({
                       if (el) el.indeterminate = someSelected && !allSelected;
                     }}
                     onChange={() => handleBoroughToggle(borough)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    disabled={isSubmitting}
+                    aria-disabled={isSubmitting}
+                    className={`w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                   <label
                     htmlFor={`borough-${borough}`}
@@ -365,7 +374,9 @@ export default function AlertForm({
                           onChange={() =>
                             handleNeighborhoodToggle(neighborhood.name)
                           }
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          disabled={isSubmitting}
+                          aria-disabled={isSubmitting}
+                          className={`w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
                         <span className="ml-2 text-sm text-gray-700">
                           {neighborhood.name}
@@ -408,7 +419,9 @@ export default function AlertForm({
                   e.target.value ? parseInt(e.target.value) : null
                 )
               }
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              disabled={isSubmitting}
+              aria-disabled={isSubmitting}
+              className={`w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             />
           </div>
           <div>
@@ -425,9 +438,11 @@ export default function AlertForm({
                   e.target.value ? parseInt(e.target.value) : null
                 )
               }
+              disabled={isSubmitting}
+              aria-disabled={isSubmitting}
               className={`w-full px-4 py-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                 errors.maxPrice ? 'border-red-300' : 'border-gray-200'
-              }`}
+              } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             />
             {errors.maxPrice && (
               <p className="text-red-500 text-sm mt-2 flex items-center">
@@ -457,7 +472,9 @@ export default function AlertForm({
               e.target.value === 'any' ? null : parseInt(e.target.value)
             )
           }
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          disabled={isSubmitting}
+          aria-disabled={isSubmitting}
+          className={`w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <option value="any">Any number of bedrooms</option>
           {BEDROOM_OPTIONS.map((option) => (
@@ -488,15 +505,14 @@ export default function AlertForm({
                   onChange={(e) =>
                     handleInputChange('petFriendly', e.target.checked)
                   }
+                  disabled={isSubmitting}
+                  aria-disabled={isSubmitting}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
               <p className="text-xs text-gray-600 text-center">
-                {formData.petFriendly 
-                  ? "Must allow pets" 
-                  : "Doesn't matter"
-                }
+                {formData.petFriendly ? 'Must allow pets' : "Doesn't matter"}
               </p>
             </div>
           </div>
@@ -544,7 +560,9 @@ export default function AlertForm({
                   e.target.value ? parseInt(e.target.value) : null
                 )
               }
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              disabled={isSubmitting}
+              aria-disabled={isSubmitting}
+              className={`w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             />
           </div>
         </div>
@@ -568,7 +586,7 @@ export default function AlertForm({
       >
         {isSubmitting ? (
           <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+            <Spinner size="sm" variant="muted" className="mr-2" />
             Creating Alert...
           </>
         ) : (

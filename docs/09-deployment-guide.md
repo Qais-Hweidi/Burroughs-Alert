@@ -3,6 +3,7 @@
 ## Overview
 
 Burroughs-Alert requires:
+
 - SQLite database with persistent storage
 - Continuous background jobs (scraper, matcher, notifier)
 - Puppeteer/Chrome for web scraping
@@ -11,15 +12,17 @@ Burroughs-Alert requires:
 ## Option 1: Deployment (Render.com + Keep-Alive)
 
 ### How It Works
+
 - Render.com provides hosting but sleeps after 15 minutes
 - Cron-job.org sends a ping every 10 minutes to keep it awake
 - Your app stays responsive 24/7!
 
-### Step-by-Step  Deployment
+### Step-by-Step Deployment
 
 #### Step 1: Deploy to Render.com
 
 1. **Push your code to GitHub**
+
    ```bash
    git add .
    git commit -m "Add deployment configuration"
@@ -34,6 +37,7 @@ Burroughs-Alert requires:
    - Render will auto-detect the `render.yaml` file
 
 4. **Configure Environment Variables**
+
    ```
    SMTP_HOST=smtp.gmail.com
    SMTP_PORT=587
@@ -120,12 +124,14 @@ pm2 startup
 ```
 
 ### VPS Providers
+
 - **DigitalOcean**: ~$6-12/month
 - **Linode**: ~$5-10/month
 
 ## Environment Variables
 
 ### Required
+
 ```bash
 # SMTP Configuration
 SMTP_HOST=smtp.gmail.com
@@ -138,6 +144,7 @@ DATABASE_URL=file:/app/data/app.db
 ```
 
 ### Optional
+
 ```bash
 # Google Maps for commute time
 GOOGLE_MAPS_API_KEY=your-api-key
@@ -153,11 +160,13 @@ JOBS_CLEANUP_CRON=0 2 * * *
 ## Monitoring
 
 ### Health Endpoints
+
 - `/api/health` - Application health
 - `/api/jobs` - Job system status
 - `/api/ping` - Keep-alive endpoint
 
 ### Logs
+
 - **Render**: View in dashboard
 - **Docker**: `docker logs container-name`
 - **PM2**: `pm2 logs`
@@ -165,19 +174,23 @@ JOBS_CLEANUP_CRON=0 2 * * *
 ## Troubleshooting
 
 ### SQLite Issues
+
 - Ensure persistent disk is mounted at `/app/data`
 - Check file permissions: `chmod 755 /app/data`
 
 ### Puppeteer Issues
+
 - Verify Chrome is installed: `google-chrome --version`
 - Check PUPPETEER_EXECUTABLE_PATH environment variable
 
 ### Email Issues
+
 - Verify SMTP credentials
 - Use Gmail App Password (not regular password)
 - Check spam folder for test emails
 
 ### Job System Issues
+
 - Check `/api/jobs` endpoint for status
 - Verify JOBS_ENABLED=true
 - Review logs for error messages
