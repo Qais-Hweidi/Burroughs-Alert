@@ -8,13 +8,14 @@ Follow these steps:
 2. Understand the problem described in the issue
 3. Ask clarifying questions if necessary
 4. Understand the prior art for this issue
-- Search the scratchpads for previous thoughts related to the issue
+- Search the scratchpads (/docs/scratchpads) for previous thoughts related to the issue
 - Search PRs to see if you can find history on this issue
-- Search the codebase for relevant files
+- Search the codebase for relevant files using dispatch tool - spawn subagents to search different sets of files in parallel
 5. Ultrathink about how to break the issue down into a series of small, manageable tasks.
 6. Document your plan in a new scratchpad
-- include the issue name in the filename
-- include a link to the issue in the scratchpad.
+- Save to /docs/scratchpads/
+- Include the issue number & name in the filename, example: issue-123-my-issue.md
+- Include a link to the issue in the scratchpad.
 
 # CREATE
 
