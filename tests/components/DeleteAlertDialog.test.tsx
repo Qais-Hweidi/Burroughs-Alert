@@ -4,7 +4,15 @@ import DeleteAlertDialog from '../../src/components/alerts/DeleteAlertDialog';
 
 // Mock the UI components
 vi.mock('../../src/components/ui/button', () => ({
-  Button: ({ children, onClick, variant, size, className, disabled, ...props }: any) => (
+  Button: ({
+    children,
+    onClick,
+    variant,
+    size,
+    className,
+    disabled,
+    ...props
+  }: any) => (
     <button
       onClick={onClick}
       className={`${variant} ${size} ${className}`}
@@ -46,14 +54,16 @@ vi.mock('../../src/components/ui/card', () => ({
 
 // Mock Lucide React icons
 vi.mock('lucide-react', () => ({
-  AlertTriangle: ({ className }: any) => <span className={className}>AlertTriangle</span>,
+  AlertTriangle: ({ className }: any) => (
+    <span className={className}>AlertTriangle</span>
+  ),
   X: ({ className }: any) => <span className={className}>X</span>,
 }));
 
 describe('DeleteAlertDialog', () => {
   const mockOnClose = vi.fn();
   const mockOnConfirm = vi.fn();
-  
+
   const mockAlertInfo = {
     neighborhoods: ['Upper East Side', 'Chelsea'],
     bedrooms: 1,
@@ -86,7 +96,11 @@ describe('DeleteAlertDialog', () => {
     );
 
     expect(screen.getByText('Delete Alert')).toBeInTheDocument();
-    expect(screen.getByText('Are you sure you want to delete this alert? This action cannot be undone.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Are you sure you want to delete this alert? This action cannot be undone.'
+      )
+    ).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Delete Alert')).toBeInTheDocument();
   });
@@ -156,7 +170,9 @@ describe('DeleteAlertDialog', () => {
       />
     );
 
-    expect(screen.getByText('Upper East Side, Chelsea, +2 more')).toBeInTheDocument();
+    expect(
+      screen.getByText('Upper East Side, Chelsea, +2 more')
+    ).toBeInTheDocument();
   });
 
   it('handles alert info without price range', () => {
@@ -234,10 +250,10 @@ describe('DeleteAlertDialog', () => {
     );
 
     const deleteButtons = screen.getAllByText('Delete Alert');
-    const deleteButton = deleteButtons.find(button => 
+    const deleteButton = deleteButtons.find((button) =>
       button.closest('button')?.className.includes('destructive')
     );
-    
+
     fireEvent.click(deleteButton!);
 
     expect(mockOnConfirm).toHaveBeenCalled();
@@ -254,11 +270,11 @@ describe('DeleteAlertDialog', () => {
     );
 
     expect(screen.getByText('Deleting...')).toBeInTheDocument();
-    
+
     // Buttons should be disabled
     const cancelButton = screen.getByText('Cancel');
     const closeButton = screen.getByText('X').closest('button');
-    
+
     expect(cancelButton).toBeDisabled();
     expect(closeButton).toBeDisabled();
   });
@@ -297,7 +313,9 @@ describe('DeleteAlertDialog', () => {
     );
 
     expect(
-      screen.getByText('You will no longer receive email notifications for apartments matching this alert.')
+      screen.getByText(
+        'You will no longer receive email notifications for apartments matching this alert.'
+      )
     ).toBeInTheDocument();
   });
 
@@ -311,7 +329,9 @@ describe('DeleteAlertDialog', () => {
     );
 
     // Dialog should be properly marked
-    const dialog = screen.getByText('Delete Alert').closest('div[class*="Card"]');
+    const dialog = screen
+      .getByText('Delete Alert')
+      .closest('div[class*="Card"]');
     expect(dialog).toBeInTheDocument();
 
     // Warning icon should be present
@@ -328,10 +348,10 @@ describe('DeleteAlertDialog', () => {
     );
 
     const cancelButton = screen.getByText('Cancel');
-    
+
     // Simulate Enter key on cancel button
     fireEvent.keyDown(cancelButton, { key: 'Enter', code: 'Enter' });
-    
+
     // Should work normally (browser handles enter on buttons)
     expect(cancelButton).toBeInTheDocument();
   });

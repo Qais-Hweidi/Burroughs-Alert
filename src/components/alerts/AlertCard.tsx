@@ -121,8 +121,8 @@ export default function AlertCard({
               {formatNeighborhoods()}
             </CardDescription>
           </div>
-          <Badge 
-            variant={alert.is_active ? "default" : "secondary"}
+          <Badge
+            variant={alert.is_active ? 'default' : 'secondary'}
             className="ml-2"
           >
             {alert.is_active ? 'Active' : 'Inactive'}

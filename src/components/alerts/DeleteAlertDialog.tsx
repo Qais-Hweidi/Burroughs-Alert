@@ -3,7 +3,13 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export interface DeleteAlertDialogProps {
   isOpen: boolean;
@@ -48,11 +54,11 @@ export default function DeleteAlertDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Dialog */}
       <Card className="relative w-full max-w-md mx-4 shadow-lg">
         <CardHeader className="pb-4">
@@ -78,9 +84,10 @@ export default function DeleteAlertDialog({
         <CardContent className="pt-0 pb-4">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Are you sure you want to delete this alert? This action cannot be undone.
+              Are you sure you want to delete this alert? This action cannot be
+              undone.
             </p>
-            
+
             {alertInfo && (
               <div className="rounded-lg border bg-muted/50 p-3">
                 <div className="space-y-1 text-sm">
@@ -97,7 +104,8 @@ export default function DeleteAlertDialog({
 
             <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3">
               <p className="text-sm text-destructive">
-                You will no longer receive email notifications for apartments matching this alert.
+                You will no longer receive email notifications for apartments
+                matching this alert.
               </p>
             </div>
           </div>

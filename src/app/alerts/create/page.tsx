@@ -28,11 +28,11 @@ function CreateAlertContent() {
     const emailParam = searchParams.get('email');
     const editParam = searchParams.get('edit');
     const modeParam = searchParams.get('mode');
-    
+
     if (emailParam) {
       setEmail(emailParam);
     }
-    
+
     if (editParam && modeParam === 'edit') {
       setIsEditMode(true);
       setAlertId(parseInt(editParam, 10));
@@ -59,9 +59,13 @@ function CreateAlertContent() {
             commuteDestination: alert.commute_destination,
             maxCommuteMinutes: alert.max_commute_minutes,
             commuteDestinationPlaceId: null, // These may not be available
-            commuteDestinationCoordinates: alert.commute_destination_lat && alert.commute_destination_lng
-              ? { lat: alert.commute_destination_lat, lng: alert.commute_destination_lng }
-              : null,
+            commuteDestinationCoordinates:
+              alert.commute_destination_lat && alert.commute_destination_lng
+                ? {
+                    lat: alert.commute_destination_lat,
+                    lng: alert.commute_destination_lng,
+                  }
+                : null,
           });
         }
       }
@@ -76,7 +80,10 @@ function CreateAlertContent() {
     router.push('/');
   };
 
-  const handleFormSuccess = (formData: AlertFormData, alertIdFromResponse?: number) => {
+  const handleFormSuccess = (
+    formData: AlertFormData,
+    alertIdFromResponse?: number
+  ) => {
     if (isEditMode) {
       // Redirect back to manage page after successful edit
       const params = new URLSearchParams({ email: formData.email });
@@ -122,13 +129,14 @@ function CreateAlertContent() {
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-8 text-white">
             <div className="text-center">
               <h1 className="text-3xl font-bold mb-2">
-                {isEditMode ? 'Edit Your Apartment Alert' : 'Create Your Apartment Alert'}
+                {isEditMode
+                  ? 'Edit Your Apartment Alert'
+                  : 'Create Your Apartment Alert'}
               </h1>
               <p className="text-blue-100 text-lg">
-                {isEditMode 
+                {isEditMode
                   ? 'Update your alert criteria to receive better apartment matches'
-                  : 'Fill out the form below to get notified about apartments that match your criteria'
-                }
+                  : 'Fill out the form below to get notified about apartments that match your criteria'}
               </p>
             </div>
           </div>
@@ -138,7 +146,9 @@ function CreateAlertContent() {
             {isLoadingAlert ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="ml-3 text-gray-600">Loading alert data...</span>
+                <span className="ml-3 text-gray-600">
+                  Loading alert data...
+                </span>
               </div>
             ) : (
               <AlertForm

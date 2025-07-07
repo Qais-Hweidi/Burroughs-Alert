@@ -51,7 +51,7 @@ function ManageAlertsContent() {
   useEffect(() => {
     const emailParam = searchParams.get('email');
     const tokenParam = searchParams.get('token');
-    
+
     if (emailParam) {
       setEmail(emailParam);
       fetchAlerts(emailParam);
@@ -62,14 +62,16 @@ function ManageAlertsContent() {
 
   const fetchAlerts = async (emailAddress: string) => {
     if (!emailAddress) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`/api/alerts?email=${encodeURIComponent(emailAddress)}`);
+      const response = await fetch(
+        `/api/alerts?email=${encodeURIComponent(emailAddress)}`
+      );
       const data: AlertsResponse = await response.json();
-      
+
       if (data.success && data.alerts && data.user) {
         setAlerts(data.alerts);
         setUser(data.user);
@@ -91,11 +93,13 @@ function ManageAlertsContent() {
   const fetchAlertsByToken = async (token: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`/api/alerts?token=${encodeURIComponent(token)}`);
+      const response = await fetch(
+        `/api/alerts?token=${encodeURIComponent(token)}`
+      );
       const data: AlertsResponse = await response.json();
-      
+
       if (data.success && data.alerts && data.user) {
         setAlerts(data.alerts);
         setUser(data.user);
@@ -128,20 +132,20 @@ function ManageAlertsContent() {
 
   const handleEditAlert = (alertId: number) => {
     // Find the alert to edit
-    const alertToEdit = alerts.find(alert => alert.id === alertId);
+    const alertToEdit = alerts.find((alert) => alert.id === alertId);
     if (!alertToEdit) return;
 
     // Navigate to create page with edit mode and alert data
-    const params = new URLSearchParams({ 
+    const params = new URLSearchParams({
       email,
       edit: alertId.toString(),
-      mode: 'edit'
+      mode: 'edit',
     });
     router.push(`/alerts/create?${params.toString()}`);
   };
 
   const handleDeleteAlert = (alertId: number) => {
-    const alertToDelete = alerts.find(alert => alert.id === alertId);
+    const alertToDelete = alerts.find((alert) => alert.id === alertId);
     if (alertToDelete) {
       setDeleteDialog({
         isOpen: true,
@@ -157,9 +161,9 @@ function ManageAlertsContent() {
 
   const confirmDeleteAlert = async () => {
     if (!deleteDialog.alertId || !email) return;
-    
+
     setIsDeleting(true);
-    
+
     try {
       const response = await fetch(`/api/alerts/${deleteDialog.alertId}`, {
         method: 'DELETE',
@@ -168,12 +172,14 @@ function ManageAlertsContent() {
         },
         body: JSON.stringify({ email }),
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         // Remove the deleted alert from the list
-        setAlerts(prev => prev.filter(alert => alert.id !== deleteDialog.alertId));
+        setAlerts((prev) =>
+          prev.filter((alert) => alert.id !== deleteDialog.alertId)
+        );
         setDeleteDialog({ isOpen: false, alertId: null });
       } else {
         setError(data.message || 'Failed to delete alert');
@@ -255,7 +261,8 @@ function ManageAlertsContent() {
                       Enter your email address
                     </Label>
                     <p className="text-sm text-muted-foreground mt-1">
-                      We'll show you all the alerts associated with this email address.
+                      We'll show you all the alerts associated with this email
+                      address.
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -271,8 +278,8 @@ function ManageAlertsContent() {
                         className="text-base"
                       />
                     </div>
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={isLoading || !email.trim()}
                       className="px-6"
                     >
@@ -305,10 +312,9 @@ function ManageAlertsContent() {
                       Alerts for {user.email}
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      {alerts.length === 0 
+                      {alerts.length === 0
                         ? 'No active alerts found'
-                        : `${alerts.length} active alert${alerts.length === 1 ? '' : 's'}`
-                      }
+                        : `${alerts.length} active alert${alerts.length === 1 ? '' : 's'}`}
                     </p>
                   </div>
                   <Button onClick={handleCreateAlert} className="gap-2">
@@ -340,20 +346,23 @@ function ManageAlertsContent() {
                       />
                     ))}
                   </div>
-                ) : !isLoading && (
-                  <div className="text-center py-12">
-                    <Settings className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No alerts yet
-                    </h3>
-                    <p className="text-gray-500 mb-6">
-                      Create your first alert to start receiving apartment notifications.
-                    </p>
-                    <Button onClick={handleCreateAlert} className="gap-2">
-                      <Plus className="w-4 h-4" />
-                      Create Your First Alert
-                    </Button>
-                  </div>
+                ) : (
+                  !isLoading && (
+                    <div className="text-center py-12">
+                      <Settings className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No alerts yet
+                      </h3>
+                      <p className="text-gray-500 mb-6">
+                        Create your first alert to start receiving apartment
+                        notifications.
+                      </p>
+                      <Button onClick={handleCreateAlert} className="gap-2">
+                        <Plus className="w-4 h-4" />
+                        Create Your First Alert
+                      </Button>
+                    </div>
+                  )
                 )}
               </div>
             )}

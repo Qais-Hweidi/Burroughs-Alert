@@ -151,7 +151,18 @@ const createAlertSchema = z
 
 const getUserAlertsSchema = z
   .object({
-    email: z.string().email('Invalid email format').optional(),
+    email: z
+      .string()
+      .email('Invalid email format')
+      .min(
+        VALIDATION_LIMITS.email.minLength,
+        `Email must be at least ${VALIDATION_LIMITS.email.minLength} characters`
+      )
+      .max(
+        VALIDATION_LIMITS.email.maxLength,
+        `Email must be at most ${VALIDATION_LIMITS.email.maxLength} characters`
+      )
+      .optional(),
     token: z
       .string()
       .length(
@@ -605,7 +616,12 @@ export async function GET(request: NextRequest) {
 
     // If email or token is provided, get user-specific alerts
     if (email || token) {
-      const validation = getUserAlertsSchema.safeParse({ email, token });
+      // Convert null values to undefined for Zod validation
+      const validationData = {
+        email: email || undefined,
+        token: token || undefined,
+      };
+      const validation = getUserAlertsSchema.safeParse(validationData);
       if (!validation.success) {
         return NextResponse.json(
           {

@@ -12,24 +12,28 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### ✅ **Excellent Infrastructure Already Available**
 
 **Database Layer (100% Ready)**:
+
 - Complete CRUD operations in `/src/lib/database/queries/alerts.ts`
 - `updateAlert()`, `deleteAlert()`, `deactivateAlert()` functions already implemented
 - `getAlertsByEmail()` for retrieving user alerts
 - SQLite with proper indexes and relationships
 
 **API Layer (70% Ready)**:
+
 - ✅ `GET /api/alerts` - Complete (retrieves alerts by email/token)
 - ✅ `GET /api/alerts/[id]` - Complete (single alert retrieval)
 - ❌ `PUT /api/alerts/[id]` - **MISSING** (but can use existing `updateAlert()` function)
 - ❌ `DELETE /api/alerts/[id]` - **MISSING** (but can use existing `deactivateAlert()` function)
 
 **UI Components (80% Ready)**:
+
 - ✅ Complete AlertForm component with validation and loading states
 - ✅ UI library (button, input, card, spinner, etc.)
 - ✅ Layout components (Header, Footer, Container)
 - ❌ **MISSING**: Alert list/card components, delete confirmation dialog
 
 **Authentication & Access Control (100% Ready)**:
+
 - ✅ Email-based authentication with unsubscribe tokens
 - ✅ Users can access alerts via email parameter or token
 - ✅ Security measures in place
@@ -39,6 +43,7 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### Phase 1: API Foundation (30 minutes)
 
 **Task 1**: Add missing API endpoints
+
 - Create `PUT /api/alerts/[id]` endpoint
 - Create `DELETE /api/alerts/[id]` endpoint
 - Both can leverage existing database functions
@@ -47,12 +52,14 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### Phase 2: UI Components (1.5 hours)
 
 **Task 2**: Create AlertCard component
+
 - Display alert details in card format
 - Include edit/delete action buttons
 - Show alert status and activity info
 - Responsive design matching existing components
 
 **Task 3**: Create delete confirmation dialog
+
 - Use existing UI library components
 - Clear confirmation message
 - Proper error handling
@@ -60,12 +67,14 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### Phase 3: Dashboard Page (2 hours)
 
 **Task 4**: Create `/alerts/manage` page
+
 - Email input form for user identification
 - Alert list display using AlertCard components
 - Loading states and error handling
 - Responsive layout
 
 **Task 5**: Enhance AlertForm for edit mode
+
 - Add edit mode prop to existing AlertForm
 - Pre-populate form fields with existing alert data
 - Update submission logic (PUT vs POST)
@@ -74,6 +83,7 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### Phase 4: Navigation & UX (30 minutes)
 
 **Task 6**: Update navigation
+
 - Add "Manage Alerts" link to success page
 - Update email templates to include dashboard link
 - Ensure consistent user experience
@@ -81,12 +91,14 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### Phase 5: Testing & Validation (1.5 hours)
 
 **Task 7**: Write comprehensive tests
+
 - API endpoint tests for PUT/DELETE
 - Component tests for AlertCard and dashboard
 - Integration tests for complete user flows
 - Error handling tests
 
 **Task 8**: Manual testing with Playwright
+
 - Test complete user journey
 - Verify responsive design
 - Test error scenarios
@@ -97,6 +109,7 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### API Endpoints
 
 **PUT /api/alerts/[id]**
+
 ```typescript
 // Can reuse existing updateAlert() function
 // Validate request body against alert schema
@@ -105,6 +118,7 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ```
 
 **DELETE /api/alerts/[id]**
+
 ```typescript
 // Use existing deactivateAlert() function (soft delete)
 // Validate user owns the alert
@@ -115,6 +129,7 @@ Currently, users can create alerts but have no way to view, edit, or manage thei
 ### Component Structure
 
 **AlertCard Component**
+
 ```typescript
 interface AlertCardProps {
   alert: Alert;
@@ -125,6 +140,7 @@ interface AlertCardProps {
 ```
 
 **Dashboard Page Structure**
+
 ```
 /alerts/manage
 ├── Email input form (if no email/token provided)
@@ -162,17 +178,20 @@ interface AlertCardProps {
 ## Testing Strategy
 
 ### Unit Tests
+
 - API endpoints for all CRUD operations
 - AlertCard component rendering and interactions
 - AlertForm in edit mode
 - Delete confirmation dialog
 
 ### Integration Tests
+
 - Complete user flow from dashboard to edit/delete
 - API integration with database operations
 - Error handling scenarios
 
 ### Manual Testing
+
 - Responsive design across devices
 - Accessibility compliance
 - Performance with multiple alerts
@@ -192,17 +211,20 @@ interface AlertCardProps {
 ## Risk Mitigation
 
 **Low Risk Implementation**:
+
 - Leveraging existing, tested infrastructure
 - Minimal new code required
 - Well-defined requirements
 - Comprehensive testing strategy
 
 **Potential Issues**:
+
 - User experience design decisions
 - Performance with many alerts per user
 - Error handling edge cases
 
 **Mitigation Strategy**:
+
 - Follow existing design patterns
 - Implement pagination if needed
 - Comprehensive error handling and testing
@@ -210,6 +232,7 @@ interface AlertCardProps {
 ## Timeline Estimate
 
 **Total Time**: ~6 hours
+
 - Phase 1 (API): 30 minutes
 - Phase 2 (UI Components): 1.5 hours
 - Phase 3 (Dashboard): 2 hours

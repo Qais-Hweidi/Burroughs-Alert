@@ -19,7 +19,7 @@ const mockAlert = {
   max_commute_minutes: 30,
   commute_destination: 'Times Square',
   commute_destination_place_id: null,
-  commute_destination_lat: 40.7580,
+  commute_destination_lat: 40.758,
   commute_destination_lng: -73.9855,
   is_active: true,
   created_at: '2024-01-01T00:00:00Z',
@@ -105,7 +105,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.OK);
@@ -132,7 +134,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -157,7 +161,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -182,7 +188,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -207,7 +215,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
@@ -234,7 +244,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -259,7 +271,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -286,7 +300,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -322,7 +338,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
@@ -364,7 +382,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -390,7 +410,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.OK);
@@ -416,7 +438,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -439,7 +463,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -463,7 +489,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -487,7 +515,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
@@ -522,7 +552,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
@@ -563,7 +595,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -586,8 +620,10 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
-      
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
+
       expect(response.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     });
 
@@ -614,7 +650,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await PUT(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
@@ -643,7 +681,9 @@ describe('/api/alerts/[id] - Alert Management', () => {
         }
       );
 
-      const response = await DELETE(request, { params: Promise.resolve({ id: alertId }) });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: alertId }),
+      });
       const body = await response.json();
 
       expect(response.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);

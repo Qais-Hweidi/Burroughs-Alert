@@ -9,7 +9,12 @@ import { getDatabase } from '@/lib/database';
 import { alerts, users } from '@/lib/database/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
-import { ERROR_CODES, HTTP_STATUS, VALIDATION_LIMITS, isValidNeighborhood } from '@/lib/utils/constants';
+import {
+  ERROR_CODES,
+  HTTP_STATUS,
+  VALIDATION_LIMITS,
+  isValidNeighborhood,
+} from '@/lib/utils/constants';
 
 const getAlertByIdSchema = z.object({
   id: z
@@ -380,8 +385,10 @@ export async function PUT(
       updateValues.commute_destination_place_id = commute_destination_place_id;
     }
     if (commute_destination_coordinates !== undefined) {
-      updateValues.commute_destination_lat = commute_destination_coordinates?.lat ?? null;
-      updateValues.commute_destination_lng = commute_destination_coordinates?.lng ?? null;
+      updateValues.commute_destination_lat =
+        commute_destination_coordinates?.lat ?? null;
+      updateValues.commute_destination_lng =
+        commute_destination_coordinates?.lng ?? null;
     }
 
     // Update alert

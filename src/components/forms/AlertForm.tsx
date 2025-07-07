@@ -166,10 +166,9 @@ export default function AlertForm({
     setErrors({});
 
     try {
-      const url = isEditMode && alertId 
-        ? `/api/alerts/${alertId}`
-        : '/api/alerts';
-      
+      const url =
+        isEditMode && alertId ? `/api/alerts/${alertId}` : '/api/alerts';
+
       const method = isEditMode ? 'PUT' : 'POST';
 
       // Call API to create or update alert
@@ -195,15 +194,17 @@ export default function AlertForm({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to ${isEditMode ? 'update' : 'create'} alert`);
+        throw new Error(
+          errorData.message ||
+            `Failed to ${isEditMode ? 'update' : 'create'} alert`
+        );
       }
 
       const data = await response.json();
       onSuccess(formData, data.alert.id);
     } catch (error) {
       setErrors({
-        general:
-          `An error occurred while ${isEditMode ? 'updating' : 'creating'} your alert. Please try again.`,
+        general: `An error occurred while ${isEditMode ? 'updating' : 'creating'} your alert. Please try again.`,
       });
     } finally {
       setIsSubmitting(false);
