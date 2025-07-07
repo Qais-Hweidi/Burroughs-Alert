@@ -55,6 +55,8 @@ export interface AlertFormProps {
   onSuccess: (data: AlertFormData, alertId?: number) => void;
   initialData?: Partial<AlertFormData>;
   className?: string;
+  isEditMode?: boolean;
+  alertId?: number;
 }
 
 // Email validation regex
@@ -70,6 +72,8 @@ export default function AlertForm({
   onSuccess,
   initialData,
   className,
+  isEditMode = false,
+  alertId,
 }: AlertFormProps) {
   // Form state
   const [formData, setFormData] = useState<AlertFormData>({
@@ -162,9 +166,15 @@ export default function AlertForm({
     setErrors({});
 
     try {
-      // Call real API to create alert
-      const response = await fetch('/api/alerts', {
-        method: 'POST',
+      const url = isEditMode && alertId 
+        ? `/api/alerts/${alertId}`
+        : '/api/alerts';
+      
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      // Call API to create or update alert
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -185,7 +195,7 @@ export default function AlertForm({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create alert');
+        throw new Error(errorData.message || `Failed to ${isEditMode ? 'update' : 'create'} alert`);
       }
 
       const data = await response.json();
@@ -193,7 +203,7 @@ export default function AlertForm({
     } catch (error) {
       setErrors({
         general:
-          'An error occurred while creating your alert. Please try again.',
+          `An error occurred while ${isEditMode ? 'updating' : 'creating'} your alert. Please try again.`,
       });
     } finally {
       setIsSubmitting(false);
@@ -587,12 +597,12 @@ export default function AlertForm({
         {isSubmitting ? (
           <>
             <Spinner size="sm" variant="muted" className="mr-2" />
-            Creating Alert...
+            {isEditMode ? 'Updating Alert...' : 'Creating Alert...'}
           </>
         ) : (
           <>
             <Check className="w-5 h-5 mr-2" />
-            Create My Alert
+            {isEditMode ? 'Update My Alert' : 'Create My Alert'}
           </>
         )}
       </button>

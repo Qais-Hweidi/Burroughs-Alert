@@ -1,4 +1,4 @@
-import { Search, MapPin, Bell, Shield, Clock, TrendingUp } from 'lucide-react';
+import { Search, MapPin, Bell, Shield, Clock, TrendingUp, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -30,6 +30,15 @@ export default function HomePage() {
               >
                 <Search className="h-6 w-6 mr-3" />
                 See How It Works
+              </Link>
+            </div>
+            <div className="mt-6">
+              <Link
+                href="/alerts/manage"
+                className="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors text-sm font-medium"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Already have alerts? Manage them here
               </Link>
             </div>
           </div>

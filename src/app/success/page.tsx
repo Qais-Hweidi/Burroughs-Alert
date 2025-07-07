@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CheckCircle, Bell, Mail, Clock, Shield } from 'lucide-react';
+import { CheckCircle, Bell, Mail, Clock, Shield, Settings } from 'lucide-react';
 
 export default function SuccessPage() {
   return (
@@ -91,6 +91,14 @@ export default function SuccessPage() {
 
           {/* Action Buttons */}
           <div className="space-y-4">
+            <Link
+              href="/alerts/manage"
+              className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 text-center flex items-center justify-center gap-2"
+            >
+              <Settings className="w-5 h-5" />
+              Manage Your Alerts
+            </Link>
+
             <Link
               href="/alerts/create"
               className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 text-center"
