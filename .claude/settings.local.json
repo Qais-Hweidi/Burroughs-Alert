@@ -7,7 +7,6 @@
       "Bash*",
       "Bash(**)",
       "Bash(.*)",
-      "bash*",
       "BASH(*)",
       "*bash*",
       "*Bash*",
@@ -40,8 +39,20 @@
       "mcp__ide__getDiagnostics",
       "mcp__puppeteer__puppeteer_evaluate",
       "mcp__puppeteer__puppeteer_navigate",
-      "mcp__puppeteer__puppeteer_screenshot"
+      "mcp__puppeteer__puppeteer_screenshot",
+      "mcp__rubberduck-semantic-intelligence__get_started",
+      "mcp__rubberduck-codebase-intelligence__quick_repo_analysis",
+      "mcp__rubberduck-semantic-intelligence__load_code",
+      "mcp__rubberduck-semantic-intelligence__discover",
+      "mcp__rubberduck-semantic-intelligence__list_actions",
+      "mcp__rubberduck-semantic-intelligence__query_action",
+      "mcp__rubberduck-semantic-intelligence__search_code",
+      "mcp__rubberduck-semantic-intelligence__plan_workflow"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "rubberduck-codebase-intelligence",
+    "rubberduck-semantic-intelligence"
+  ]
 }

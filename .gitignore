@@ -49,5 +49,8 @@ logs
 .vscode/
 .idea/
 
+# MCP
+.mcp.json
+
 # OS
 Thumbs.db
